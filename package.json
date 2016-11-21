@@ -1,0 +1,29 @@
+{
+  "name": "omero_parade",
+  "version": "0.0.1",
+  "description": "\"React.js based centre panel for webclient\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node_modules/.bin/webpack-dev-server --progress --inline --hot",
+    "dev": "node_modules/.bin/webpack --config webpack.config.js --watch"
+  },
+  "author": "William Moore",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "axios": "^0.14.0",
+    "babel-core": "^6.13.2",
+    "babel-loader": "^6.2.5",
+    "babel-preset-es2015": "^6.13.2",
+    "babel-preset-react": "^6.11.1",
+    "react": "^15.3.2",
+    "react-dom": "^15.3.1",
+    "webpack": "^1.13.2"
+  },
+  "devDependencies": {
+    "babel-plugin-transform-class-properties": "^6.19.0",
+    "babel-plugin-transform-react-jsx": "^6.8.0",
+    "babel-preset-react-hmre": "^1.1.1",
+    "webpack-dev-server": "^1.16.2"
+  }
+}

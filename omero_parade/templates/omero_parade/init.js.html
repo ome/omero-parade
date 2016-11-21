@@ -1,0 +1,80 @@
+
+<script src="{% static "omero_parade/js/bundle.min.js" %}"></script>
+<script>
+
+$(function() {
+
+  var pluginIndex = {{ forloop.counter }};
+  var url="{% url 'webindex' %}";
+
+
+  var reactRender = function(datatree, selectedNode) {
+    var imageIds = [];
+
+    $.each(selectedNode.children, function(index, child) {
+      imageIds.push(datatree.get_node(child).data.obj.id);
+    });
+
+    omero_parade.default(imageIds, url);
+
+  };
+
+  $("#omero_parade").omeroweb_center_plugin({
+    plugin_index: pluginIndex,        // From the Django template loop
+    empty_on_sel_change: false,       // Do not completely erase content when changing selection
+    load_plugin_content: function(selected, dtype, oid) {
+
+      console.log(selected, dtype, oid);
+
+      // this may have been called before datatree was initialised...
+      var datatree = $.jstree.reference('#dataTree');
+      if (!datatree) return;
+
+      // We use the tree to access selected objects, since we can traverse
+      // to check parents etc...
+      // Note: We do not use the parameters selected, dtype or oid as
+      // it is easier to use the tree directly as these do not refer to
+      // a jstree node
+      var tree_selected = datatree.get_selected(true);
+
+      if (tree_selected === undefined) {
+        return;
+      }
+
+      // TODO Handle multi-selection
+      var selected = tree_selected[0];
+
+      // If the selected object is an image, return that image and its siblings
+      if (selected.type === 'image') {
+        // Set selected to be the parent so that lastSelected can be compared
+        // to the container
+        selected = datatree.get_node(datatree.get_parent(selected));
+        reactRender(datatree, selected);
+      }
+
+      // If the selected object is a Dataset, tag or orphaned return its children
+      else if (selected.type === 'dataset' || selected.type === 'orphaned' || selected.type === 'tag'){
+        // Make sure that the dataset is loaded
+        if (!datatree.is_loaded(selected)) {
+          datatree.load_node(selected, function(node, status){
+            reactRender(datatree, datatree.get_node(node));
+          });
+        } else {
+          reactRender(datatree, datatree.get_node(selected));
+        }
+      }
+    },
+    // supported_obj_types: ['dataset', 'image', 'orphaned', 'tag']
+    plugin_enabled: function(selected){
+        if (selected.length == 0) return false;
+        var dtype = selected[0]['id'].split('-')[0];
+         if (selected.length > 1) {
+            return (dtype == "image");
+        } else {
+            return ($.inArray(dtype, ["image", "dataset"]) > -1);
+        }
+    }
+  });
+});
+
+</script>
