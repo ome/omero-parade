@@ -37,6 +37,13 @@ $(function() {
       // a jstree node
       var tree_selected = datatree.get_selected(true);
 
+      omero_parade.default(tree_selected, datatree);
+
+      return;
+
+
+
+
       if (tree_selected === undefined) {
         return;
       }
@@ -66,13 +73,14 @@ $(function() {
     },
     // supported_obj_types: ['dataset', 'image', 'orphaned', 'tag']
     plugin_enabled: function(selected){
-        if (selected.length == 0) return false;
-        var dtype = selected[0]['id'].split('-')[0];
-         if (selected.length > 1) {
-            return (dtype == "image");
-        } else {
-            return ($.inArray(dtype, ["image", "dataset"]) > -1);
-        }
+        return true;
+        // if (selected.length == 0) return false;
+        // var dtype = selected[0]['id'].split('-')[0];
+        //  if (selected.length > 1) {
+        //     return (dtype == "image");
+        // } else {
+        //     return ($.inArray(dtype, ["image", "dataset"]) > -1);
+        // }
     }
   });
 });

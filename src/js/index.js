@@ -1,11 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
+import CentrePanel from './CentrePanel';
 
-function omero_parade(imageIds) {
-  console.log("testing...", imageIds);
+function omero_parade(selected, jstree) {
+  console.log("testing...", selected, jstree);
   ReactDOM.render(
-    <App imageIds={imageIds} />,
+    <CentrePanel
+        selected={selected}
+        jstree={jstree} />,
     document.getElementById('omero_parade')
   );
 }
