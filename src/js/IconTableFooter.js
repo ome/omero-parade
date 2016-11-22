@@ -1,6 +1,20 @@
 
 import React, { Component } from 'react';
 
+const styles = {
+    footer: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: 25,
+        borderRight: 0,
+        borderBottom: 'solid 1px hsl(210,10%,90%)',
+        overflow: 'hidden',
+        background: 'none repeat scroll 0 0 #EFF1F4',
+    }
+}
+
 const IconTableFooter = React.createClass({
 
     componentDidMount: function() {
@@ -23,7 +37,7 @@ const IconTableFooter = React.createClass({
 
     render: function() {
         return (
-            <div className="toolbar iconTableFooter">
+            <div style={styles.footer} >
                 <div
                     ref="thumbSlider"
                     title="Zoom Thumbnails" />

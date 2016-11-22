@@ -5,6 +5,18 @@ import IconTableHeadRow from './IconTableHeadRow'
 import ImageIcon from './ImageIcon'
 
 
+const styles = {
+    thumbContainer: {
+        position: 'absolute',
+        bottom: 25,
+        left: 0,
+        top: 29,
+        overflow: 'auto',
+        marginTop: 0,
+        right: 0,
+    }
+}
+
 
 const IconTable = React.createClass({
 
@@ -187,7 +199,7 @@ const IconTable = React.createClass({
                     setFilterText={this.setFilterText}
                     layout={this.state.layout}
                     setLayout={this.setLayout} />
-            <div className="iconTable">
+            <div style={styles.thumbContainer} >
                 <ul
                     ref="dataIcons"
                     className={this.state.layout + "Layout"}>

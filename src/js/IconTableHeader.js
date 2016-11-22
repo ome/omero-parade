@@ -1,6 +1,20 @@
 
 import React, { Component } from 'react';
 
+const styles = {
+    toolbar: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 29,
+        borderRight: 0,
+        borderBottom: 'solid 1px hsl(210,10%,90%)',
+        overflow: 'hidden',
+        background: 'none repeat scroll 0 0 #EFF1F4',
+    }
+}
+
 const IconTableHeader = React.createClass({
 
     handleLayoutClick: function(event) {
@@ -19,7 +33,7 @@ const IconTableHeader = React.createClass({
         var iconBtnClass = layout === "icon" ? "checked" : "",
             tableBtnClass = layout === "table" ? "checked" : "";
         return (
-            <div className="toolbar iconTableHeader">
+            <div style={styles.toolbar} >
                 <div id="layout_chooser">
                     <button
                         onClick={this.handleLayoutClick}
