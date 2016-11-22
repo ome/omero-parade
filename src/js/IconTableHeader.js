@@ -23,13 +23,11 @@ const IconTableHeader = React.createClass({
                 <div id="layout_chooser">
                     <button
                         onClick={this.handleLayoutClick}
-                        id="icon_layout"
                         title="View as Thumbnails"
                         data-layout="icon"
                         className={iconBtnClass} />
                     <button
                         onClick={this.handleLayoutClick}
-                        id="table_layout"
                         title="View as List"
                         data-layout="table"
                         className={tableBtnClass} />
@@ -37,7 +35,6 @@ const IconTableHeader = React.createClass({
                 <form className="search filtersearch" id="filtersearch" action="#" style={{top: 4}}>
                     <div>
                         <input
-                            id="id_search"
                             type="text"
                             placeholder="Filter Images"
                             onKeyUp={this.handleFilterChange}

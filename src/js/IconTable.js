@@ -187,8 +187,8 @@ const IconTable = React.createClass({
                     setFilterText={this.setFilterText}
                     layout={this.state.layout}
                     setLayout={this.setLayout} />
-            <div id="icon_table" className="iconTable">
-                <ul id="dataIcons"
+            <div className="iconTable">
+                <ul
                     ref="dataIcons"
                     className={this.state.layout + "Layout"}>
                     <IconTableHeadRow />

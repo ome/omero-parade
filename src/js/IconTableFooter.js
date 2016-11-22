@@ -25,7 +25,6 @@ const IconTableFooter = React.createClass({
         return (
             <div className="toolbar iconTableFooter">
                 <div
-                    id="thumb_size_slider"
                     ref="thumbSlider"
                     title="Zoom Thumbnails" />
             </div>
