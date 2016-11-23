@@ -1,6 +1,18 @@
 
 import React, { Component } from 'react';
 
+const styles = {
+    selected: {
+        color: 'white',
+        backgroundColor: '#3875d7',
+        border: 'solid 1px #3875d7',
+        boxShadow: '0 1px 1px rgba(0,0,0,0.2)',
+    },
+    fsSelected: {
+        backgroundColor: '#cddcfc',
+        border: 'solid 1px #cddcfc',
+    }
+}
 
 const ImageIcon = React.createClass({
 
@@ -40,12 +52,18 @@ const ImageIcon = React.createClass({
             iconSizes = this.getIconSizes(),
             cls = [];
 
-        if (image.selected) {cls.push('ui-selected')};
-        if (image.fsSelected) {cls.push('fs-selected')};
+        let iconStyle = {};
+        if (image.fsSelected) {
+            iconStyle = Object.assign({}, iconStyle, styles.fsSelected)
+        };
+        if (image.selected) {
+            iconStyle = Object.assign({}, iconStyle, styles.selected)
+        };
 
         return (
             <li className={"row " + cls.join(" ")}
                 id={"image_icon-" + image.id}
+                style={iconStyle}
                 ref="icon"
                 data-fileset={image.data.obj.filesetId}
                 data-type="image"

@@ -84,7 +84,7 @@ const IconTableHeader = React.createClass({
                         style={tableBtnStyle}
                         className="parade_table_layout" />
                 </div>
-                <form className="search filtersearch" id="filtersearch" action="#" style={{top: 4}}>
+                <form className="search filtersearch" action="#" style={{top: 4}}>
                     <div>
                         <input
                             type="text"

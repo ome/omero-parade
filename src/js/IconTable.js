@@ -69,7 +69,7 @@ const IconTable = React.createClass({
                     var imageId = $(this).attr('data-id');
                     var containerNode = OME.getTreeImageContainerBestGuess(imageId);
                     var selectedNode = inst.locate_node('image-' + imageId, containerNode)[0];
-                    inst.select_node(selectedNode, true);
+                    inst.select_node(selectedNode);
                 });
             },
             start: function() {
