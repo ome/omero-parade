@@ -1,5 +1,6 @@
 
 import React, { Component } from 'react';
+import Well from './Well';
 
 
 const PlateGrid = React.createClass({

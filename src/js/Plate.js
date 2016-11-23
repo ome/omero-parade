@@ -22,7 +22,7 @@ const Plate = React.createClass({
             return;
         }
 
-        var url = "/webclient/api/fields/";
+        var url = "/omero_parade/api/fields/";
         $.ajax({
             url: url,
             data: data,
@@ -31,8 +31,8 @@ const Plate = React.createClass({
             success: function(data) {
                 if (this.isMounted()) {
                     this.setState({
-                        fields: data.fields,
-                        selectedField: data.fields[0]
+                        fields: data.data,
+                        selectedField: data.data[0]
                     });
                 }
             }.bind(this),
