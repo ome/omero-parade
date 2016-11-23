@@ -6,3 +6,91 @@
 .parade_table_layout {
 	background: url(../images/table_layout.png) no-repeat scroll center center transparent;
 }
+
+
+input[type=range].parade {
+  -webkit-appearance: none;
+  width: 100%;
+  margin: 3.3px 0;
+}
+input[type=range].parade:focus {
+  outline: none;
+}
+input[type=range].parade::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 8.4px;
+  cursor: pointer;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0), 0px 0px 1px rgba(13, 13, 13, 0);
+  background: rgba(238, 238, 238, 0.82);
+  border-radius: 1.3px;
+  border: 0.2px solid #aaaaaa;
+}
+input[type=range].parade::-webkit-slider-thumb {
+  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+  border: 0px solid #aaaaaa;
+  height: 15px;
+  width: 15px;
+  border-radius: 3px;
+  background: #727c86;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -3.5px;
+}
+input[type=range].parade:focus::-webkit-slider-runnable-track {
+  background: rgba(238, 238, 238, 0.82);
+}
+input[type=range].parade::-moz-range-track {
+  width: 100%;
+  height: 8.4px;
+  cursor: pointer;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0), 0px 0px 1px rgba(13, 13, 13, 0);
+  background: rgba(238, 238, 238, 0.82);
+  border-radius: 1.3px;
+  border: 0.2px solid #aaaaaa;
+}
+input[type=range].parade::-moz-range-thumb {
+  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+  border: 0px solid #aaaaaa;
+  height: 15px;
+  width: 15px;
+  border-radius: 3px;
+  background: #727c86;
+  cursor: pointer;
+}
+input[type=range].parade::-ms-track {
+  width: 100%;
+  height: 8.4px;
+  cursor: pointer;
+  background: transparent;
+  border-color: transparent;
+  color: transparent;
+}
+input[type=range].parade::-ms-fill-lower {
+  background: rgba(225, 225, 225, 0.82);
+  border: 0.2px solid #aaaaaa;
+  border-radius: 2.6px;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0), 0px 0px 1px rgba(13, 13, 13, 0);
+}
+input[type=range].parade::-ms-fill-upper {
+  background: rgba(238, 238, 238, 0.82);
+  border: 0.2px solid #aaaaaa;
+  border-radius: 2.6px;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0), 0px 0px 1px rgba(13, 13, 13, 0);
+}
+input[type=range].parade::-ms-thumb {
+  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+  border: 0px solid #aaaaaa;
+  height: 15px;
+  width: 15px;
+  border-radius: 3px;
+  background: #727c86;
+  cursor: pointer;
+  height: 8.4px;
+}
+input[type=range].parade:focus::-ms-fill-lower {
+  background: rgba(238, 238, 238, 0.82);
+}
+input[type=range].parade:focus::-ms-fill-upper {
+  background: rgba(238, 238, 238, 0.82);
+}
+

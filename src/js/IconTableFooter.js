@@ -12,38 +12,27 @@ const styles = {
         borderBottom: 'solid 1px hsl(210,10%,90%)',
         overflow: 'hidden',
         background: 'none repeat scroll 0 0 #EFF1F4',
+    },
+    slider: {
+        position: 'absolute',
+        right: 25,
+        width: 120,
+        top: 6,
     }
 }
 
-const IconTableFooter = React.createClass({
-
-    componentDidMount: function() {
-        var setIconSize = this.props.setIconSize,
-            iconSize = this.props.iconSize;
-        $(this.refs.thumbSlider).slider({
-            max: 200,
-            min: 30,
-            value: iconSize,
-            slide: function(event, ui) {
-                setIconSize(ui.value);
-            }
-        });
-    },
-
-    componentWillUnmount: function() {
-        // cleanup plugin
-        $(this.refs.thumbSlider).slider( "destroy" );
-    },
-
-    render: function() {
-        return (
-            <div style={styles.footer} >
-                <div
-                    ref="thumbSlider"
-                    title="Zoom Thumbnails" />
-            </div>
-        );
-    }
-});
+const IconTableFooter = ({setIconSize, iconSize}) => (
+    <div style={styles.footer} >
+        <input
+            type="range"
+            style={styles.slider}
+            className="parade"
+            min="30"
+            max="200"
+            value={iconSize}
+            onChange={(event) => {setIconSize(event.target.value)}}
+        />
+    </div>
+);
 
 export default IconTableFooter
