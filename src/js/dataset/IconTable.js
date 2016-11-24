@@ -95,6 +95,7 @@ const IconTable = React.createClass({
         // Simply allow jstree to handle selection ranges etc by delegating
         // the event.
         // TODO: this fails when we have some thumbnails hidden (still get selected in range)
+        // TODO: Also fails if Dataset node is collapsed.
         var keys = {
             shiftKey: event.shiftKey,
             metaKey: event.metaKey

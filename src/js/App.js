@@ -48,7 +48,9 @@ const App = React.createClass({
         }
     },
 
-    getParentNode: function(selected, inst) {
+    getParentNode: function() {
+        var selected = this.props.selected,
+            inst = this.props.jstree;
         if (this.renderNothing(selected)) {
             return;
         }
@@ -64,24 +66,18 @@ const App = React.createClass({
         }
     },
 
-    // Most render nothing unless we've selected a Dataset or Image(s)
     render: function() {
-        var selected = this.props.selected,
-            inst = this.props.jstree;
+        // parentNode may be null if not suitable to display
+        let parentNode = this.getParentNode();
 
-        var iconTable;
-
-        var parentNode = this.getParentNode(selected, inst);
-
+        let iconTable;
         if (parentNode) {
-
             let dtype = parentNode.type;
-
             if (dtype === "plate" || dtype === "acquisition") {
                 iconTable = (
                     <ReactPlate
                         parentNode={parentNode}
-                        inst={inst}
+                        inst={this.props.jstree}
                         iconSize={this.state.iconSize} />
                 )
             } else {
@@ -92,7 +88,7 @@ const App = React.createClass({
                 iconTable = (
                     <IconTable
                         parentNode={parentNode}
-                        inst={inst}
+                        inst={this.props.jstree}
                         iconSize={this.state.iconSize} />
                 )
             }
