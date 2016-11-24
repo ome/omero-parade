@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import CentrePanel from './CentrePanel';
+import App from './App';
 
 function omero_parade(selected, jstree) {
   ReactDOM.render(
-    <CentrePanel
+    <App
         selected={selected}
         jstree={jstree} />,
     document.getElementById('omero_parade')

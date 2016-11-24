@@ -6,7 +6,7 @@ import IconTable from './IconTable'
 import ReactPlate from './ReactPlate'
 
 
-const CentrePanel = React.createClass({
+const App = React.createClass({
 
     parentTypes: ["dataset", "orphaned", "tag", "share", "plate", "acquisition"],
 
@@ -120,4 +120,4 @@ const CentrePanel = React.createClass({
 });
 
 
-export default CentrePanel
+export default App
