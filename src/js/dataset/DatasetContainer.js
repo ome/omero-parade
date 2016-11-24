@@ -103,78 +103,80 @@ const DatasetContainer = React.createClass({
         $("#" + selectedNode.id + ">a").trigger($.Event('click', keys));
     },
 
-    render: function() {
-        var parentNode = this.props.parentNode,
-            inst = this.props.inst;
-        var imgNodes = [];
+    marshalNode: function(node) {
+        var parentNode = this.props.parentNode;
         var dateFormatOptions = {
             weekday: "short", year: "numeric", month: "short",
             day: "numeric", hour: "2-digit", minute: "2-digit"
         };
+        var d = node.data.obj.date || node.data.obj.acqDate;
+        var date = new Date(d);
+        date = date.toLocaleTimeString(undefined, dateFormatOptions);
+        var iData = {'id': node.data.obj.id,
+            'name': node.text,
+            'data': JSON.parse(JSON.stringify(node.data)),
+            'selected': node.state.selected,
+            'date': date,
+        };
+        // If image is in share and share is not owned by user...
+        if (node.data.obj.shareId && !parentNode.data.obj.isOwned) {
+            // share ID will be needed to open image viewer
+            iData.shareId = node.data.obj.shareId;
+        }
+        // Thumb version: random to break cache if thumbnails are -1 'in progress'
+        // or we're refreshing 1 or all thumbnails
+        // if (node.data.obj.thumbVersion != undefined ||
+        //         event.type === "refreshThumbnails" ||
+        //         event.type === "refreshThumb") {
+        //     var thumbVersion = node.data.obj.thumbVersion;
+        //     if (thumbVersion === -1 || event.type === "refreshThumbnails" || (
+        //             event.type === "refreshThumb" && data.imageId === iData.id)) {
+        //         thumbVersion = getRandom();
+        //         // We cache this to prevent new thumbnails requested on every
+        //         // selection change. Refreshing of tree will reset thumbVersion.
+        //         node.data.obj.thumbVersion = thumbVersion;
+        //     }
+        //     iData.thumbVersion = thumbVersion;
+        // }
+        return iData;
+    },
 
-        parentNode.children.forEach(function(ch){
+    getImageNodes: function() {
+        let imgNodes = [],
+            inst = this.props.inst;
+
+        this.props.parentNode.children.forEach(function(ch){
             var childNode = inst.get_node(ch);
             // Ignore non-images under tags or 'deleted' under shares
             if (childNode.type == "image") {
                 imgNodes.push(childNode);
             }
         });
+        return imgNodes;
+    },
 
-        var imgJson = [],
-            selFileSets = [],
-            thumbsToDeselect = [],
-            fltr = this.state.filterText;
+    render: function() {
+        var imgNodes = this.getImageNodes();
+        var fltr = this.state.filterText;
+
         // Convert jsTree nodes into json for template
-        imgNodes.forEach(function(node){
-            var d = node.data.obj.date || node.data.obj.acqDate;
-            var date = new Date(d);
-            date = date.toLocaleTimeString(undefined, dateFormatOptions);
-            var iData = {'id': node.data.obj.id,
-                    'name': node.text,
-                    'data': JSON.parse(JSON.stringify(node.data)),
-                    'selected': node.state.selected,
-                    'date': date,
-                };
-            // Note fileset IDs for selected images
-            if (iData.selected) {
-                var fsId = node.data.obj.filesetId;
-                if (fsId) {
-                    selFileSets.push(fsId);
-                }
-            }
-            // Thumb version: random to break cache if thumbnails are -1 'in progress'
-            // or we're refresing 1 or all thumbnails
-            // if (node.data.obj.thumbVersion != undefined ||
-            //         event.type === "refreshThumbnails" ||
-            //         event.type === "refreshThumb") {
-            //     var thumbVersion = node.data.obj.thumbVersion;
-            //     if (thumbVersion === -1 || event.type === "refreshThumbnails" || (
-            //             event.type === "refreshThumb" && data.imageId === iData.id)) {
-            //         thumbVersion = getRandom();
-            //         // We cache this to prevent new thumbnails requested on every
-            //         // selection change. Refreshing of tree will reset thumbVersion.
-            //         node.data.obj.thumbVersion = thumbVersion;
-            //     }
-            //     iData.thumbVersion = thumbVersion;
-            // }
-            // If image is in share and share is not owned by user...
-            if (node.data.obj.shareId && !parentNode.data.obj.isOwned) {
-                // share ID will be needed to open image viewer
-                iData.shareId = node.data.obj.shareId;
-            }
+        let imgJson = imgNodes.map(this.marshalNode);
 
-            if (fltr.length === 0 || iData.name.indexOf(fltr) > -1) {
-                imgJson.push(iData);
-            } else if (iData.selected) {
-                thumbsToDeselect.push(iData.id);
-            }
-        });
+        let thumbsToDeselect = [];
+        if (fltr.length > 0) {
+            // find hidden images we need to de-select in jstree
+            thumbsToDeselect = imgJson.filter(i => i.name.indexOf(fltr) === -1 && i.selected)
+                                      .map(i => i.id);
+            // filter images
+            imgJson = imgJson.filter(i => i.name.indexOf(fltr) !== -1);
+        }
 
         // Let parent know that some aren't shown
         this.setThumbsToDeselect(thumbsToDeselect);
 
-        // Now we know which filesets are selected, we can
-        // go through all images, adding fs-selection flag if in
+        // Get selected filesets...
+        let selFileSets = imgJson.filter(i => i.selected).map(i => i.data.obj.filesetId);
+        // ...go through all images, adding fs-selection flag if in selected fileset
         if (selFileSets.length > 0) {
             imgJson.forEach(function(img){
                 if (selFileSets.indexOf(img.data.obj.filesetId) > -1) {
