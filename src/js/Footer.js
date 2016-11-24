@@ -21,7 +21,7 @@ const styles = {
     }
 }
 
-const IconTableFooter = ({setIconSize, iconSize}) => (
+const Footer = ({setIconSize, iconSize}) => (
     <div style={styles.footer} >
         <input
             type="range"
@@ -35,4 +35,4 @@ const IconTableFooter = ({setIconSize, iconSize}) => (
     </div>
 );
 
-export default IconTableFooter
+export default Footer

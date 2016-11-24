@@ -1,9 +1,9 @@
 
 import React from 'react';
 // import ReactDOM from 'react-dom';
-import IconTableFooter from './IconTableFooter'
-import IconTable from './IconTable'
-import ReactPlate from './ReactPlate'
+import Footer from './Footer'
+import IconTable from './dataset/IconTable'
+import ReactPlate from './plate/ReactPlate'
 
 
 const App = React.createClass({
@@ -111,7 +111,7 @@ const App = React.createClass({
             <div>
                 
                 {iconTable}
-                <IconTableFooter
+                <Footer
                     iconSize={this.state.iconSize}
                     setIconSize={this.setIconSize} />
             </div>
