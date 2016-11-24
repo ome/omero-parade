@@ -2,7 +2,7 @@
 import React from 'react';
 // import ReactDOM from 'react-dom';
 import Footer from './Footer'
-import IconTable from './dataset/IconTable'
+import DatasetContainer from './dataset/DatasetContainer'
 import ReactPlate from './plate/ReactPlate'
 
 
@@ -70,11 +70,11 @@ const App = React.createClass({
         // parentNode may be null if not suitable to display
         let parentNode = this.getParentNode();
 
-        let iconTable;
+        let childPanel;
         if (parentNode) {
             let dtype = parentNode.type;
             if (dtype === "plate" || dtype === "acquisition") {
-                iconTable = (
+                childPanel = (
                     <ReactPlate
                         parentNode={parentNode}
                         inst={this.props.jstree}
@@ -85,8 +85,8 @@ const App = React.createClass({
                 // Cache this parentNode. If next selection == 0, still show this
                 // E.g. if image in Dataset is de-selected
                 this.previousParent = parentNode;
-                iconTable = (
-                    <IconTable
+                childPanel = (
+                    <DatasetContainer
                         parentNode={parentNode}
                         inst={this.props.jstree}
                         iconSize={this.state.iconSize} />
@@ -97,7 +97,7 @@ const App = React.createClass({
         return (
             <div>
                 
-                {iconTable}
+                {childPanel}
                 <Footer
                     iconSize={this.state.iconSize}
                     setIconSize={this.setIconSize} />

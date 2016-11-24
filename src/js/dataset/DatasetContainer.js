@@ -18,7 +18,7 @@ const styles = {
 }
 
 
-const IconTable = React.createClass({
+const DatasetContainer = React.createClass({
 
     getInitialState: function() {
         return {
@@ -212,4 +212,4 @@ const IconTable = React.createClass({
     }
 });
 
-export default IconTable
+export default DatasetContainer
