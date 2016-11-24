@@ -22,11 +22,19 @@ const ReactPlate = React.createClass({
             // Children is list of node-ids
             key = parentNode.children[0];
         }
+        console.log('key', key);
         // We pass key to <Plate> so that if key doesn't change,
         // Plate won't mount (load data) again
+        var inst = this.props.inst;
+        var plateId = parentNode.data.id;
+        var dtype = parentNode.type;
+        if (dtype === "acquisition") {
+            plateId = inst.get_node(inst.get_parent(parentNode)).data.id;
+        }
+
         return (
             <Plate
-                plateId={this.props.plateId}
+                plateId={plateId}
                 parentNode={parentNode}
                 iconSize={this.props.iconSize}
                 key={key}/>

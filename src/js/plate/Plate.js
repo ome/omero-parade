@@ -7,7 +7,7 @@ const Plate = React.createClass({
 
     componentDidMount: function() {
         var parentNode = this.props.parentNode,
-            plateId = this.props.plateId,
+            // plateId = this.props.plateId,
             objId = parentNode.data.id;
         var data;
         if (parentNode.type === "acquisition") {

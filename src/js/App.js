@@ -67,9 +67,7 @@ const App = React.createClass({
     // Most render nothing unless we've selected a Dataset or Image(s)
     render: function() {
         var selected = this.props.selected,
-            inst = this.props.jstree,
-            imgNodes = [],
-            dtype;
+            inst = this.props.jstree;
 
         var iconTable;
 
@@ -77,18 +75,14 @@ const App = React.createClass({
 
         if (parentNode) {
 
-            dtype = parentNode.type;
+            let dtype = parentNode.type;
 
             if (dtype === "plate" || dtype === "acquisition") {
-                var plateId = parentNode.data.id;
-                if (dtype === "acquisition") {
-                    plateId = inst.get_node(inst.get_parent(parentNode)).data.id;
-                }
                 iconTable = (
                     <ReactPlate
-                        plateId={plateId}
-                        iconSize={this.state.iconSize}
-                        parentNode={parentNode} />
+                        parentNode={parentNode}
+                        inst={inst}
+                        iconSize={this.state.iconSize} />
                 )
             } else {
                 // handles tag, orphaned, dataset, share
@@ -99,10 +93,7 @@ const App = React.createClass({
                     <IconTable
                         parentNode={parentNode}
                         inst={inst}
-                        filterText={this.state.filterText}
-                        setThumbsToDeselect={this.setThumbsToDeselect}
-                        iconSize={this.state.iconSize}
-                        layout={this.state.layout} />
+                        iconSize={this.state.iconSize} />
                 )
             }
         }
