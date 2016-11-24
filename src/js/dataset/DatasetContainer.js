@@ -1,21 +1,6 @@
 
 import React, { Component } from 'react';
-import IconTableHeader from './IconTableHeader'
-import IconTableHeadRow from './IconTableHeadRow'
-import ImageIcon from './ImageIcon'
-
-
-const styles = {
-    thumbContainer: {
-        position: 'absolute',
-        bottom: 25,
-        left: 0,
-        top: 29,
-        overflow: 'auto',
-        marginTop: 0,
-        right: 0,
-    }
-}
+import Dataset from './Dataset'
 
 
 const DatasetContainer = React.createClass({
@@ -56,31 +41,6 @@ const DatasetContainer = React.createClass({
 
     setThumbsToDeselect: function(imageIds) {
         this._thumbsToDeselect = imageIds;
-    },
-
-    componentDidMount: function() {
-        var inst = this.props.inst;
-        $(this.refs.dataIcons).selectable({
-            filter: 'li.row',
-            distance: 2,
-            stop: function() {
-                // Make the same selection in the jstree etc
-                $(".ui-selected").each(function(){
-                    var imageId = $(this).attr('data-id');
-                    var containerNode = OME.getTreeImageContainerBestGuess(imageId);
-                    var selectedNode = inst.locate_node('image-' + imageId, containerNode)[0];
-                    inst.select_node(selectedNode);
-                });
-            },
-            start: function() {
-                inst.deselect_all();
-            }
-        });
-    },
-
-    componentWillUnmount: function() {
-        // cleanup plugin
-        $(this.refs.dataIcons).selectable( "destroy" );
     },
 
     handleIconClick: function(imageId, event) {
@@ -185,32 +145,18 @@ const DatasetContainer = React.createClass({
             });
         }
 
-        var icons = imgJson.map(function(image){
-            return (
-                <ImageIcon
-                    image={image}
-                    key={image.id}
-                    iconSize={this.props.iconSize}
-                    handleIconClick={this.handleIconClick} />
-            );
-        }.bind(this));
-
         return (
-        <div className="centrePanel">
-            <IconTableHeader
-                    filterText={this.state.filterText}
-                    setFilterText={this.setFilterText}
-                    layout={this.state.layout}
-                    setLayout={this.setLayout} />
-            <div style={styles.thumbContainer} >
-                <ul
-                    ref="dataIcons"
-                    className={this.state.layout + "Layout"}>
-                    <IconTableHeadRow />
-                    {icons}
-                </ul>
-            </div>
-        </div>);
+            <Dataset
+                inst = {this.props.inst}
+                imgJson={imgJson}
+                iconSize={this.props.iconSize}
+                handleIconClick={this.handleIconClick}
+                filterText={this.state.filterText}
+                setFilterText={this.setFilterText}
+                layout={this.state.layout}
+                setLayout={this.setLayout}
+            />
+        )
     }
 });
 
