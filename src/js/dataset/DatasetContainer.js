@@ -43,26 +43,6 @@ const DatasetContainer = React.createClass({
         this._thumbsToDeselect = imageIds;
     },
 
-    handleIconClick: function(imageId, event) {
-        var inst = this.props.inst;
-        var containerNode = OME.getTreeImageContainerBestGuess(imageId);
-        var selectedNode = inst.locate_node('image-' + imageId, containerNode)[0];
-
-        // Deselect all to begin (supress jstree event)
-        // inst.deselect_all(true);
-        // inst.select_node(selectedNode, true);
-
-        // Simply allow jstree to handle selection ranges etc by delegating
-        // the event.
-        // TODO: this fails when we have some thumbnails hidden (still get selected in range)
-        // TODO: Also fails if Dataset node is collapsed.
-        var keys = {
-            shiftKey: event.shiftKey,
-            metaKey: event.metaKey
-        }
-        $("#" + selectedNode.id + ">a").trigger($.Event('click', keys));
-    },
-
     marshalNode: function(node) {
         var parentNode = this.props.parentNode;
         var dateFormatOptions = {
