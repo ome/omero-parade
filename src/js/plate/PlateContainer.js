@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import Plate from './Plate'
 
 
-const ReactPlate = React.createClass({
+const PlateContainer = React.createClass({
 
     render: function() {
         var parentNode = this.props.parentNode;
@@ -41,4 +41,4 @@ const ReactPlate = React.createClass({
     }
 });
 
-export default ReactPlate
+export default PlateContainer

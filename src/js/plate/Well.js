@@ -21,7 +21,7 @@ const Well = React.createClass({
             <td className={"well " + cls} title={""+this.props.row+this.props.col}>
                 <img
 
-                    src={"/webgateway/render_thumbnail/" + this.props.iid + "/96/"}
+                    src={this.props.thumb_url}
                     onClick={this.handleClick}
                     style={imgStyle} />
             </td>

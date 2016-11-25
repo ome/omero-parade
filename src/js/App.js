@@ -3,7 +3,7 @@ import React from 'react';
 // import ReactDOM from 'react-dom';
 import Footer from './Footer'
 import DatasetContainer from './dataset/DatasetContainer'
-import ReactPlate from './plate/ReactPlate'
+import PlateContainer from './plate/PlateContainer'
 
 
 const App = React.createClass({
@@ -75,7 +75,7 @@ const App = React.createClass({
             let dtype = parentNode.type;
             if (dtype === "plate" || dtype === "acquisition") {
                 childPanel = (
-                    <ReactPlate
+                    <PlateContainer
                         parentNode={parentNode}
                         inst={this.props.jstree}
                         iconSize={this.state.iconSize} />
