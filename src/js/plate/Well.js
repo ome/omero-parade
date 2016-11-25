@@ -2,31 +2,16 @@
 import React, { Component } from 'react';
 
 
-const Well = React.createClass({
-
-    handleClick: function(event) {
-        this.props.handleWellClick(event, this.props.id);
-    },
-
-    render: function() {
-        var imgStyle = {
-                width: this.props.iconSize + 'px',
-                maxHeight: this.props.iconSize + 'px',
-            },
-            cls = "";
-        if (this.props.selected) {
-            cls = "ui-selected";
-        }
-        return (
-            <td className={"well " + cls} title={""+this.props.row+this.props.col}>
-                <img
-
-                    src={this.props.thumb_url}
-                    onClick={this.handleClick}
-                    style={imgStyle} />
-            </td>
-        )
-    }
-})
+const Well = ({id, iconSize, selected, row, col, thumb_url, handleWellClick}) => {
+    return (
+        <td className={"well " + (selected ? "ui-selected" : "")}
+            title={""+row+col}>
+            <img
+                src={thumb_url}
+                onClick={event => {handleWellClick(event, id)}}
+                style={{width: iconSize, maxHeight: iconSize}} />
+        </td>
+    )
+}
 
 export default Well
