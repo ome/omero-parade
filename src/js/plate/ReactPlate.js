@@ -22,7 +22,6 @@ const ReactPlate = React.createClass({
             // Children is list of node-ids
             key = parentNode.children[0];
         }
-        console.log('key', key);
         // We pass key to <Plate> so that if key doesn't change,
         // Plate won't mount (load data) again
         var inst = this.props.inst;

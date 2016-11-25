@@ -76,6 +76,10 @@ const Dataset = React.createClass({
         inst.deselect_all();
         let nodes = toSelect.map(iid => inst.locate_node('image-' + iid, containerNode)[0]);
         inst.select_node(nodes);
+        // we also focus the node, so that hotkey events come from the node
+        if (nodes.length > 0) {
+            $("#" + nodes[0].id).children('.jstree-anchor').focus();
+        }
     },
 
     render() {

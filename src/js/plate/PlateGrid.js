@@ -70,6 +70,22 @@ const PlateGrid = React.createClass({
         }
     },
 
+    setSelectedWells: function(wellIds) {
+
+        this.setState({selectedWellIds: wellIds});
+
+        var well_index = this.props.fieldId;
+        var selected_objs = wellIds.map(wId => ({id: 'well-' + wId, index: this.props.fieldId}))
+        $("body")
+            .data("selected_objects.ome", selected_objs)
+            .trigger("selection_change.ome");
+        // Update the buttons above jstree as if nothing selected
+        // (but don't actually change selection in jstree).
+        if (buttonsShowHide) {
+            buttonsShowHide([]);
+        }
+    },
+
     handleWellClick: function(event, wellId) {
         // update selected state for range of wells etc...
         var isWellSelected = function(wellId) {
@@ -102,7 +118,7 @@ const PlateGrid = React.createClass({
                     newSel.push(wellId);
                 }
             });
-            this.setState({selectedWellIds: newSel});
+            this.setSelectedWells(newSel);
 
         } else if (event.metaKey) {
             // toggle selection of well
@@ -119,13 +135,11 @@ const PlateGrid = React.createClass({
             if (!found) {
                 s.push(wellId);
             }
-            this.setState({selectedWellIds: s});
+            this.setSelectedWells(s);
         } else {
             // Select only this well
-            this.setState({selectedWellIds: [wellId]});
+            this.setSelectedWells([wellId]);
         }
-        // Calls to ome.webclient.actions.js
-        //OME.well_selection_changed(selected, idx, perms);
     },
 
     render: function() {
