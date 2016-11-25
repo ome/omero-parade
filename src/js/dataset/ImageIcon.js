@@ -52,7 +52,7 @@ const ImageIcon = React.createClass({
             iconSizes = this.getIconSizes(),
             cls = [];
 
-        let iconStyle = {};
+        let iconStyle = {width: this.props.iconSize, height: this.props.iconSize};
         if (image.fsSelected) {
             iconStyle = Object.assign({}, iconStyle, styles.fsSelected)
         };
