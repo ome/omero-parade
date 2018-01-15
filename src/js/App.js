@@ -37,6 +37,7 @@ const App = React.createClass({
     },
 
     getParentNode: function() {
+        // See http://will-moore.github.io/react-render-purely-props-and-state/
         var selected = this.props.selected,
             inst = this.props.jstree;
         if (this.renderNothing(selected)) {
