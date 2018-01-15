@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import PlateGrid from './PlateGrid'
 import Footer from '../Footer'
+import HeatmapChooser from './HeatmapChooser';
 
 
 const Plate = React.createClass({
@@ -40,80 +41,25 @@ const Plate = React.createClass({
                 error: function(xhr, status, err) {
             }.bind(this)
         });
-
-        // Load OMERO.tables data for this plate (if any)
-        url = "/webgateway/table/Plate/" + plateId + "/query/?query=*";
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            cache: false,
-            success: function(data) {
-                if (this.isMounted()) {
-                    console.log("table", data);
-                    // if we have table data for this plate...
-                    if (data.data && data.data.columns) {
-                        // TODO: find which column is the Well ID
-                        var wellColIdx = 0;
-                        // want to get data in map of {wellId:[values]}
-                        var heatmapData = data.data.rows.reduce(function(prev, curr){
-                            var wellId = curr[wellColIdx] + "";
-                            prev[wellId] = curr;
-                            return prev;
-                        }, {});
-
-                        this.setState({
-                            heatmapNames: data.data.columns,
-                            heatmapData: heatmapData,
-                        });
-                    }
-                }
-            }.bind(this)
-        });
     },
 
     getInitialState: function() {
         return {
             fields: [],
             selectedField: undefined,
-            heatmapNames: undefined,
             heatmapData: undefined,
             selectedHeatmap: undefined,
             heatmapRange: undefined,
         }
     },
 
-    handleFieldSelect: function(event) {
-        this.setState({selectedField: event.target.value});
+    // allow child HeatmapChooser to set heatmap data for Plate
+    setHeatmap: function(data) {
+        this.setState(data);
     },
 
-    handleHeatmapSelect: function(event) {
-        var heatmapIndex = event.target.value;
-
-        // Need to calculate colours for all wells (if data is numeric)
-        // Get range of values
-        var values = [];
-        for (var wellId in this.state.heatmapData) {
-            values.push(this.state.heatmapData[wellId]);
-        }
-        var maxValue = values.reduce(function(prev, well){
-            var value = well[heatmapIndex];
-            return Math.max(prev, value);
-        }, 0);
-        var minValue = values.reduce(function(prev, well){
-            var value = well[heatmapIndex];
-            return Math.min(prev, value);
-        }, maxValue);
-
-        // Wells will calculate their own color, but they need
-        // to know the range of heatmap values in the plate
-        var heatmapRange;
-        if (!isNaN(minValue) && !isNaN(maxValue)) {
-            heatmapRange = [minValue, maxValue];
-        }
-        this.setState({
-            selectedHeatmap: heatmapIndex,
-            heatmapRange: heatmapRange,
-        });
+    handleFieldSelect: function(event) {
+        this.setState({selectedField: event.target.value});
     },
 
     render: function() {
@@ -133,23 +79,6 @@ const Plate = React.createClass({
             idx++;
         }
 
-        var heatmapChooser;
-        var options;
-        if (this.state.heatmapNames) {
-            heatmapChooser = (
-                <select onChange={this.handleHeatmapSelect}>
-                    {this.state.heatmapNames.map(function(n, i){
-                        return (
-                            <option
-                                key={i}
-                                value={i}>
-                                {n}
-                            </option>
-                        );
-                    })}
-                </select>
-            );
-        }
         // #spw id is just for css
         // Use key: selectedField to force PlateGrid to mount on field change
         return (
@@ -159,7 +88,10 @@ const Plate = React.createClass({
                         <select onChange={this.handleFieldSelect} >
                             {fieldSelect}
                         </select>
-                        {heatmapChooser}
+                        <HeatmapChooser
+                            plateId={this.props.plateId}
+                            heatmapData={this.state.heatmapData}
+                            setHeatmap={this.setHeatmap} />
                     </div>
                     <div id="spw">
                         <PlateGrid
