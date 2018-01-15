@@ -144,6 +144,9 @@ const PlateGrid = React.createClass({
 
     render: function() {
         var data = this.state.data,
+            selectedHeatmap = this.props.selectedHeatmap,
+            heatmapRange = this.props.heatmapRange,
+            heatmapData = this.props.heatmapData,
             iconSize = this.props.iconSize,
             placeholderStyle = {
                 width: iconSize + 'px',
@@ -152,7 +155,9 @@ const PlateGrid = React.createClass({
             selectedWellIds = this.state.selectedWellIds,
             handleWellClick = this.handleWellClick;
         if (!data) {
-            return (<table />)
+            return (
+                <table />
+            )
         }
         var columnNames = data.collabels.map(function(l){
             return (<th key={l}>{l}</th>);
@@ -163,6 +168,8 @@ const PlateGrid = React.createClass({
                 var well = grid[rowIndex][colIndex];
                 if (well) {
                     var selected = selectedWellIds.indexOf(well.wellId) > -1;
+                    // lookup this Well's data from heatmap
+                    var heatmapValues = heatmapData && heatmapData[well.wellId+""];
                     return (
                         <Well
                             key={well.wellId}
@@ -173,7 +180,10 @@ const PlateGrid = React.createClass({
                             iconSize={iconSize}
                             handleWellClick={handleWellClick}
                             row={r}
-                            col={c} />
+                            col={c}
+                            selectedHeatmap={selectedHeatmap}
+                            heatmapRange={heatmapRange}
+                            heatmapValues={heatmapValues} />
                     )
                 } else {
                     return (
