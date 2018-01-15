@@ -17,6 +17,7 @@ const Well = ({id,
     let title = "" + row + col; // E.g. A1
     let imgStyle = {width: iconSize, maxHeight: iconSize};
     let divStyle = {width: iconSize, height: iconSize};
+    let cls = "";
 
     let getHeatmapColor = function(fraction) {
         // we only support one LUT just now
@@ -28,18 +29,21 @@ const Well = ({id,
     };
 
     if (selectedHeatmap) {
-            var value = heatmapValues[selectedHeatmap];
-            title += " " + value;
-            if (heatmapRange && value) {
-                var fraction = (value - heatmapRange[0]) / (heatmapRange[1] - heatmapRange[0]);
-                heatmapColor = getHeatmapColor(fraction);
-                divStyle.background = heatmapColor;
-                imgStyle.display = 'none';
-            }
+        var value = heatmapValues[selectedHeatmap];
+        title += " " + value;
+        if (heatmapRange && value) {
+            var fraction = (value - heatmapRange[0]) / (heatmapRange[1] - heatmapRange[0]);
+            heatmapColor = getHeatmapColor(fraction);
+            divStyle.background = heatmapColor;
+            cls += "heatmap";
         }
+    }
+    if (selected) {
+        cls += " ui-selected";
+    }
 
     return (
-        <td className={"well " + (selected ? "ui-selected" : "")}
+        <td className={"well " + cls}
             title={""+row+col}>
             <div
                 style={divStyle}

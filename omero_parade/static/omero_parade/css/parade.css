@@ -7,6 +7,15 @@
 	background: url(../images/table_layout.png) no-repeat scroll center center transparent;
 }
 
+/** Plate Well, when showing heatmap **/
+.heatmap img {
+  transition: opacity 0.2s ease-in-out;
+  opacity: 0;
+}
+.heatmap img:hover {
+  opacity: 1;
+}
+
 
 input[type=range].parade {
   -webkit-appearance: none;

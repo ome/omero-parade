@@ -48,6 +48,13 @@ var HeatmapChooser = React.createClass({
     handleHeatmapSelect: function(event) {
         var heatmapIndex = event.target.value;
 
+        if (heatmapIndex == "--") {
+            this.props.setHeatmap({
+                selectedHeatmap: undefined,
+                heatmapRange: undefined,
+            });
+        }
+
         // Need to calculate colours for all wells (if data is numeric)
         // Get range of values
         var values = [];
@@ -88,6 +95,10 @@ var HeatmapChooser = React.createClass({
 
         return (
             <select onChange={this.handleHeatmapSelect}>
+                <option
+                    value="--" >
+                    Choose heatmap....
+                </option>
                 {this.state.heatmapNames.map(function(n, i){
                     return (
                         <option
