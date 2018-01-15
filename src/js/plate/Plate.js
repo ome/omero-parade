@@ -1,13 +1,14 @@
 
 import React, { Component } from 'react';
 import PlateGrid from './PlateGrid'
+import Footer from '../Footer'
 
 
 const Plate = React.createClass({
 
     componentDidMount: function() {
         var parentNode = this.props.parentNode,
-            // plateId = this.props.plateId,
+            plateId = this.props.plateId,
             objId = parentNode.data.id;
         var data;
         if (parentNode.type === "acquisition") {

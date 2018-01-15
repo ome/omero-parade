@@ -5,6 +5,16 @@ import Plate from './Plate'
 
 const PlateContainer = React.createClass({
 
+    getInitialState: function() {
+        return {
+            iconSize: 65,
+        }
+    },
+
+    setIconSize: function(size) {
+        this.setState({iconSize: parseInt(size, 10)});
+    },
+
     render: function() {
         var parentNode = this.props.parentNode;
 
@@ -35,7 +45,8 @@ const PlateContainer = React.createClass({
             <Plate
                 plateId={plateId}
                 parentNode={parentNode}
-                iconSize={this.props.iconSize}
+                iconSize={this.state.iconSize}
+                setIconSize={this.setIconSize}
                 key={key}/>
         )
     }

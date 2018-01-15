@@ -9,7 +9,12 @@ const DatasetContainer = React.createClass({
         return {
             layout: 'icon',
             filterText: "",
+            iconSize: 65,
         }
+    },
+
+    setIconSize: function(size) {
+        this.setState({iconSize: parseInt(size, 10)});
     },
 
     setLayout: function(layout) {
@@ -129,7 +134,8 @@ const DatasetContainer = React.createClass({
             <Dataset
                 inst = {this.props.inst}
                 imgJson={imgJson}
-                iconSize={this.props.iconSize}
+                iconSize={this.state.iconSize}
+                setIconSize={this.setIconSize}
                 handleIconClick={this.handleIconClick}
                 filterText={this.state.filterText}
                 setFilterText={this.setFilterText}

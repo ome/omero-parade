@@ -14,5 +14,5 @@ Build for development:
 
 Add to config:
 
-	$ bin/omero config append omero.web.apps 'omero_parade"'
+	$ bin/omero config append omero.web.apps '"omero_parade"'
 	$ bin/omero config append omero.web.ui.center_plugins '["Parade", "omero_parade/init.js.html", "omero_parade"]'

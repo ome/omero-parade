@@ -1,7 +1,5 @@
 
 import React from 'react';
-// import ReactDOM from 'react-dom';
-import Footer from './Footer'
 import DatasetContainer from './dataset/DatasetContainer'
 import PlateContainer from './plate/PlateContainer'
 
@@ -9,16 +7,6 @@ import PlateContainer from './plate/PlateContainer'
 const App = React.createClass({
 
     parentTypes: ["dataset", "orphaned", "tag", "share", "plate", "acquisition"],
-
-    getInitialState: function() {
-        return {
-            iconSize: 65,
-        };
-    },
-
-    setIconSize: function(size) {
-        this.setState({iconSize: size});
-    },
 
     renderNothing: function(selected) {
         if (selected.length === 0) {
@@ -70,38 +58,29 @@ const App = React.createClass({
         // parentNode may be null if not suitable to display
         let parentNode = this.getParentNode();
 
-        let childPanel;
         if (parentNode) {
             let dtype = parentNode.type;
             if (dtype === "plate" || dtype === "acquisition") {
-                childPanel = (
+                return (
                     <PlateContainer
                         parentNode={parentNode}
-                        inst={this.props.jstree}
-                        iconSize={this.state.iconSize} />
+                        inst={this.props.jstree} />
                 )
             } else {
                 // handles tag, orphaned, dataset, share
                 // Cache this parentNode. If next selection == 0, still show this
                 // E.g. if image in Dataset is de-selected
                 this.previousParent = parentNode;
-                childPanel = (
+                return (
                     <DatasetContainer
                         parentNode={parentNode}
-                        inst={this.props.jstree}
-                        iconSize={this.state.iconSize} />
+                        inst={this.props.jstree} />
                 )
             }
         }
 
         return (
-            <div>
-                
-                {childPanel}
-                <Footer
-                    iconSize={this.state.iconSize}
-                    setIconSize={this.setIconSize} />
-            </div>
+            <div></div>
         );
     }
 });

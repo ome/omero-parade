@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import IconTableHeader from './IconTableHeader'
 import IconTableHeadRow from './IconTableHeadRow'
 import ImageIcon from './ImageIcon'
+import Footer from '../Footer'
 
 const styles = {
     thumbContainer: {
@@ -83,31 +84,37 @@ const Dataset = React.createClass({
     },
 
     render() {
-        let {imgJson, iconSize, filterText, setFilterText, layout, setLayout} = this.props;
+        let {imgJson, iconSize, setIconSize, 
+             filterText, setFilterText, layout, setLayout} = this.props;
         var ulStyle = layout === 'icon' ? {width: '100%', height: '100%'} : {};
 
         return (
-            <div className="centrePanel">
-                <IconTableHeader
-                        filterText={filterText}
-                        setFilterText={setFilterText}
-                        layout={layout}
-                        setLayout={setLayout} />
-                <div style={styles.thumbContainer} >
-                    <ul
-                        ref="dataIcons"
-                        style={ulStyle}
-                        className={layout + "Layout"}>
-                        <IconTableHeadRow />
-                        {imgJson.map(image => (
-                            <ImageIcon
-                                image={image}
-                                key={image.id}
-                                iconSize={iconSize}
-                                handleIconClick={this.handleIconClick} />
-                        ))}
-                    </ul>
+            <div>
+                <div className="centrePanel">
+                    <IconTableHeader
+                            filterText={filterText}
+                            setFilterText={setFilterText}
+                            layout={layout}
+                            setLayout={setLayout} />
+                    <div style={styles.thumbContainer} >
+                        <ul
+                            ref="dataIcons"
+                            style={ulStyle}
+                            className={layout + "Layout"}>
+                            <IconTableHeadRow />
+                            {imgJson.map(image => (
+                                <ImageIcon
+                                    image={image}
+                                    key={image.id}
+                                    iconSize={iconSize}
+                                    handleIconClick={this.handleIconClick} />
+                            ))}
+                        </ul>
+                    </div>
                 </div>
+                <Footer
+                    iconSize={iconSize}
+                    setIconSize={setIconSize} />
             </div>
         );
     }
