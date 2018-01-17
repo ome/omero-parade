@@ -1,5 +1,6 @@
 
 import React, { Component } from 'react';
+import { getHeatmapColor } from '../util'
 
 
 const Well = ({id,
@@ -18,15 +19,6 @@ const Well = ({id,
     let imgStyle = {width: iconSize, maxHeight: iconSize};
     let divStyle = {width: iconSize, height: iconSize};
     let cls = "";
-
-    let getHeatmapColor = function(fraction) {
-        // we only support one LUT just now
-        var red = parseInt(255 * fraction),
-            green = parseInt(255 * (1 - fraction)),
-            blue = 0,
-            alpha = 1;
-        return "rgba(" + [red, green, blue, alpha].join(",") + ")";
-    };
 
     if (selectedHeatmap) {
         var value = heatmapValues[selectedHeatmap];

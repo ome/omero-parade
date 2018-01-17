@@ -16,6 +16,27 @@
   opacity: 1;
 }
 
+.heatmapLutKey {
+  float: left;
+  margin-left: 10px;
+}
+.heatmapLutKey span {
+  float: left;
+    padding: 3px;
+    font-size: 12px;
+}
+.heatmapLutKey>div {
+    height: 14px;
+    margin: 2px;
+    float: left;
+}
+.heatmapLutKey>div>div {
+  float:left;
+  width: 1px;
+  height: 100%;
+  margin: 0;
+  border-width: 0;
+}
 
 input[type=range].parade {
   -webkit-appearance: none;

@@ -1,4 +1,5 @@
 import React from 'react';
+import { getHeatmapColor } from '../util';
 
 var HeatmapChooser = React.createClass({
 
@@ -83,18 +84,35 @@ var HeatmapChooser = React.createClass({
         });
     },
 
-
     render: function() {
-        var heatmapChooser;
-        var options;
+        var heatmapChooser,
+            lutKey,
+            options;
         if (!this.state.heatmapNames) {
             return (
                 <span></span>
             )
         }
+        if (this.props.heatmapRange) {
+            lutKey = (
+                <div className="heatmapLutKey">
+                    {this.props.heatmapRange[0]}
+                    <div>
+                        {[...Array(125)].map(function(x, i){
+                            var c = getHeatmapColor(i/125);
+                            return (
+                                <div key={i} style={{'backgroundColor': c}}></div>
+                            )
+                        }.bind(this))}
+                    </div>
+                    {this.props.heatmapRange[1]}
+                </div>
+            )
+        }
 
         return (
-            <select onChange={this.handleHeatmapSelect}>
+            <div style={{'float':"left"}}>
+            <select onChange={this.handleHeatmapSelect} style={{'float':"left"}}>
                 <option
                     value="--" >
                     Choose heatmap....
@@ -109,6 +127,8 @@ var HeatmapChooser = React.createClass({
                     );
                 })}
             </select>
+                {lutKey}
+            </div>
         );
     }
 });

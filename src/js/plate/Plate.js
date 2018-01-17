@@ -85,12 +85,15 @@ const Plate = React.createClass({
             <div>
                 <div className="plateContainer">
                     <div>
-                        <select onChange={this.handleFieldSelect} >
+                        <select
+                            style={{'float':"left"}}
+                            onChange={this.handleFieldSelect} >
                             {fieldSelect}
                         </select>
                         <HeatmapChooser
                             plateId={this.props.plateId}
                             heatmapData={this.state.heatmapData}
+                            heatmapRange={this.state.heatmapRange}
                             setHeatmap={this.setHeatmap} />
                     </div>
                     <div id="spw">
