@@ -49,7 +49,6 @@ const Plate = React.createClass({
             selectedField: undefined,
             heatmapData: undefined,
             selectedHeatmap: undefined,
-            heatmapRange: undefined,
         }
     },
 
@@ -79,6 +78,28 @@ const Plate = React.createClass({
             idx++;
         }
 
+        // Need to calculate colours for all wells (if data is numeric)
+        // Get range of values
+        var values = [];
+        var heatmapIndex = this.state.selectedHeatmap;
+        for (var wellId in this.state.heatmapData) {
+            values.push(this.state.heatmapData[wellId]);
+        }
+        var maxValue = values.reduce(function(prev, well){
+            var value = well[heatmapIndex];
+            return Math.max(prev, value);
+        }, 0);
+        var minValue = values.reduce(function(prev, well){
+            var value = well[heatmapIndex];
+            return Math.min(prev, value);
+        }, maxValue);
+
+        // Wells will calculate their own color, but they need
+        // to know the range of heatmap values in the plate
+        var heatmapRange;
+        if (!isNaN(minValue) && !isNaN(maxValue)) {
+            heatmapRange = [minValue, maxValue];
+        }
         // #spw id is just for css
         // Use key: selectedField to force PlateGrid to mount on field change
         return (
@@ -92,8 +113,9 @@ const Plate = React.createClass({
                         </select>
                         <HeatmapChooser
                             plateId={this.props.plateId}
+                            selectedHeatmap={this.state.selectedHeatmap}
                             heatmapData={this.state.heatmapData}
-                            heatmapRange={this.state.heatmapRange}
+                            heatmapRange={heatmapRange}
                             setHeatmap={this.setHeatmap} />
                     </div>
                     <div id="spw">
@@ -102,7 +124,7 @@ const Plate = React.createClass({
                             iconSize={this.props.iconSize}
                             plateId={this.props.plateId}
                             selectedHeatmap={this.state.selectedHeatmap}
-                            heatmapRange={this.state.heatmapRange}
+                            heatmapRange={heatmapRange}
                             heatmapData={this.state.heatmapData}
                             fieldId={this.state.selectedField} />
                     </div>

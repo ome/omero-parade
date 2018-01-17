@@ -52,35 +52,11 @@ var HeatmapChooser = React.createClass({
         if (heatmapIndex == "--") {
             this.props.setHeatmap({
                 selectedHeatmap: undefined,
-                heatmapRange: undefined,
             });
-        }
-
-        // Need to calculate colours for all wells (if data is numeric)
-        // Get range of values
-        var values = [];
-        for (var wellId in this.props.heatmapData) {
-            values.push(this.props.heatmapData[wellId]);
-        }
-        var maxValue = values.reduce(function(prev, well){
-            var value = well[heatmapIndex];
-            return Math.max(prev, value);
-        }, 0);
-        var minValue = values.reduce(function(prev, well){
-            var value = well[heatmapIndex];
-            return Math.min(prev, value);
-        }, maxValue);
-
-        // Wells will calculate their own color, but they need
-        // to know the range of heatmap values in the plate
-        var heatmapRange;
-        if (!isNaN(minValue) && !isNaN(maxValue)) {
-            heatmapRange = [minValue, maxValue];
         }
         // Pass this back to parent Plate, so Wells can render it
         this.props.setHeatmap({
             selectedHeatmap: heatmapIndex,
-            heatmapRange: heatmapRange,
         });
     },
 
@@ -96,8 +72,7 @@ var HeatmapChooser = React.createClass({
         if (this.props.heatmapRange) {
             lutKey = (
                 <div className="heatmapLutKey">
-                    {this.props.heatmapRange[0]}
-                    <div>
+                    <div title={this.props.heatmapRange[0] + "-" + this.props.heatmapRange[1]}>
                         {[...Array(125)].map(function(x, i){
                             var c = getHeatmapColor(i/125);
                             return (
@@ -105,7 +80,6 @@ var HeatmapChooser = React.createClass({
                             )
                         }.bind(this))}
                     </div>
-                    {this.props.heatmapRange[1]}
                 </div>
             )
         }
