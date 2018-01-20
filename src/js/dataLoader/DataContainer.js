@@ -1,9 +1,9 @@
 
 import React, { Component } from 'react';
-import Plate from './Plate'
+import FieldsLoader from './FieldsLoader'
 
 
-const PlateContainer = React.createClass({
+const DataContainer = React.createClass({
 
     getInitialState: function() {
         return {
@@ -32,7 +32,7 @@ const PlateContainer = React.createClass({
             // Children is list of node-ids
             key = parentNode.children[0];
         }
-        // We pass key to <Plate> so that if key doesn't change,
+        // We pass key to <FieldsLoader> so that if key doesn't change,
         // Plate won't mount (load data) again
         var inst = this.props.inst;
         var plateId = parentNode.data.id;
@@ -42,7 +42,7 @@ const PlateContainer = React.createClass({
         }
 
         return (
-            <Plate
+            <FieldsLoader
                 plateId={plateId}
                 parentNode={parentNode}
                 iconSize={this.state.iconSize}
@@ -52,4 +52,4 @@ const PlateContainer = React.createClass({
     }
 });
 
-export default PlateContainer
+export default DataContainer
