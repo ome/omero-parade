@@ -12,4 +12,8 @@ urlpatterns = patterns(
 
     # list fields in Plate ?plate=123 or Acquisition ?run=456
     url(r'^api/fields/$', views.api_field_list, name='parade_fields'),
+
+    # list functions for filtering data
+    # url(r'^api/filters/$', views.api_filter_list, name='parade_filters'),
+    url(r'^api/filters/$', views.api_filter_list, name='parade_filters'),
 )

@@ -36,6 +36,9 @@ export default React.createClass({
     },
 
     render: function() {
+        if (this.props.fieldId === undefined) {
+            return(<div></div>)
+        }
         return(<FilterContainer
                  plateId={this.props.plateId}
                  fieldId={this.props.fieldId}

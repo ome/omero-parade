@@ -6,6 +6,7 @@ import omero.clients
 from django.http import Http404, JsonResponse
 from omeroweb.webclient.decorators import login_required
 from omero.rtypes import rlong, unwrap
+from . import parade_settings
 
 
 def get_long_or_default(request, name, default):
@@ -50,3 +51,17 @@ def api_field_list(request, conn=None, **kwargs):
         fields = res
 
     return JsonResponse({'data': fields})
+
+
+def api_filter_list(request):
+
+    filter_modules = parade_settings.PARADE_FILTERS
+
+    print "filter_modules", filter_modules
+
+    filters = []
+    for m in filter_modules:
+        module = __import__('%s.omero_filters' % m)
+        filters.extend(module.omero_filters.get_filters())
+
+    return JsonResponse({'data': filters})
