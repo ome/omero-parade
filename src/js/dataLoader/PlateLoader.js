@@ -1,6 +1,7 @@
 
 import React, { Component } from 'react';
 import FilterContainer from '../filter/FilterContainer';
+import PlateGrid from '../plate/PlateGrid';
 
 export default React.createClass({
 
@@ -8,7 +9,14 @@ export default React.createClass({
         return {
             data: undefined,
             selectedWellIds: [],
+            filteredImageIds: []
         }
+    },
+
+    setFilteredImageIds: function(imgIds) {
+        this.setState({
+            filteredImageIds: imgIds
+        });
     },
 
     componentDidMount: function() {
@@ -39,9 +47,17 @@ export default React.createClass({
         if (this.props.fieldId === undefined) {
             return(<div></div>)
         }
-        return(<FilterContainer
+        return(<div>
+                <FilterContainer
                  plateId={this.props.plateId}
                  fieldId={this.props.fieldId}
-                />)
+                 plateData={this.state.data}
+                 setFilteredImageIds={this.setFilteredImageIds}
+                />
+                <PlateGrid
+                 plateData={this.state.data}
+                 filteredImageIds={this.state.filteredImageIds}
+                />
+              </div>)
     }
 });

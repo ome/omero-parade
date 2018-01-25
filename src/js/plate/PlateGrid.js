@@ -5,28 +5,6 @@ import Well from './Well';
 
 const PlateGrid = React.createClass({
 
-    componentDidMount: function() {
-        var plateId = this.props.plateId,
-            fieldId = this.props.fieldId;
-
-        var url = "/webgateway/plate/" + plateId + "/" + fieldId + "/";
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            cache: false,
-            success: function(data) {
-                if (this.isMounted()) {
-                    var wellIds = this.getWellIdsFromUrlQuery(data);
-                    this.setState({
-                        data: data,
-                        selectedWellIds: wellIds
-                    });
-                }
-            }.bind(this),
-                error: function(xhr, status, err) {
-            }.bind(this)
-        });
-    },
 
     // Uses the url ?show=well-123 or image-123 to get well IDs from data
     getWellIdsFromUrlQuery: function(data) {
@@ -65,7 +43,6 @@ const PlateGrid = React.createClass({
 
     getInitialState: function() {
         return {
-            data: undefined,
             selectedWellIds: [],
         }
     },
@@ -143,7 +120,7 @@ const PlateGrid = React.createClass({
     },
 
     render: function() {
-        var data = this.state.data,
+        var data = this.props.plateData,
             selectedHeatmap = this.props.selectedHeatmap,
             heatmapRange = this.props.heatmapRange,
             heatmapData = this.props.heatmapData,
@@ -153,7 +130,9 @@ const PlateGrid = React.createClass({
                 height: iconSize + 'px',
             },
             selectedWellIds = this.state.selectedWellIds,
-            handleWellClick = this.handleWellClick;
+            handleWellClick = this.handleWellClick,
+            filteredImageIds = this.props.filteredImageIds;
+        console.log('PlateGrid, filteredImageIds', filteredImageIds)
         if (!data) {
             return (
                 <table />
@@ -166,7 +145,7 @@ const PlateGrid = React.createClass({
         var rows = data.rowlabels.map(function(r, rowIndex){
             var wells = data.collabels.map(function(c, colIndex){
                 var well = grid[rowIndex][colIndex];
-                if (well) {
+                if (well && filteredImageIds.indexOf(well.id) > -1) {
                     var selected = selectedWellIds.indexOf(well.wellId) > -1;
                     // lookup this Well's data from heatmap
                     var heatmapValues = heatmapData && heatmapData[well.wellId+""];

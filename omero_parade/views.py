@@ -22,6 +22,10 @@ def get_long_or_default(request, name, default):
     return val
 
 
+def index(request):
+    return JsonResponse({'index': 'placeholder'})
+
+
 @login_required()
 def api_field_list(request, conn=None, **kwargs):
     """Return the min and max-indexed well samples for plate/run."""
@@ -53,7 +57,7 @@ def api_field_list(request, conn=None, **kwargs):
     return JsonResponse({'data': fields})
 
 
-def api_filter_list(request):
+def filter_list(request):
 
     filter_modules = parade_settings.PARADE_FILTERS
 
@@ -65,3 +69,16 @@ def api_filter_list(request):
         filters.extend(module.omero_filters.get_filters())
 
     return JsonResponse({'data': filters})
+
+
+@login_required()
+def filter_script(request, filter_name, conn=None, **kwargs):
+
+    filter_modules = parade_settings.PARADE_FILTERS
+
+    for m in filter_modules:
+        module = __import__('%s.omero_filters' % m)
+        if filter_name in module.omero_filters.get_filters():
+            return module.omero_filters.get_script(request, filter_name, conn)
+
+    return JsonResponse({'Error': 'Filter script not found'})
