@@ -1,34 +1,21 @@
-
-from omero.sys import ParametersI
 from omero.rtypes import rint
 from django.http import JsonResponse
 import json
-
+from omero.sys import ParametersI
+from omero_parade.utils import get_image_ids
 
 def get_filters():
-    return ["tables", "ROI_count"]
+    return ["Rating", "ROI_count"]
 
 def get_script(request, script_name, conn):
+    """Return a JS function to filter images by various params."""
+    plate_id = request.GET.get('plate')
+    field_id = request.GET.get('field')
+    img_ids = get_image_ids(conn, plate_id, field_id)
+    query_service = conn.getQueryService()
 
     if script_name == "ROI_count":
-
-        plate_id = request.GET.get('plate')
-        field_id = request.GET.get('field')
-
         # Want to get ROI count for images in plate
-        conn.SERVICE_OPTS.setOmeroGroup('-1')
-        query_service = conn.getQueryService()
-        params = ParametersI()
-        params.addId(plate_id)
-        params.add('wsidx', rint(field_id))
-        query = "select img.id "\
-                "from Well well "\
-                "join well.wellSamples ws "\
-                "join ws.image img "\
-                "where well.plate.id = :id "\
-                "and index(ws) = :wsidx"
-        p = query_service.projection(query, params, conn.SERVICE_OPTS)
-        img_ids = [i[0].val for i in p]
 
         # Get ROI counts
         params = ParametersI()
@@ -36,8 +23,6 @@ def get_script(request, script_name, conn):
         query = "select roi.image.id, count(roi.id) from Roi roi "\
                 "where roi.image.id in (:ids) group by roi.image"
         p = query_service.projection(query, params)
-        # Can't get query count() to work - Just get image IDs
-        # (where ROI count > 0)
         roi_counts = {}
         for i in p:
             roi_counts[i[0].val] = i[1].val

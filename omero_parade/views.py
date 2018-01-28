@@ -8,6 +8,8 @@ from omeroweb.webclient.decorators import login_required
 from omero.rtypes import rlong, unwrap
 from . import parade_settings
 
+def index(request):
+    return JsonResponse({"Index": "Placeholder"})
 
 def get_long_or_default(request, name, default):
     """
@@ -20,10 +22,6 @@ def get_long_or_default(request, name, default):
     if val_raw is not None:
         val = long(val_raw)
     return val
-
-
-def index(request):
-    return JsonResponse({'index': 'placeholder'})
 
 
 @login_required()
