@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
+import FilterInput from './FilterInput';
 
 
 export default React.createClass({
 
     getInitialState: function() {
-        return {}
+        return {
+            filterFunc: undefined,
+            filterParams: [],
+            paramValues: [],
+        }
     },
 
     componentDidMount: function() {
@@ -20,61 +25,45 @@ export default React.createClass({
 
             // Response has filter function - Needs eval()
             var f = eval(data.f);
-
-            // convert 2D grid to list of images....
-            let imgIds = [];
-            this.props.plateData.grid.forEach(row => {
-                row.forEach(col => {
-                    // returns True if ROI count > 2
-                    if (col && f(col, 2)) {
-                        imgIds.push(col.id);
-                    }
-                });
-            });
-            console.log('imgIds', imgIds);
-            this.props.setFilteredImageIds(imgIds);
+            this.setState({
+                filterFunc: f,
+                filterParams: data.params,
+            })
         }.bind(this));
     },
+    
+    handleFilterInput: function(event, paramIndex) {
+        console.log("Handle Filter input", event.target.value, paramIndex);
 
-    handleAddFilter: function(event) {
-        var filterName = event.target.value;
-        console.log('handleAddFilter', filterName);
-        if (filterName !== "--") {
-
-            this.setState([...this.state.filters, filterName]);
-            
-            // Load /filter/?filter=filterName&plate=plateId script
-            // which adds itself to the PARADE_FILTERS list,
-            // like OPEN_WITH list.
-
-            var url = window.PARADE_INDEX_URL + 'filters/script/' + filterName;
-            url += '?plate=' + this.props.plateId;
-            url += '&field=' + this.props.fieldId;
-            $.getJSON(url, function(data){
-
-                // Response has filter function - Needs eval()
-                var f = eval(data.f);
-
-                // convert 2D grid to list of images....
-                let imgIds = [];
-                this.props.plateData.grid.forEach(row => {
-                    row.forEach(col => {
-                        // returns True if ROI count > 2
-                        if (col && f(col, 2)) {
-                            imgIds.push(col.id);
-                        }
-                    });
-                });
-                console.log('imgIds', imgIds);
-                this.props.setFilteredImageIds(imgIds);
-            }.bind(this));
-        }
+        // If we have all the parameters we need, do the filtering...
+        let limit = parseInt(event.target.value);
+        // convert 2D grid to list of images....
+        let imgIds = [];
+        this.props.plateData.grid.forEach(row => {
+            row.forEach(col => {
+                // returns True if ROI count > 2
+                if (col && this.state.filterFunc(col, limit)) {
+                    imgIds.push(col.id);
+                }
+            });
+        });
+        console.log('imgIds', imgIds);
+        this.props.setFilteredImageIds(imgIds);
     },
 
     render: function() {
         console.log("render filter...", this.props.name)
         return(
-            <div>Filter: {this.props.name}</div>
+            <div>Filter: {this.props.name}
+                {this.state.filterParams.map((p, i) => {
+                    return <FilterInput
+                                type={p.type}
+                                key={i}
+                                paramIndex={i}
+                                onChange={this.handleFilterInput}
+                            />
+                })}
+            </div>
         )
     }
 });

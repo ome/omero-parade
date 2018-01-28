@@ -29,7 +29,6 @@ def get_script(request, script_name, conn):
                 "and index(ws) = :wsidx"
         p = query_service.projection(query, params, conn.SERVICE_OPTS)
         img_ids = [i[0].val for i in p]
-        print 'img_ids', img_ids
 
         # Get ROI counts
         params = ParametersI()
@@ -42,7 +41,6 @@ def get_script(request, script_name, conn):
         roi_counts = {}
         for i in p:
             roi_counts[i[0].val] = i[1].val
-        print 'roi_counts', roi_counts
 
         # Return a JS function that will be passed an object e.g. {'type': 'Image', 'id': 1}
         # and should return true or false
@@ -51,4 +49,10 @@ def get_script(request, script_name, conn):
             return (roi_counts[data.id] > limit);
         })
         """ % json.dumps(roi_counts)
-        return JsonResponse({'f': f})
+
+        filterParams = [{'type': 'number'}]
+        return JsonResponse(
+            {
+                'f': f,
+                'params': filterParams,
+            })
