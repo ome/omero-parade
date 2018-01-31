@@ -11,6 +11,28 @@ export default React.createClass({
         }
     },
 
+    // 2D list. Each filter adds a list of image IDs filtered
+    filteredImageIds: [],
+
+    updateFiltering: function(filterIndex, imageIds) {
+
+        // After each filter changes we update state, calculate the combination of
+        // all filters and pass this up to parent component...
+
+        this.filteredImageIds[filterIndex] = imageIds;
+        console.log("this.filteredImageIds", this.filteredImageIds);
+        let filteredIds = this.filteredImageIds.reduce(function(prev, curr){
+            console.log('prev', prev, 'curr', curr);
+            if (prev && curr) {
+                // remove any ids from prev that aren't in curr
+                prev = prev.filter(p => curr.indexOf(p) > -1);
+            }
+            return prev;
+        })
+        console.log('fileredIds', filteredIds);
+        this.props.setFilteredImageIds(filteredIds);
+    },
+
     componentDidMount: function() {
         console.log("Fitler mount", this.props.plateId, this.props.fieldId);
         // list available filters (TODO: only for current data? e.g. plate)
@@ -61,14 +83,15 @@ export default React.createClass({
                 </select>
                 <br />
                 {
-                    this.state.selectedFilters.map(fname => (
+                    this.state.selectedFilters.map((fname, idx) => (
                         <ParadeFilter
-                            key={fname}
+                            key={""+idx}
+                            index={idx}
                             name={fname}
                             plateId={this.props.plateId}
                             fieldId={this.props.fieldId}
                             plateData={this.props.plateData}
-                            setFilteredImageIds={this.props.setFilteredImageIds}
+                            updateFiltering={this.updateFiltering}
                         />
                     ))
                 }

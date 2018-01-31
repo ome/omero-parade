@@ -48,7 +48,7 @@ export default React.createClass({
             });
         });
         console.log('imgIds', imgIds);
-        this.props.setFilteredImageIds(imgIds);
+        this.props.updateFiltering(this.props.index, imgIds);
     },
 
     render: function() {
