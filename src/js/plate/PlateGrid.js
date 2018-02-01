@@ -131,8 +131,8 @@ const PlateGrid = React.createClass({
             },
             selectedWellIds = this.state.selectedWellIds,
             handleWellClick = this.handleWellClick,
-            filteredImageIds = this.props.filteredImageIds;
-        console.log('PlateGrid, filteredImageIds', filteredImageIds)
+            filteredIds = this.props.filteredImageIds;
+        console.log('PlateGrid, filteredImageIds', filteredIds)
         if (!data) {
             return (
                 <table />
@@ -145,7 +145,7 @@ const PlateGrid = React.createClass({
         var rows = data.rowlabels.map(function(r, rowIndex){
             var wells = data.collabels.map(function(c, colIndex){
                 var well = grid[rowIndex][colIndex];
-                if (well && filteredImageIds.indexOf(well.id) > -1) {
+                if (well && (filteredIds === undefined || filteredIds.indexOf(well.id) > -1)) {
                     var selected = selectedWellIds.indexOf(well.wellId) > -1;
                     // lookup this Well's data from heatmap
                     var heatmapValues = heatmapData && heatmapData[well.wellId+""];

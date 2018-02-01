@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import FilterContainer from '../filter/FilterContainer';
 import PlateGrid from '../plate/PlateGrid';
+import Footer from '../Footer';
 
 export default React.createClass({
 
@@ -9,13 +10,20 @@ export default React.createClass({
         return {
             data: undefined,
             selectedWellIds: [],
-            filteredImageIds: []
+            filteredImageIds: undefined,
+            iconSize: 50,
         }
     },
 
     setFilteredImageIds: function(imgIds) {
         this.setState({
             filteredImageIds: imgIds
+        });
+    },
+
+    setIconSize: function(size) {
+        this.setState({
+            iconSize: size
         });
     },
 
@@ -48,16 +56,24 @@ export default React.createClass({
             return(<div></div>)
         }
         return(<div>
-                <FilterContainer
-                 plateId={this.props.plateId}
-                 fieldId={this.props.fieldId}
-                 plateData={this.state.data}
-                 setFilteredImageIds={this.setFilteredImageIds}
-                />
-                <PlateGrid
-                 plateData={this.state.data}
-                 filteredImageIds={this.state.filteredImageIds}
-                />
+                <div className="plateContainer">
+                    <FilterContainer
+                    plateId={this.props.plateId}
+                    fieldId={this.props.fieldId}
+                    plateData={this.state.data}
+                    setFilteredImageIds={this.setFilteredImageIds}
+                    />
+                    <div id="spw">
+                        <PlateGrid
+                        iconSize={this.state.iconSize}
+                        plateData={this.state.data}
+                        filteredImageIds={this.state.filteredImageIds}
+                        />
+                    </div>
+                </div>
+                <Footer
+                    iconSize={this.state.iconSize}
+                    setIconSize={this.setIconSize} />
               </div>)
     }
 });

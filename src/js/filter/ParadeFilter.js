@@ -37,12 +37,13 @@ export default React.createClass({
 
         // If we have all the parameters we need, do the filtering...
         let limit = parseInt(event.target.value);
+        let blank = (event.target.value.length === 0);
         // convert 2D grid to list of images....
         let imgIds = [];
         this.props.plateData.grid.forEach(row => {
             row.forEach(col => {
                 // returns True if ROI count > 2
-                if (col && this.state.filterFunc(col, limit)) {
+                if (col && (blank || this.state.filterFunc(col, limit))) {
                     imgIds.push(col.id);
                 }
             });

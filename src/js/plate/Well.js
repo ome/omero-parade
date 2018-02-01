@@ -16,8 +16,8 @@ const Well = ({id,
 
     let heatmapColor = "rgba(255,255,255,0)";   // transparent by default
     let title = "" + row + col; // E.g. A1
-    let imgStyle = {width: iconSize, maxHeight: iconSize};
-    let divStyle = {width: iconSize, height: iconSize};
+    let imgStyle = {width: iconSize + 'px', maxHeight: iconSize + 'px'};
+    let divStyle = {width: iconSize + 'px', height: iconSize + 'px'};
     let cls = "";
 
     if (selectedHeatmap) {
