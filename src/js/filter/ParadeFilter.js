@@ -52,9 +52,9 @@ export default React.createClass({
     render: function() {
         return(
             <div>{this.props.name}
-                {this.state.filterParams.map((p, i) => {
+                {this.state.filterParams.map((f, i) => {
                     return <FilterInput
-                                type={p.type}
+                                filter={f}
                                 key={i}
                                 paramIndex={i}
                                 onChange={this.handleFilterInput}

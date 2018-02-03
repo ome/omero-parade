@@ -37,11 +37,12 @@ def get_script(request, script_name, conn):
         })
         """ % json.dumps(ratings)
 
-        filterParams = [{'type': 'number'}]
+        filter_params = [{'type': 'text',
+                          'values': ['--', '1', '2', '3', '4', '5']}]
         return JsonResponse(
             {
                 'f': f,
-                'params': filterParams,
+                'params': filter_params,
             })
 
     if script_name == "ROI_count":
@@ -56,6 +57,8 @@ def get_script(request, script_name, conn):
         roi_counts = {}
         for i in p:
             roi_counts[i[0].val] = i[1].val
+        min_count = min(roi_counts.values())
+        max_count = max(roi_counts.values())
 
         # Return a JS function that will be passed an object e.g. {'type': 'Image', 'id': 1}
         # and should return true or false
@@ -65,9 +68,10 @@ def get_script(request, script_name, conn):
         })
         """ % json.dumps(roi_counts)
 
-        filterParams = [{'type': 'number'}]
+        filter_params = [{'type': 'number',
+                          'title': '%s-%s' % (min_count, max_count)}]
         return JsonResponse(
             {
                 'f': f,
-                'params': filterParams,
+                'params': filter_params,
             })
