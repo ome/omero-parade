@@ -18,6 +18,14 @@
   flex-direction: column;
 }
 
+.filterContainer>div {
+  margin: 5px;
+}
+
+.filterContainer input, .filterContainer select {
+  margin-left: 5px;
+}
+
 .plateGrid {
   flex: 1;
   width: 100%;
