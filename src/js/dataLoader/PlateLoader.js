@@ -63,17 +63,16 @@ export default React.createClass({
                     plateData={this.state.data}
                     setFilteredImageIds={this.setFilteredImageIds}
                     />
-                    <div id="spw">
-                        <PlateGrid
-                        iconSize={this.state.iconSize}
-                        plateData={this.state.data}
-                        filteredImageIds={this.state.filteredImageIds}
-                        />
-                    </div>
-                </div>
-                <Footer
+                    <PlateGrid
                     iconSize={this.state.iconSize}
-                    setIconSize={this.setIconSize} />
+                    plateData={this.state.data}
+                    filteredImageIds={this.state.filteredImageIds}
+                    />
+                
+                    <Footer
+                        iconSize={this.state.iconSize}
+                        setIconSize={this.setIconSize} />
+                    </div>
               </div>)
     }
 });

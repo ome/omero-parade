@@ -65,8 +65,8 @@ export default React.createClass({
     render: function() {
         console.log("render this.state.filters:", this.state.filters)
         return(
-            <div>
-                <select defaultValue={"--"} onChange={this.handleAddFilter} style={{'float':"left"}}>
+            <div className="filterContainer">
+                <select defaultValue={"--"} onChange={this.handleAddFilter}>
                     <option
                         value="--" >
                         Add filter...

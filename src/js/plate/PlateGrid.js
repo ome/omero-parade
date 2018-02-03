@@ -180,15 +180,17 @@ const PlateGrid = React.createClass({
         });
 
         return (
-            <table>
-                <tbody>
-                    <tr>
-                        <th> </th>
-                        {columnNames}
-                    </tr>
-                    {rows}
-                </tbody>
-            </table>
+            <div className="plateGrid">
+                <table>
+                    <tbody>
+                        <tr>
+                            <th> </th>
+                            {columnNames}
+                        </tr>
+                        {rows}
+                    </tbody>
+                </table>
+            </div>
         );
     }
 });

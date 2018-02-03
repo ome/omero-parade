@@ -3,10 +3,7 @@ import React, { Component } from 'react';
 
 const styles = {
     footer: {
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
+        position: 'relative',
         height: 25,
         borderRight: 0,
         borderBottom: 'solid 1px hsl(210,10%,90%)',
@@ -18,6 +15,7 @@ const styles = {
         right: 25,
         width: 120,
         top: 6,
+        border: 'solid #aaa 1px',
     }
 }
 

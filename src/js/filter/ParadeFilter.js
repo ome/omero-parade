@@ -55,7 +55,7 @@ export default React.createClass({
     render: function() {
         console.log("render filter...", this.props.name)
         return(
-            <div>Filter: {this.props.name}
+            <div>{this.props.name}
                 {this.state.filterParams.map((p, i) => {
                     return <FilterInput
                                 type={p.type}
