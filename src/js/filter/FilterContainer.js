@@ -20,21 +20,17 @@ export default React.createClass({
         // all filters and pass this up to parent component...
 
         this.filteredImageIds[filterIndex] = imageIds;
-        console.log("this.filteredImageIds", this.filteredImageIds);
         let filteredIds = this.filteredImageIds.reduce(function(prev, curr){
-            console.log('prev', prev, 'curr', curr);
             if (prev && curr) {
                 // remove any ids from prev that aren't in curr
                 prev = prev.filter(p => curr.indexOf(p) > -1);
             }
             return prev;
         })
-        console.log('fileredIds', filteredIds);
         this.props.setFilteredImageIds(filteredIds);
     },
 
     componentDidMount: function() {
-        console.log("Fitler mount", this.props.plateId, this.props.fieldId);
         // list available filters (TODO: only for current data? e.g. plate)
         // TODO: probably want to allow 'label' and unique 'id'/'name' for each filter
         $.ajax({
@@ -42,7 +38,6 @@ export default React.createClass({
             dataType: 'json',
             cache: false,
             success: function(data) {
-                console.log("FilterLoader data", data);
                 if (this.isMounted()) {
                     this.setState({
                         filters: data.data,
@@ -54,7 +49,6 @@ export default React.createClass({
 
     handleAddFilter: function(event) {
         var filterName = event.target.value;
-        console.log('handleAddFilter', filterName, [...this.state.selectedFilters, filterName]);
         if (filterName !== "--") {
             this.setState({
                 selectedFilters: [...this.state.selectedFilters, filterName]
@@ -63,7 +57,6 @@ export default React.createClass({
     },
 
     render: function() {
-        console.log("render this.state.filters:", this.state.filters)
         return(
             <div className="filterContainer">
                 <select defaultValue={"--"} onChange={this.handleAddFilter}>

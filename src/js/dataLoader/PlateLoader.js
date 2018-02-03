@@ -39,7 +39,6 @@ export default React.createClass({
             dataType: 'json',
             cache: false,
             success: function(data) {
-                console.log("PlateLoader data", data);
                 if (this.isMounted()) {
                     this.setState({
                         data: data,

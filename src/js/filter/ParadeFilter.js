@@ -13,7 +13,6 @@ export default React.createClass({
     },
 
     componentDidMount: function() {
-        console.log("ParadeFitler mount", this.props.plateId, this.props.fieldId);
         // Load /filter/?filter=filterName&plate=plateId script
         // which adds itself to the PARADE_FILTERS list,
         // like OPEN_WITH list.
@@ -33,7 +32,6 @@ export default React.createClass({
     },
     
     handleFilterInput: function(event, paramIndex) {
-        console.log("Handle Filter input", event.target.value, paramIndex);
 
         // If we have all the parameters we need, do the filtering...
         let limit = parseInt(event.target.value);
@@ -48,12 +46,10 @@ export default React.createClass({
                 }
             });
         });
-        console.log('imgIds', imgIds);
         this.props.updateFiltering(this.props.index, imgIds);
     },
 
     render: function() {
-        console.log("render filter...", this.props.name)
         return(
             <div>{this.props.name}
                 {this.state.filterParams.map((p, i) => {
