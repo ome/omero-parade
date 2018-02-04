@@ -31,14 +31,17 @@ def get_script(request, script_name, conn):
 
         # Return a JS function that will be passed an object e.g. {'type': 'Image', 'id': 1}
         # and should return true or false
-        f = """(function filter(data, target) {
+        f = """(function filter(data, params) {
             var ratings = %s;
-            return (ratings[data.id] == target);
+            return (params.rating === '-' || ratings[data.id] == params.rating);
         })
         """ % json.dumps(ratings)
 
-        filter_params = [{'type': 'text',
-                          'values': ['--', '1', '2', '3', '4', '5']}]
+        filter_params = [{'name': 'rating',
+                          'type': 'text',
+                          'values': ['-', '1', '2', '3', '4', '5'],
+                          'default': '-',
+                          }]
         return JsonResponse(
             {
                 'f': f,
@@ -62,14 +65,25 @@ def get_script(request, script_name, conn):
 
         # Return a JS function that will be passed an object e.g. {'type': 'Image', 'id': 1}
         # and should return true or false
-        f = """(function filter(data, limit) {
+        f = """(function filter(data, params) {
             var roi_counts = %s;
-            return (roi_counts[data.id] > limit);
+            if (isNaN(params.count) || params.count == '') return true;
+            if (params.operator === '=') return roi_counts[data.id] == params.count;
+            if (params.operator === '<') return roi_counts[data.id] < params.count;
+            if (params.operator === '>') return roi_counts[data.id] > params.count;
         })
         """ % json.dumps(roi_counts)
 
-        filter_params = [{'type': 'number',
-                          'title': '%s-%s' % (min_count, max_count)}]
+        filter_params = [
+            {'name': 'operator',
+             'type': 'text',
+             'values': ['>', '=', '<'],
+             'default': '>'},
+            {'name': 'count',
+             'type': 'number',
+             'default': '',
+             'title': '%s-%s' % (min_count, max_count)}
+        ]
         return JsonResponse(
             {
                 'f': f,
