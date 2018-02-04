@@ -98,11 +98,9 @@ def get_script(request, script_name, conn):
             iid = l.parent.id.val
             text = l.child.textValue.val
             all_tags.append(text)
-            print iid, text
             if iid not in tags:
                 tags[iid] = []
             tags[iid].append(text)
-            print tags[iid]
         
         # remove duplicates
         all_tags = list(set(all_tags))
@@ -112,7 +110,6 @@ def get_script(request, script_name, conn):
         # and should return true or false
         f = """(function filter(data, params) {
             var tags = %s;
-            console.log(data, params, tags[data.id])
             return (params.tag === 'Choose_Tag' || (tags[data.id] && tags[data.id].indexOf(params.tag) > -1));
         })
         """ % json.dumps(tags)
