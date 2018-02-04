@@ -5,7 +5,7 @@ from omero.sys import ParametersI
 from omero_parade.utils import get_image_ids
 
 def get_filters():
-    return ["Rating", "ROI_count"]
+    return ["ROI_count"]
 
 def get_script(request, script_name, conn):
     """Return a JS function to filter images by various params."""
@@ -13,40 +13,6 @@ def get_script(request, script_name, conn):
     field_id = request.GET.get('field')
     img_ids = get_image_ids(conn, plate_id, field_id)
     query_service = conn.getQueryService()
-
-    if script_name == "Rating":
-
-        params = ParametersI()
-        params.addIds(img_ids)
-        query = """select oal from ImageAnnotationLink as oal
-            join fetch oal.details.owner
-            left outer join fetch oal.child as ch
-            left outer join fetch oal.parent as pa
-            where pa.id in (:ids) and ch.class=LongAnnotation 
-            and ch.ns='openmicroscopy.org/omero/insight/rating'"""
-        links = query_service.findAllByQuery(query, params, conn.SERVICE_OPTS)
-        ratings = {}
-        for l in links:
-            ratings[l.parent.id.val] = l.child.longValue.val
-
-        # Return a JS function that will be passed an object e.g. {'type': 'Image', 'id': 1}
-        # and should return true or false
-        f = """(function filter(data, params) {
-            var ratings = %s;
-            return (params.rating === '-' || ratings[data.id] == params.rating);
-        })
-        """ % json.dumps(ratings)
-
-        filter_params = [{'name': 'rating',
-                          'type': 'text',
-                          'values': ['-', '1', '2', '3', '4', '5'],
-                          'default': '-',
-                          }]
-        return JsonResponse(
-            {
-                'f': f,
-                'params': filter_params,
-            })
 
     if script_name == "ROI_count":
         # Want to get ROI count for images in plate
