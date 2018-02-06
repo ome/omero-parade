@@ -55,7 +55,8 @@ def api_field_list(request, conn=None, **kwargs):
     return JsonResponse({'data': fields})
 
 
-def filter_list(request):
+@login_required()
+def filter_list(request, conn=None, **kwargs):
 
     filter_modules = parade_settings.PARADE_FILTERS
 
@@ -64,7 +65,7 @@ def filter_list(request):
     filters = []
     for m in filter_modules:
         module = __import__('%s.omero_filters' % m)
-        filters.extend(module.omero_filters.get_filters())
+        filters.extend(module.omero_filters.get_filters(request, conn))
 
     return JsonResponse({'data': filters})
 
@@ -76,7 +77,7 @@ def filter_script(request, filter_name, conn=None, **kwargs):
 
     for m in filter_modules:
         module = __import__('%s.omero_filters' % m)
-        if filter_name in module.omero_filters.get_filters():
+        if filter_name in module.omero_filters.get_filters(request, conn):
             return module.omero_filters.get_script(request, filter_name, conn)
 
     return JsonResponse({'Error': 'Filter script not found'})

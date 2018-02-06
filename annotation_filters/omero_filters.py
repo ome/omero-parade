@@ -4,7 +4,7 @@ import json
 from omero.sys import ParametersI
 from omero_parade.utils import get_image_ids
 
-def get_filters():
+def get_filters(request, conn):
     return ["Rating", "Comment", "Tag"]
 
 def get_script(request, script_name, conn):
