@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import FilterContainer from '../filter/FilterContainer';
+import FilterHub from '../filter/FilterHub';
 import PlateGrid from '../plate/PlateGrid';
 import Footer from '../Footer';
 
@@ -11,38 +11,7 @@ export default React.createClass({
             data: undefined,
             selectedWellIds: [],
             iconSize: 50,
-            filterNames: [],
-            filterValues: [],   // [{'inputName':'value'}]
         }
-    },
-
-    // We store various filter inputs & defaults in STATE
-    // but the filter functions are stored here
-    filterFunctions: [],
-
-    addFilter: function(filterName) {
-        this.setState({
-            filterNames: [...this.state.filterNames, filterName],
-        });
-    },
-
-    handleFilterLoaded: function(filterIndex, filterFunc, defaultValues) {
-        this.filterFunctions[filterIndex] = filterFunc;
-        let filterValues = [...this.state.filterValues];    // new list
-        filterValues[filterIndex] = defaultValues;
-        this.setState({
-            filterValues: filterValues,
-        });
-    },
-
-    handleFilterChange: function(filterIndex, paramName, paramValue) {
-        let newValues = Object.assign({}, this.state.filterValues[filterIndex]);
-        newValues[paramName] = paramValue;
-        let filterValues = [...this.state.filterValues];    // new list
-        filterValues[filterIndex] = newValues;
-        this.setState({
-            filterValues: filterValues
-        });
     },
 
     setIconSize: function(size) {
@@ -93,42 +62,13 @@ export default React.createClass({
             });
         }
 
-        if (this.state.filterNames) {
-            let filteredImages = this.state.filterNames.reduce((imgList, name, idx) => {
-                // get the filter function...
-                let f = this.filterFunctions[idx];
-                let paramValues = this.state.filterValues[idx];
-                if (f && paramValues) {
-                    imgList = imgList.filter(image => f(image, paramValues));
-                }
-                return imgList;
-            }, images);
-
-            filteredImageIds = filteredImages.map(i => i.id);
-        }
-
-        return(<div>
-                <div className="plateContainer">
-                    <FilterContainer
-                        plateId={this.props.plateId}
-                        fieldId={this.props.fieldId}
-                        plateData={this.state.data}
-                        addFilter={this.addFilter}
-                        handleFilterLoaded={this.handleFilterLoaded}
-                        handleFilterChange={this.handleFilterChange}
-                        filterNames={this.state.filterNames}
-                        filterValues={this.state.filterValues}
-                        />
-                    <PlateGrid
-                        iconSize={this.state.iconSize}
-                        plateData={this.state.data}
-                        filteredImageIds={filteredImageIds}
-                        />
-                
-                    <Footer
-                        iconSize={this.state.iconSize}
-                        setIconSize={this.setIconSize} />
-                </div>
-              </div>)
+        return(<FilterHub
+                    images={images}
+                    plateId={this.props.plateId}
+                    fieldId={this.props.fieldId}
+                    plateData={this.state.data}
+                    iconSize={this.state.iconSize}
+                    setIconSize={this.setIconSize}
+                />)
     }
 });
