@@ -34,12 +34,12 @@ const DatasetContainer = React.createClass({
         if (imageIds.length === 0) {
             return;
         }
-        var inst = this.props.inst;
+        var jstree = this.props.jstree;
         var containerNode = OME.getTreeImageContainerBestGuess(imageIds[0]);
         if (containerNode) {
             imageIds.forEach(function(iid){
-                var selectedNode = inst.locate_node('image-' + iid, containerNode)[0];
-                inst.deselect_node(selectedNode, true);
+                var selectedNode = jstree.locate_node('image-' + iid, containerNode)[0];
+                jstree.deselect_node(selectedNode, true);
             });
         }
     },
@@ -88,10 +88,10 @@ const DatasetContainer = React.createClass({
 
     getImageNodes: function() {
         let imgNodes = [],
-            inst = this.props.inst;
+            jstree = this.props.jstree;
 
         this.props.parentNode.children.forEach(function(ch){
-            var childNode = inst.get_node(ch);
+            var childNode = jstree.get_node(ch);
             // Ignore non-images under tags or 'deleted' under shares
             if (childNode.type == "image") {
                 imgNodes.push(childNode);
@@ -132,7 +132,7 @@ const DatasetContainer = React.createClass({
 
         return (
             <Dataset
-                inst = {this.props.inst}
+                jstree = {this.props.jstree}
                 imgJson={imgJson}
                 iconSize={this.state.iconSize}
                 setIconSize={this.setIconSize}

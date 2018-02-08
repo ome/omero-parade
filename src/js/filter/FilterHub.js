@@ -57,6 +57,7 @@ export default React.createClass({
         let images = this.props.images;
 
         if (this.state.filterNames) {
+            const startTime = performance.now();
             let filteredImages = this.state.filterNames.reduce((imgList, name, idx) => {
                 // get the filter function...
                 let f = this.filterFunctions[idx];
@@ -66,7 +67,7 @@ export default React.createClass({
                 }
                 return imgList;
             }, images);
-
+            console.log("Filtering images took ms:", performance.now() - startTime);
             filteredImageIds = filteredImages.map(i => i.id);
         }
 

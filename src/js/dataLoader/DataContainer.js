@@ -1,6 +1,7 @@
 
 import React, { Component } from 'react';
 import FieldsLoader from './FieldsLoader'
+import DatasetContainer from '../dataset/DatasetContainer';
 
 
 const DataContainer = React.createClass({
@@ -22,6 +23,7 @@ const DataContainer = React.createClass({
         if (!parentNode.state.loaded) {
             return (<h2 className="iconTable">Loading...</h2>);
         }
+
         // If plate has > 1 run, show nothing
         if (parentNode.type === "plate" && parentNode.children.length > 1) {
             return (<h2 className="iconTable">Select Run</h2>);
@@ -35,20 +37,29 @@ const DataContainer = React.createClass({
         // We pass key to <FieldsLoader> so that if key doesn't change,
         // Plate won't mount (load data) again
         var inst = this.props.inst;
-        var plateId = parentNode.data.id;
+        var parentId = parentNode.data.id;
         var dtype = parentNode.type;
-        if (dtype === "acquisition") {
-            plateId = inst.get_node(inst.get_parent(parentNode)).data.id;
-        }
 
-        return (
-            <FieldsLoader
-                plateId={plateId}
-                parentNode={parentNode}
-                iconSize={this.state.iconSize}
-                setIconSize={this.setIconSize}
-                key={key}/>
-        )
+        if (dtype === "plate" || dtype === "aquisition") {
+            if (dtype === "acquisition") {
+                parentId = inst.get_node(inst.get_parent(parentNode)).data.id;
+            }
+
+            return (
+                <FieldsLoader
+                    plateId={parentId}
+                    parentNode={parentNode}
+                    iconSize={this.state.iconSize}
+                    setIconSize={this.setIconSize}
+                    key={key}/>
+            )
+        } else if (dtype === "dataset") {
+            return (
+                <DatasetContainer
+                    jstree={inst}
+                    parentNode={parentNode}/>
+            )
+        }
     }
 });
 

@@ -20,7 +20,7 @@ const styles = {
 const Dataset = React.createClass({
 
     componentDidMount: function() {
-        var inst = this.props.inst;
+        var jstree = this.props.jstree;
         $(this.refs.dataIcons).selectable({
             filter: 'li.row',
             distance: 2,
@@ -29,12 +29,12 @@ const Dataset = React.createClass({
                 $(".ui-selected").each(function(){
                     var imageId = $(this).attr('data-id');
                     var containerNode = OME.getTreeImageContainerBestGuess(imageId);
-                    var selectedNode = inst.locate_node('image-' + imageId, containerNode)[0];
-                    inst.select_node(selectedNode);
+                    var selectedNode = jstree.locate_node('image-' + imageId, containerNode)[0];
+                    jstree.select_node(selectedNode);
                 });
             },
             start: function() {
-                inst.deselect_all();
+                jstree.deselect_all();
             }
         });
     },
@@ -45,7 +45,7 @@ const Dataset = React.createClass({
     },
 
     handleIconClick: function(imageId, event) {
-        let inst = this.props.inst;
+        let jstree = this.props.jstree;
         let containerNode = OME.getTreeImageContainerBestGuess(imageId);
 
         let selIds = this.props.imgJson.filter(i => i.selected).map(i => i.id);
@@ -74,9 +74,9 @@ const Dataset = React.createClass({
             // Only select clicked image
             toSelect = [imageId];
         }
-        inst.deselect_all();
-        let nodes = toSelect.map(iid => inst.locate_node('image-' + iid, containerNode)[0]);
-        inst.select_node(nodes);
+        jstree.deselect_all();
+        let nodes = toSelect.map(iid => jstree.locate_node('image-' + iid, containerNode)[0]);
+        jstree.select_node(nodes);
         // we also focus the node, so that hotkey events come from the node
         if (nodes.length > 0) {
             $("#" + nodes[0].id).children('.jstree-anchor').focus();
