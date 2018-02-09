@@ -60,6 +60,7 @@ export default React.createClass({
                             key={""+idx}
                             filterIndex={idx}
                             name={fname}
+                            datasetId={this.props.datasetId}
                             plateId={this.props.plateId}
                             fieldId={this.props.fieldId}
                             handleFilterLoaded={this.props.handleFilterLoaded}

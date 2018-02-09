@@ -131,7 +131,7 @@ const PlateGrid = React.createClass({
             },
             selectedWellIds = this.state.selectedWellIds,
             handleWellClick = this.handleWellClick,
-            filteredIds = this.props.filteredImageIds;
+            filteredIds = this.props.filteredImages.map(i => i.id);
         console.log('PlateGrid, filteredImageIds', filteredIds)
         if (!data) {
             return (

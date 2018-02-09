@@ -26,7 +26,7 @@
   margin-left: 5px;
 }
 
-.plateGrid {
+.plateGrid, .centrePanel {
   flex: 1;
   width: 100%;
   overflow: auto;

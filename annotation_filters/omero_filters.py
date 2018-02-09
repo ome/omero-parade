@@ -9,9 +9,13 @@ def get_filters(request, conn):
 
 def get_script(request, script_name, conn):
     """Return a JS function to filter images by various params."""
+    dataset_id = request.GET.get('dataset')
     plate_id = request.GET.get('plate')
     field_id = request.GET.get('field')
-    img_ids = get_image_ids(conn, plate_id, field_id)
+    if plate_id and field_id:
+        img_ids = get_image_ids(conn, plate_id, field_id)
+    elif dataset_id:
+        img_ids = [i.id for i in conn.getObjects('Image', opts={'dataset': dataset_id})]
     query_service = conn.getQueryService()
 
     if script_name == "Rating":

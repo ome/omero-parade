@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import FilterContainer from '../filter/FilterContainer';
 import PlateGrid from '../plate/PlateGrid';
 import Footer from '../Footer';
+import Dataset from '../dataset/Dataset';
 
 export default React.createClass({
 
@@ -47,18 +48,17 @@ export default React.createClass({
     },
 
     render: function() {
-        if (this.props.fieldId === undefined) {
+        if (this.props.fieldId === undefined && this.props.datasetId === undefined) {
             return(<div></div>)
         }
 
-        let filteredImageIds;
-
         // Images could be from parent PlateLoader OR DatasetLoader
         let images = this.props.images;
+        let filteredImages;
 
         if (this.state.filterNames) {
             const startTime = performance.now();
-            let filteredImages = this.state.filterNames.reduce((imgList, name, idx) => {
+            filteredImages = this.state.filterNames.reduce((imgList, name, idx) => {
                 // get the filter function...
                 let f = this.filterFunctions[idx];
                 let paramValues = this.state.filterValues[idx];
@@ -68,12 +68,31 @@ export default React.createClass({
                 return imgList;
             }, images);
             console.log("Filtering images took ms:", performance.now() - startTime);
-            filteredImageIds = filteredImages.map(i => i.id);
+        } else {
+            filteredImages = images;
+        }
+        let imageComponent;
+        console.log('DATASET', this.props.datasetId);
+        if (this.props.datasetId) {
+            imageComponent = (
+                <Dataset
+                    iconSize={this.props.iconSize}
+                    imgJson={filteredImages}
+                    jstree = {this.props.jstree}
+                    />)
+        } else {
+            imageComponent = (
+                <PlateGrid
+                        iconSize={this.props.iconSize}
+                        plateData={this.props.plateData}
+                        filteredImages={filteredImages}
+                        />)
         }
 
         return(<div>
                 <div className="plateContainer">
                     <FilterContainer
+                        datasetId={this.props.datasetId}
                         plateId={this.props.plateId}
                         fieldId={this.props.fieldId}
                         addFilter={this.addFilter}
@@ -82,12 +101,7 @@ export default React.createClass({
                         filterNames={this.state.filterNames}
                         filterValues={this.state.filterValues}
                         />
-                    <PlateGrid
-                        iconSize={this.props.iconSize}
-                        plateData={this.props.plateData}
-                        filteredImageIds={filteredImageIds}
-                        />
-                
+                    {imageComponent}
                     <Footer
                         iconSize={this.props.iconSize}
                         setIconSize={this.setIconSize} />

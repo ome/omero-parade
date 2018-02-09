@@ -89,32 +89,20 @@ const Dataset = React.createClass({
         var ulStyle = layout === 'icon' ? {width: '100%', height: '100%'} : {};
 
         return (
-            <div>
-                <div className="centrePanel">
-                    <IconTableHeader
-                            filterText={filterText}
-                            setFilterText={setFilterText}
-                            layout={layout}
-                            setLayout={setLayout} />
-                    <div style={styles.thumbContainer} >
-                        <ul
-                            ref="dataIcons"
-                            style={ulStyle}
-                            className={layout + "Layout"}>
-                            <IconTableHeadRow />
-                            {imgJson.map(image => (
-                                <ImageIcon
-                                    image={image}
-                                    key={image.id}
-                                    iconSize={iconSize}
-                                    handleIconClick={this.handleIconClick} />
-                            ))}
-                        </ul>
-                    </div>
-                </div>
-                <Footer
-                    iconSize={iconSize}
-                    setIconSize={setIconSize} />
+            <div className="centrePanel">
+                <ul
+                    ref="dataIcons"
+                    style={ulStyle}
+                    className={layout + "Layout"}>
+                    <IconTableHeadRow />
+                    {imgJson.map(image => (
+                        <ImageIcon
+                            image={image}
+                            key={image.id}
+                            iconSize={iconSize}
+                            handleIconClick={this.handleIconClick} />
+                    ))}
+                </ul>
             </div>
         );
     }
