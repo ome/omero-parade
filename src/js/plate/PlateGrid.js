@@ -145,7 +145,8 @@ const PlateGrid = React.createClass({
         var rows = data.rowlabels.map(function(r, rowIndex){
             var wells = data.collabels.map(function(c, colIndex){
                 var well = grid[rowIndex][colIndex];
-                if (well && (filteredIds === undefined || filteredIds.indexOf(well.id) > -1)) {
+                if (well) {
+                    var hidden = (filteredIds !== undefined && filteredIds.indexOf(well.id) === -1);
                     var selected = selectedWellIds.indexOf(well.wellId) > -1;
                     // lookup this Well's data from heatmap
                     var heatmapValues = heatmapData && heatmapData[well.wellId+""];
@@ -156,6 +157,7 @@ const PlateGrid = React.createClass({
                             iid={well.id}
                             thumb_url={well.thumb_url}
                             selected={selected}
+                            hidden={hidden}
                             iconSize={iconSize}
                             handleWellClick={handleWellClick}
                             row={r}
