@@ -209,3 +209,9 @@ input[type=range].parade:focus::-ms-fill-upper {
     text-align: center;
     float: left;
 }
+
+.layoutButton {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}

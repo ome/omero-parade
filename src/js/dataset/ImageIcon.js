@@ -26,16 +26,8 @@ const ImageIcon = React.createClass({
     // },
 
     getIconSizes: function() {
-        var image = this.props.image,
-            width = this.props.iconSize,
-            height = this.props.iconSize,
-            wh = image.data.obj.sizeX / image.data.obj.sizeY;
-        if (wh < 1) {
-            width = width * wh;
-        } else if (wh > 1) {
-            height = height / wh;
-        }
-        return {'width': width, 'height': height}
+        var width = this.props.iconSize;
+        return {'width': width, 'max-height': width}
     },
 
     // After rendering, scroll selectd icon into view
@@ -64,11 +56,9 @@ const ImageIcon = React.createClass({
             <li className={"datasetThumb " + cls.join(" ")}
                 id={"image_icon-" + image.id}
                 style={iconStyle}
-                ref="icon"
-                data-fileset={image.data.obj.filesetId}
+                data-fileset={image.data ? image.data.obj.filesetId : ""}
                 data-type="image"
                 data-id={image.id}
-                data-perms={image.data.obj.permsCss}
                 tabIndex={0}
                 onClick={this.handleIconClick}
             >

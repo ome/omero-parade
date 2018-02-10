@@ -1,8 +1,8 @@
 
 import React, { Component } from 'react';
-import ImageIcon from './ImageIcon'
+import ImageIcon from '../dataset/ImageIcon'
 
-const Dataset = React.createClass({
+export default React.createClass({
 
     componentDidMount: function() {
         var jstree = this.props.jstree;
@@ -15,11 +15,15 @@ const Dataset = React.createClass({
                     var imageId = $(this).attr('data-id');
                     var containerNode = OME.getTreeImageContainerBestGuess(imageId);
                     var selectedNode = jstree.locate_node('image-' + imageId, containerNode)[0];
-                    jstree.select_node(selectedNode);
+                    if (jstree) {
+                        jstree.select_node(selectedNode);
+                    }
                 });
             },
             start: function() {
-                jstree.deselect_all();
+                if (jstree) {
+                    jstree.deselect_all();
+                }
             }
         });
     },
@@ -59,35 +63,47 @@ const Dataset = React.createClass({
             // Only select clicked image
             toSelect = [imageId];
         }
-        jstree.deselect_all();
-        let nodes = toSelect.map(iid => jstree.locate_node('image-' + iid, containerNode)[0]);
-        jstree.select_node(nodes);
-        // we also focus the node, so that hotkey events come from the node
-        if (nodes.length > 0) {
-            $("#" + nodes[0].id).children('.jstree-anchor').focus();
+        if (jstree) {
+            jstree.deselect_all();
+            let nodes = toSelect.map(iid => jstree.locate_node('image-' + iid, containerNode)[0]);
+            jstree.select_node(nodes);
+            // we also focus the node, so that hotkey events come from the node
+            if (nodes.length > 0) {
+                $("#" + nodes[0].id).children('.jstree-anchor').focus();
+            }
         }
     },
 
     render() {
         let {imgJson, iconSize, setIconSize, 
-             layout, setLayout} = this.props;
+             filterText, setFilterText, layout, setLayout} = this.props;
 
         return (
             <div className="parade_centrePanel">
-                <ul
-                    ref="dataIcons"
-                    className={layout + "Layout"}>
+                <table>
+                    <tbody>
+                    <tr>
+                        <td>Thumb</td>
+                        <td>Name</td>
+                    </tr>
                     {imgJson.map(image => (
-                        <ImageIcon
-                            image={image}
-                            key={image.id}
-                            iconSize={iconSize}
-                            handleIconClick={this.handleIconClick} />
+                        <tr key={image.id}>
+                            <td>
+                                <img alt="image"
+                                    width={iconSize + "px"}
+                                    height={iconSize + "px"}
+                                    src={"/webgateway/render_thumbnail/" + image.id + "/"}
+                                    title={image.name}
+                                    onClick={event => {this.handleIconClick(image.id, event)}} />
+                            </td>
+                            <td>
+                                {image.name}
+                            </td>
+                        </tr>
                     ))}
-                </ul>
+                    </tbody>
+                </table>
             </div>
         );
     }
 });
-
-export default Dataset

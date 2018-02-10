@@ -30,24 +30,27 @@ const DataContainer = React.createClass({
         var parentId = parentNode.data.id;
         var dtype = parentNode.type;
 
-        if (dtype === "plate" || dtype === "aquisition") {
-            if (dtype === "acquisition") {
+        let rv = (<div>OOps {dtype}</div>);
+        if (dtype == "plate" || dtype == "aquisition") {
+            if (dtype == "acquisition") {
                 parentId = inst.get_node(inst.get_parent(parentNode)).data.id;
             }
 
-            return (
+            rv = (
                 <FieldsLoader
                     plateId={parentId}
                     parentNode={parentNode}
                     key={key}/>
             )
-        } else if (dtype === "dataset") {
-            return (
+        }
+        if (dtype === "dataset") {
+            rv = (
                 <DatasetContainer
                     jstree={inst}
                     parentNode={parentNode}/>
             )
         }
+        return rv;
     }
 });
 
