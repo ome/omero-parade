@@ -6,25 +6,8 @@ import FilterHub from '../filter/FilterHub'
 
 const DatasetContainer = React.createClass({
 
-    getInitialState: function() {
-        return {
-            layout: 'icon',
-            iconSize: 65,
-        }
-    },
-
-    setIconSize: function(size) {
-        this.setState({iconSize: parseInt(size, 10)});
-    },
-
-    setLayout: function(layout) {
-        this.setState({layout: layout});
-    },
-
     deselectHiddenThumbs: function() {
         var imageIds = this._thumbsToDeselect;
-        console.log("deselectHiddenThumbs", imageIds);
-
         if (imageIds.length === 0) {
             return;
         }
@@ -115,9 +98,6 @@ const DatasetContainer = React.createClass({
                 datasetId={this.props.parentNode.data.obj.id}
                 jstree = {this.props.jstree}
                 images={imgJson}
-                iconSize={this.state.iconSize}
-                setIconSize={this.setIconSize}
-                layout={this.state.layout}
             />)
     }
 });

@@ -10,14 +10,7 @@ export default React.createClass({
         return {
             data: undefined,
             selectedWellIds: [],
-            iconSize: 50,
         }
-    },
-
-    setIconSize: function(size) {
-        this.setState({
-            iconSize: size
-        });
     },
 
     componentDidMount: function() {
@@ -67,8 +60,6 @@ export default React.createClass({
                     plateId={this.props.plateId}
                     fieldId={this.props.fieldId}
                     plateData={this.state.data}
-                    iconSize={this.state.iconSize}
-                    setIconSize={this.setIconSize}
                 />)
     }
 });

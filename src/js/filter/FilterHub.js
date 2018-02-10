@@ -11,6 +11,7 @@ export default React.createClass({
         return {
             filterNames: [],
             filterValues: [],   // [{'inputName':'value'}]
+            iconSize: 50,
         }
     },
 
@@ -43,6 +44,10 @@ export default React.createClass({
         });
     },
 
+    setIconSize: function(size) {
+        this.setState({iconSize: parseInt(size, 10)});
+    },
+
     componentDidMount: function() {
         
     },
@@ -72,18 +77,17 @@ export default React.createClass({
             filteredImages = images;
         }
         let imageComponent;
-        console.log('DATASET', this.props.datasetId);
         if (this.props.datasetId) {
             imageComponent = (
                 <Dataset
-                    iconSize={this.props.iconSize}
+                    iconSize={this.state.iconSize}
                     imgJson={filteredImages}
                     jstree = {this.props.jstree}
                     />)
         } else {
             imageComponent = (
                 <PlateGrid
-                        iconSize={this.props.iconSize}
+                        iconSize={this.state.iconSize}
                         plateData={this.props.plateData}
                         filteredImages={filteredImages}
                         />)
@@ -103,7 +107,7 @@ export default React.createClass({
                         />
                     {imageComponent}
                     <Footer
-                        iconSize={this.props.iconSize}
+                        iconSize={this.state.iconSize}
                         setIconSize={this.setIconSize} />
                 </div>
               </div>)
