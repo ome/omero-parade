@@ -61,7 +61,7 @@ const ImageIcon = React.createClass({
         };
 
         return (
-            <li className={"row " + cls.join(" ")}
+            <li className={"datasetThumb " + cls.join(" ")}
                 id={"image_icon-" + image.id}
                 style={iconStyle}
                 ref="icon"
@@ -72,21 +72,11 @@ const ImageIcon = React.createClass({
                 tabIndex={0}
                 onClick={this.handleIconClick}
             >
-                <div className="image">
                     <img alt="image"
                         width={iconSizes.width + "px"}
                         height={iconSizes.height + "px"}
-                        src={"/webgateway/render_thumbnail/" + image.id + "/?version=" + image.thumbVersion}
+                        src={"/webgateway/render_thumbnail/" + image.id + "/"}
                         title={image.name} />
-                </div>
-                <div className="desc">
-                    {image.name}
-                    <span className="hidden_sort_text">{image.name}</span>
-                </div>
-                <div className="date">{image.date}</div>
-                <div className="sizeX">{image.data.obj.sizeX}</div>
-                <div className="sizeY">{image.data.obj.sizeY}</div>
-                <div className="sizeZ">{image.data.obj.sizeZ}</div>
             </li>
         )
     }
