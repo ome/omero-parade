@@ -1,9 +1,7 @@
 
 import React, { Component } from 'react';
 import FilterContainer from '../filter/FilterContainer';
-import PlateGrid from '../plate/PlateGrid';
-import Footer from '../Footer';
-import Dataset from '../dataset/Dataset';
+import Layout from '../tableData/Layout';
 
 export default React.createClass({
 
@@ -77,24 +75,8 @@ export default React.createClass({
             filteredImages = images;
         }
         let imageComponent;
-        if (this.props.datasetId) {
-            imageComponent = (
-                <Dataset
-                    iconSize={this.state.iconSize}
-                    imgJson={filteredImages}
-                    jstree = {this.props.jstree}
-                    />)
-        } else {
-            imageComponent = (
-                <PlateGrid
-                        iconSize={this.state.iconSize}
-                        plateData={this.props.plateData}
-                        filteredImages={filteredImages}
-                        />)
-        }
 
-        return(<div>
-                <div className="plateContainer">
+        return(<div className="reactContainer">
                     <FilterContainer
                         datasetId={this.props.datasetId}
                         plateId={this.props.plateId}
@@ -105,11 +87,11 @@ export default React.createClass({
                         filterNames={this.state.filterNames}
                         filterValues={this.state.filterValues}
                         />
-                    {imageComponent}
-                    <Footer
-                        iconSize={this.state.iconSize}
-                        setIconSize={this.setIconSize} />
-                </div>
-              </div>)
+                    <Layout
+                        jstree={this.props.jstree}
+                        plateData={this.props.plateData}
+                        filteredImages={filteredImages}
+                        />
+                </div>)
     }
 });

@@ -6,16 +6,6 @@ import DatasetContainer from '../dataset/DatasetContainer';
 
 const DataContainer = React.createClass({
 
-    getInitialState: function() {
-        return {
-            iconSize: 65,
-        }
-    },
-
-    setIconSize: function(size) {
-        this.setState({iconSize: parseInt(size, 10)});
-    },
-
     render: function() {
         var parentNode = this.props.parentNode;
 
@@ -49,8 +39,6 @@ const DataContainer = React.createClass({
                 <FieldsLoader
                     plateId={parentId}
                     parentNode={parentNode}
-                    iconSize={this.state.iconSize}
-                    setIconSize={this.setIconSize}
                     key={key}/>
             )
         } else if (dtype === "dataset") {
