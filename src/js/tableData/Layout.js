@@ -27,10 +27,12 @@ export default React.createClass({
     },
 
     componentDidMount: function() {
-        console.log("mount...", window.PARADE_DATAPROVIDERS_URL);
         // list available data providers (TODO: only for current data? e.g. plate)
+        let url = window.PARADE_DATAPROVIDERS_URL;
+        if (this.props.datasetId) url += '?dataset=' + this.props.datasetId;
+        else if (this.props.plateId) url += '?plate=' + this.props.plateId;
         $.ajax({
-            url: window.PARADE_DATAPROVIDERS_URL,
+            url: url,
             dataType: 'json',
             cache: false,
             success: function(data) {
