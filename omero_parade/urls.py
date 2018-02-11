@@ -21,4 +21,12 @@ urlpatterns = patterns(
     # e.g. ?plate=1
     url(r'^filters/script/(?P<filter_name>[\w.]+)/$', views.filter_script,
     	name='parade_filter_script'),
+    
+    # list sources of table data
+    url(r'^dataproviders/$', views.dataprovider_list,
+        name='parade_dataproviders'),
+
+    # Get the table data
+    url(r'^data/(?P<data_name>[\w.]+)/$', views.get_data,
+    	name='parade_data'),
 )

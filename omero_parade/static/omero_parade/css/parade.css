@@ -215,3 +215,8 @@ input[type=range].parade:focus::-ms-fill-upper {
   top: 5px;
   right: 5px;
 }
+
+.parade_centrePanel td {
+  text-align: center;
+  font-size: 110%;
+}

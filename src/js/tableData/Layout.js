@@ -12,6 +12,8 @@ export default React.createClass({
         return {
             iconSize: 50,
             layout: "table",   // "icon" or "table"
+            dataProviders: [],
+            tableData: {},
         }
     },
 
@@ -25,8 +27,42 @@ export default React.createClass({
     },
 
     componentDidMount: function() {
-        
+        console.log("mount...", window.PARADE_DATAPROVIDERS_URL);
+        // list available data providers (TODO: only for current data? e.g. plate)
+        $.ajax({
+            url: window.PARADE_DATAPROVIDERS_URL,
+            dataType: 'json',
+            cache: false,
+            success: function(data) {
+                if (this.isMounted()) {
+                    console.log(data);
+                    this.setState({
+                        dataProviders: data.data,
+                    });
+                }
+            }.bind(this)
+        });
     },
+
+    handleAddData: function(event) {
+        // When user chooses to ADD data by Name, load it...
+        var dataName = event.target.value;
+        if (dataName !== "--") {
+            var url = window.PARADE_INDEX_URL + 'data/' + dataName;
+            if (this.props.datasetId) url += '?dataset=' + this.props.datasetId;
+            if (this.props.plateId) url += '?plate=' + this.props.plateId;
+            if (this.props.fieldId !== undefined) url += '&field=' + this.props.fieldId;
+            $.getJSON(url, data => {
+                // Add data to table data
+                let td = Object.assign({}, this.state.tableData);
+                td[dataName] = data.data;
+                this.setState({
+                    tableData: td
+                });
+            });
+        }
+    },
+
 
     render: function() {
         if (this.props.plateData === undefined && this.props.filteredImages === undefined) {
@@ -39,6 +75,7 @@ export default React.createClass({
                     iconSize={this.state.iconSize}
                     imgJson={this.props.filteredImages}
                     jstree = {this.props.jstree}
+                    tableData = {this.state.tableData}
                     />)
         } else if (this.props.plateData) {
             imageComponent = (
@@ -59,6 +96,21 @@ export default React.createClass({
         return(
                 <div className="plateContainer">
                     <div className="layoutHeader">
+                        <select defaultValue={"--"} onChange={this.handleAddData}>
+                            <option
+                                value="--" >
+                                Add table data...
+                            </option>
+                            {this.state.dataProviders.map(function(n, i){
+                                return (
+                                    <option
+                                        key={i}
+                                        value={n}>
+                                        {n}
+                                    </option>
+                                );
+                            })}
+                        </select>
                         <div className="layoutButton">
                             <button onClick={() => {this.setLayout("icon")}}>
                                 grid

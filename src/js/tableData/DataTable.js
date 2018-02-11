@@ -75,8 +75,9 @@ export default React.createClass({
     },
 
     render() {
-        let {imgJson, iconSize, setIconSize, 
-             filterText, setFilterText, layout, setLayout} = this.props;
+        let {imgJson, iconSize, tableData} = this.props;
+
+        let columnNames = Object.keys(tableData);
 
         return (
             <div className="parade_centrePanel">
@@ -85,6 +86,9 @@ export default React.createClass({
                     <tr>
                         <td>Thumb</td>
                         <td>Name</td>
+                        {columnNames.map(name => (
+                            <td key={name}>{name}</td>
+                        ))}
                     </tr>
                     {imgJson.map(image => (
                         <tr key={image.id}>
@@ -99,6 +103,9 @@ export default React.createClass({
                             <td>
                                 {image.name}
                             </td>
+                            {columnNames.map(name => (
+                                <td key={name}>{tableData[name][image.id]}</td>
+                            ))}
                         </tr>
                     ))}
                     </tbody>

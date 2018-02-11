@@ -81,3 +81,38 @@ def filter_script(request, filter_name, conn=None, **kwargs):
             return module.omero_filters.get_script(request, filter_name, conn)
 
     return JsonResponse({'Error': 'Filter script not found'})
+
+
+@login_required()
+def dataprovider_list(request, conn=None, **kwargs):
+
+    modules = parade_settings.PARADE_FILTERS
+
+    dps = []
+    for m in modules:
+        try:
+            module = __import__('%s.data_providers' % m)
+            if hasattr(module.data_providers, 'get_dataproviders'):
+                dps.extend(module.data_providers.get_dataproviders(request, conn))
+        except ImportError:
+            pass
+
+    return JsonResponse({'data': dps})
+
+
+@login_required()
+def get_data(request, data_name, conn=None, **kwargs):
+
+    modules = parade_settings.PARADE_FILTERS
+
+    for m in modules:
+        try:
+            module = __import__('%s.data_providers' % m)
+            if hasattr(module.data_providers, 'get_dataproviders'):
+                if data_name in module.data_providers.get_dataproviders(request, conn):
+                    data = module.data_providers.get_data(request, data_name, conn)
+                    return JsonResponse({'data': data})
+        except ImportError:
+            pass
+
+    return JsonResponse({'Error': 'Data provier not found'})

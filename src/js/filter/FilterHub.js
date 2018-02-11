@@ -88,6 +88,9 @@ export default React.createClass({
                         filterValues={this.state.filterValues}
                         />
                     <Layout
+                        datasetId={this.props.datasetId}
+                        plateId={this.props.plateId}
+                        fieldId={this.props.fieldId}
                         jstree={this.props.jstree}
                         plateData={this.props.plateData}
                         filteredImages={filteredImages}
