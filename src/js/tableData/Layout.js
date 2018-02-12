@@ -77,7 +77,7 @@ export default React.createClass({
                     iconSize={this.state.iconSize}
                     imgJson={this.props.filteredImages}
                     jstree = {this.props.jstree}
-                    tableData = {this.state.tableData}
+                    tableData={this.state.tableData}
                     />)
         } else if (this.props.plateData) {
             imageComponent = (
@@ -85,6 +85,8 @@ export default React.createClass({
                     iconSize={this.state.iconSize}
                     plateData={this.props.plateData}
                     filteredImages={this.props.filteredImages}
+                    tableData={this.state.tableData}
+                    fieldId={this.props.fieldId}
                     />)
         } else {
             imageComponent = (

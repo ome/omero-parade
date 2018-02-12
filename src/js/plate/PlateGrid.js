@@ -121,9 +121,6 @@ const PlateGrid = React.createClass({
 
     render: function() {
         var data = this.props.plateData,
-            selectedHeatmap = this.props.selectedHeatmap,
-            heatmapRange = this.props.heatmapRange,
-            heatmapData = this.props.heatmapData,
             iconSize = this.props.iconSize,
             placeholderStyle = {
                 width: iconSize + 'px',
@@ -131,8 +128,8 @@ const PlateGrid = React.createClass({
             },
             selectedWellIds = this.state.selectedWellIds,
             handleWellClick = this.handleWellClick,
+            tableData = this.props.tableData,
             filteredIds = this.props.filteredImages.map(i => i.id);
-        console.log('PlateGrid, filteredImageIds', filteredIds)
         if (!data) {
             return (
                 <table />
@@ -149,7 +146,9 @@ const PlateGrid = React.createClass({
                     var hidden = (filteredIds !== undefined && filteredIds.indexOf(well.id) === -1);
                     var selected = selectedWellIds.indexOf(well.wellId) > -1;
                     // lookup this Well's data from heatmap
-                    var heatmapValues = heatmapData && heatmapData[well.wellId+""];
+                    // var heatmapValues = heatmapData && heatmapData[well.wellId+""];
+                    // tableData is mapped to Image IDs... (well.id is image ID!)
+                    var imgTableData = Object.keys(tableData).map(col => col + ": " + tableData[col][well.id])
                     return (
                         <Well
                             key={well.wellId}
@@ -162,9 +161,7 @@ const PlateGrid = React.createClass({
                             handleWellClick={handleWellClick}
                             row={r}
                             col={c}
-                            selectedHeatmap={selectedHeatmap}
-                            heatmapRange={heatmapRange}
-                            heatmapValues={heatmapValues} />
+                            imgTableData={imgTableData} />
                     )
                 } else {
                     return (
