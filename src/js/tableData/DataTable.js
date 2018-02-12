@@ -1,8 +1,15 @@
 
 import React, { Component } from 'react';
-import ImageIcon from '../dataset/ImageIcon'
+import ImageIcon from '../dataset/ImageIcon';
+import { getHeatmapColor } from '../util';
 
 export default React.createClass({
+
+    getInitialState: function() {
+        return {
+            showHeatmapColumns: {},
+        }
+    },
 
     componentDidMount: function() {
         var jstree = this.props.jstree;
@@ -31,6 +38,15 @@ export default React.createClass({
     componentWillUnmount: function() {
         // cleanup plugin
         $(this.refs.dataIcons).selectable( "destroy" );
+    },
+
+    handleShowHeatmap: function(event, name) {
+        let checked = event.target.checked;
+        let showHeatmapColumns = Object.assign({}, this.state.showHeatmapColumns);
+        showHeatmapColumns[name] = checked;
+        this.setState({
+            showHeatmapColumns: showHeatmapColumns
+        });
     },
 
     handleIconClick: function(imageId, event) {
@@ -79,6 +95,18 @@ export default React.createClass({
 
         let columnNames = Object.keys(tableData);
 
+        let dataRanges = columnNames.reduce((prev, name) => {
+            let mn = Object.values(tableData[name]).reduce((p, v) => Math.min(p, v));
+            let mx = Object.values(tableData[name]).reduce((p, v) => Math.max(p, v));
+            prev[name] = [mn, mx]
+            return prev;
+        }, {});
+        function heatMapColor(name, value) {
+            let minMax = dataRanges[name];
+            let fraction = (value - minMax[0])/(minMax[1] - minMax[0]);
+            return getHeatmapColor(fraction);
+        }
+
         return (
             <div className="parade_centrePanel">
                 <table>
@@ -87,7 +115,13 @@ export default React.createClass({
                         <td>Thumb</td>
                         <td>Name</td>
                         {columnNames.map(name => (
-                            <td key={name}>{name}</td>
+                            <td key={name}>
+                                {name}
+                                <input
+                                    onClick={(event) => {this.handleShowHeatmap(event, name)}}
+                                    type="checkbox"
+                                    title="Show Heatmap"/>
+                            </td>
                         ))}
                     </tr>
                     {imgJson.map(image => (
@@ -104,7 +138,11 @@ export default React.createClass({
                                 {image.name}
                             </td>
                             {columnNames.map(name => (
-                                <td key={name}>{tableData[name][image.id]}</td>
+                                <td key={name}
+                                    style={{backgroundColor: this.state.showHeatmapColumns[name] ? heatMapColor(name, tableData[name][image.id]): 'transparent'}}
+                                    >
+                                    {tableData[name][image.id]}
+                                </td>
                             ))}
                         </tr>
                     ))}

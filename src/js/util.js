@@ -5,11 +5,17 @@ const getHeatmapColor = function(fraction) {
         green = 0,
         blue = 0,
         alpha = 1;
-    if (fraction > 0.25) {
-        red = parseInt(256 * (fraction - 0.25) * 1.3);
+    // if (fraction > 0.25) {
+    //     red = parseInt(256 * (fraction - 0.25) * 1.3);
+    // }
+    // if (fraction < 0.75) {
+    //     green = parseInt(256 * (1 - (fraction * 1.3)));
+    // }
+    if (fraction > 0.5) {
+        red = parseInt(256 * (fraction - 0.5) * 2);
     }
-    if (fraction < 0.75) {
-        green = parseInt(256 * (1 - (fraction * 1.3)));
+    if (fraction < 0.5) {
+        green = parseInt((0.5 - fraction) * 2 * 256);
     }
     return "rgba(" + [red, green, blue, alpha].join(",") + ")";
 }
