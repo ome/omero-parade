@@ -49,7 +49,30 @@ export default React.createClass({
         });
     },
 
-    handleIconClick: function(imageId, event) {
+    setSelectedWells: function(wellIds) {
+
+        this.setState({selectedWellIds: wellIds});
+
+        var well_index = this.props.fieldId;
+        var selected_objs = wellIds.map(wId => ({id: 'well-' + wId, index: this.props.fieldId}))
+        $("body")
+            .data("selected_objects.ome", selected_objs)
+            .trigger("selection_change.ome");
+        // Update the buttons above jstree as if nothing selected
+        // (but don't actually change selection in jstree).
+        if (buttonsShowHide) {
+            buttonsShowHide([]);
+        }
+    },
+
+    handleIconClick: function(image, event) {
+        // Might be a Dataset image OR a Well that is selected.
+        let imageId = image.id;
+        let wellId = image.wellId;
+        if (wellId) {
+            this.setSelectedWells([wellId]);
+            return;
+        }
         let jstree = this.props.jstree;
         let containerNode = OME.getTreeImageContainerBestGuess(imageId);
 
@@ -132,7 +155,7 @@ export default React.createClass({
                                     height={iconSize + "px"}
                                     src={"/webgateway/render_thumbnail/" + image.id + "/"}
                                     title={image.name}
-                                    onClick={event => {this.handleIconClick(image.id, event)}} />
+                                    onClick={event => {this.handleIconClick(image, event)}} />
                             </td>
                             <td>
                                 {image.name}

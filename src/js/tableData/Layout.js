@@ -78,6 +78,7 @@ export default React.createClass({
                     imgJson={this.props.filteredImages}
                     jstree = {this.props.jstree}
                     tableData={this.state.tableData}
+                    fieldId={this.props.fieldId}
                     />)
         } else if (this.props.plateData) {
             imageComponent = (
