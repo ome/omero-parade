@@ -26,7 +26,7 @@
 
 .filterContainer {
   background: rgb(239, 241, 244);
-  border-bottom: 1px solid hsl(210,10%,70%);
+  border-bottom: 1px solid hsl(210, 32%, 87%);
   padding: 5px;
 }
 
@@ -219,4 +219,11 @@ input[type=range].parade:focus::-ms-fill-upper {
 .parade_centrePanel td {
   text-align: center;
   font-size: 110%;
+  padding: 3px;
+}
+
+.layoutHeader {
+  padding: 5px;
+  background: rgb(239, 241, 244);
+  border-bottom: 1px solid hsl(210,10%,70%);
 }

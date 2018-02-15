@@ -132,7 +132,7 @@ export default React.createClass({
 
         return (
             <div className="parade_centrePanel">
-                <table>
+                <table className="parade_dataTable">
                     <tbody>
                     <tr>
                         <td>Thumb</td>
