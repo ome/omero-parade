@@ -7,6 +7,10 @@ $(function() {
 
   var pluginIndex = {{ forloop.counter }};
 
+  window.PARADE_FILTERS_URL = "{% url 'parade_filters' %}";
+  window.PARADE_INDEX_URL = "{% url 'parade_index' %}";
+  window.PARADE_DATAPROVIDERS_URL = "{% url 'parade_dataproviders' %}";
+
   $("#omero_parade").omeroweb_center_plugin({
     plugin_index: pluginIndex,        // From the Django template loop
     empty_on_sel_change: false,       // Do not completely erase content when changing selection

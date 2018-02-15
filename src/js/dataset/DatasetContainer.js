@@ -1,45 +1,22 @@
 
 import React, { Component } from 'react';
 import Dataset from './Dataset'
+import FilterHub from '../filter/FilterHub'
 
 
 const DatasetContainer = React.createClass({
 
-    getInitialState: function() {
-        return {
-            layout: 'icon',
-            filterText: "",
-            iconSize: 65,
-        }
-    },
-
-    setIconSize: function(size) {
-        this.setState({iconSize: parseInt(size, 10)});
-    },
-
-    setLayout: function(layout) {
-        this.setState({layout: layout});
-    },
-
-    setFilterText: function(filterText) {
-        console.log("setFilterText", filterText);
-        this.setState({filterText: filterText});
-        setTimeout(this.deselectHiddenThumbs, 50);
-    },
-
     deselectHiddenThumbs: function() {
         var imageIds = this._thumbsToDeselect;
-        console.log("deselectHiddenThumbs", imageIds);
-
         if (imageIds.length === 0) {
             return;
         }
-        var inst = this.props.inst;
+        var jstree = this.props.jstree;
         var containerNode = OME.getTreeImageContainerBestGuess(imageIds[0]);
         if (containerNode) {
             imageIds.forEach(function(iid){
-                var selectedNode = inst.locate_node('image-' + iid, containerNode)[0];
-                inst.deselect_node(selectedNode, true);
+                var selectedNode = jstree.locate_node('image-' + iid, containerNode)[0];
+                jstree.deselect_node(selectedNode, true);
             });
         }
     },
@@ -88,10 +65,10 @@ const DatasetContainer = React.createClass({
 
     getImageNodes: function() {
         let imgNodes = [],
-            inst = this.props.inst;
+            jstree = this.props.jstree;
 
         this.props.parentNode.children.forEach(function(ch){
-            var childNode = inst.get_node(ch);
+            var childNode = jstree.get_node(ch);
             // Ignore non-images under tags or 'deleted' under shares
             if (childNode.type == "image") {
                 imgNodes.push(childNode);
@@ -102,22 +79,9 @@ const DatasetContainer = React.createClass({
 
     render: function() {
         var imgNodes = this.getImageNodes();
-        var fltr = this.state.filterText;
 
         // Convert jsTree nodes into json for template
         let imgJson = imgNodes.map(this.marshalNode);
-
-        let thumbsToDeselect = [];
-        if (fltr.length > 0) {
-            // find hidden images we need to de-select in jstree
-            thumbsToDeselect = imgJson.filter(i => i.name.indexOf(fltr) === -1 && i.selected)
-                                      .map(i => i.id);
-            // filter images
-            imgJson = imgJson.filter(i => i.name.indexOf(fltr) !== -1);
-        }
-
-        // Let parent know that some aren't shown
-        this.setThumbsToDeselect(thumbsToDeselect);
 
         // Get selected filesets...
         let selFileSets = imgJson.filter(i => i.selected).map(i => i.data.obj.filesetId);
@@ -130,19 +94,11 @@ const DatasetContainer = React.createClass({
             });
         }
 
-        return (
-            <Dataset
-                inst = {this.props.inst}
-                imgJson={imgJson}
-                iconSize={this.state.iconSize}
-                setIconSize={this.setIconSize}
-                handleIconClick={this.handleIconClick}
-                filterText={this.state.filterText}
-                setFilterText={this.setFilterText}
-                layout={this.state.layout}
-                setLayout={this.setLayout}
-            />
-        )
+        return (<FilterHub
+                datasetId={this.props.parentNode.data.obj.id}
+                jstree = {this.props.jstree}
+                images={imgJson}
+            />)
     }
 });
 

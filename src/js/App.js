@@ -1,7 +1,6 @@
 
 import React from 'react';
-import DatasetContainer from './dataset/DatasetContainer'
-import PlateContainer from './plate/PlateContainer'
+import DataContainer from './dataLoader/DataContainer'
 
 
 const App = React.createClass({
@@ -61,23 +60,22 @@ const App = React.createClass({
 
         if (parentNode) {
             let dtype = parentNode.type;
-            if (dtype === "plate" || dtype === "acquisition") {
-                return (
-                    <PlateContainer
-                        parentNode={parentNode}
-                        inst={this.props.jstree} />
-                )
-            } else {
-                // handles tag, orphaned, dataset, share
-                // Cache this parentNode. If next selection == 0, still show this
-                // E.g. if image in Dataset is de-selected
-                this.previousParent = parentNode;
-                return (
-                    <DatasetContainer
-                        parentNode={parentNode}
-                        inst={this.props.jstree} />
-                )
-            }
+            return (
+                <DataContainer
+                    parentNode={parentNode}
+                    inst={this.props.jstree} />
+            )
+            // } else {
+            //     // handles tag, orphaned, dataset, share
+            //     // Cache this parentNode. If next selection == 0, still show this
+            //     // E.g. if image in Dataset is de-selected
+            //     this.previousParent = parentNode;
+            //     return (
+            //         <DatasetContainer
+            //             parentNode={parentNode}
+            //             inst={this.props.jstree} />
+            //     )
+            // }
         }
 
         return (

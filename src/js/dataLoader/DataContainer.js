@@ -1,19 +1,10 @@
 
 import React, { Component } from 'react';
-import Plate from './Plate'
+import FieldsLoader from './FieldsLoader'
+import DatasetContainer from '../dataset/DatasetContainer';
 
 
-const PlateContainer = React.createClass({
-
-    getInitialState: function() {
-        return {
-            iconSize: 65,
-        }
-    },
-
-    setIconSize: function(size) {
-        this.setState({iconSize: parseInt(size, 10)});
-    },
+const DataContainer = React.createClass({
 
     render: function() {
         var parentNode = this.props.parentNode;
@@ -22,6 +13,7 @@ const PlateContainer = React.createClass({
         if (!parentNode.state.loaded) {
             return (<h2 className="iconTable">Loading...</h2>);
         }
+
         // If plate has > 1 run, show nothing
         if (parentNode.type === "plate" && parentNode.children.length > 1) {
             return (<h2 className="iconTable">Select Run</h2>);
@@ -32,24 +24,34 @@ const PlateContainer = React.createClass({
             // Children is list of node-ids
             key = parentNode.children[0];
         }
-        // We pass key to <Plate> so that if key doesn't change,
+        // We pass key to <FieldsLoader> so that if key doesn't change,
         // Plate won't mount (load data) again
         var inst = this.props.inst;
-        var plateId = parentNode.data.id;
+        var parentId = parentNode.data.id;
         var dtype = parentNode.type;
-        if (dtype === "acquisition") {
-            plateId = inst.get_node(inst.get_parent(parentNode)).data.id;
-        }
 
-        return (
-            <Plate
-                plateId={plateId}
-                parentNode={parentNode}
-                iconSize={this.state.iconSize}
-                setIconSize={this.setIconSize}
-                key={key}/>
-        )
+        let rv = (<div>OOps {dtype}</div>);
+        if (dtype == "plate" || dtype == "aquisition") {
+            if (dtype == "acquisition") {
+                parentId = inst.get_node(inst.get_parent(parentNode)).data.id;
+            }
+
+            rv = (
+                <FieldsLoader
+                    plateId={parentId}
+                    parentNode={parentNode}
+                    key={key}/>
+            )
+        }
+        if (dtype === "dataset") {
+            rv = (
+                <DatasetContainer
+                    jstree={inst}
+                    parentNode={parentNode}/>
+            )
+        }
+        return rv;
     }
 });
 
-export default PlateContainer
+export default DataContainer

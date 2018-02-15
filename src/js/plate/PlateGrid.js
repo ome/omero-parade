@@ -5,28 +5,6 @@ import Well from './Well';
 
 const PlateGrid = React.createClass({
 
-    componentDidMount: function() {
-        var plateId = this.props.plateId,
-            fieldId = this.props.fieldId;
-
-        var url = "/webgateway/plate/" + plateId + "/" + fieldId + "/";
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            cache: false,
-            success: function(data) {
-                if (this.isMounted()) {
-                    var wellIds = this.getWellIdsFromUrlQuery(data);
-                    this.setState({
-                        data: data,
-                        selectedWellIds: wellIds
-                    });
-                }
-            }.bind(this),
-                error: function(xhr, status, err) {
-            }.bind(this)
-        });
-    },
 
     // Uses the url ?show=well-123 or image-123 to get well IDs from data
     getWellIdsFromUrlQuery: function(data) {
@@ -65,7 +43,6 @@ const PlateGrid = React.createClass({
 
     getInitialState: function() {
         return {
-            data: undefined,
             selectedWellIds: [],
         }
     },
@@ -143,17 +120,16 @@ const PlateGrid = React.createClass({
     },
 
     render: function() {
-        var data = this.state.data,
-            selectedHeatmap = this.props.selectedHeatmap,
-            heatmapRange = this.props.heatmapRange,
-            heatmapData = this.props.heatmapData,
+        var data = this.props.plateData,
             iconSize = this.props.iconSize,
             placeholderStyle = {
                 width: iconSize + 'px',
                 height: iconSize + 'px',
             },
             selectedWellIds = this.state.selectedWellIds,
-            handleWellClick = this.handleWellClick;
+            handleWellClick = this.handleWellClick,
+            tableData = this.props.tableData,
+            filteredIds = this.props.filteredImages.map(i => i.id);
         if (!data) {
             return (
                 <table />
@@ -167,9 +143,12 @@ const PlateGrid = React.createClass({
             var wells = data.collabels.map(function(c, colIndex){
                 var well = grid[rowIndex][colIndex];
                 if (well) {
+                    var hidden = (filteredIds !== undefined && filteredIds.indexOf(well.id) === -1);
                     var selected = selectedWellIds.indexOf(well.wellId) > -1;
                     // lookup this Well's data from heatmap
-                    var heatmapValues = heatmapData && heatmapData[well.wellId+""];
+                    // var heatmapValues = heatmapData && heatmapData[well.wellId+""];
+                    // tableData is mapped to Image IDs... (well.id is image ID!)
+                    var imgTableData = Object.keys(tableData).map(col => col + ": " + tableData[col][well.id])
                     return (
                         <Well
                             key={well.wellId}
@@ -177,13 +156,12 @@ const PlateGrid = React.createClass({
                             iid={well.id}
                             thumb_url={well.thumb_url}
                             selected={selected}
+                            hidden={hidden}
                             iconSize={iconSize}
                             handleWellClick={handleWellClick}
                             row={r}
                             col={c}
-                            selectedHeatmap={selectedHeatmap}
-                            heatmapRange={heatmapRange}
-                            heatmapValues={heatmapValues} />
+                            imgTableData={imgTableData} />
                     )
                 } else {
                     return (
@@ -201,15 +179,17 @@ const PlateGrid = React.createClass({
         });
 
         return (
-            <table>
-                <tbody>
-                    <tr>
-                        <th> </th>
-                        {columnNames}
-                    </tr>
-                    {rows}
-                </tbody>
-            </table>
+            <div className="plateGrid">
+                <table>
+                    <tbody>
+                        <tr>
+                            <th> </th>
+                            {columnNames}
+                        </tr>
+                        {rows}
+                    </tbody>
+                </table>
+            </div>
         );
     }
 });
