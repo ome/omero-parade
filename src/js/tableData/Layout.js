@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import FilterContainer from '../filter/FilterContainer';
 import DataTable from './DataTable';
+import DataPlot from './DataPlot';
 import PlateGrid from '../plate/PlateGrid';
 import Dataset from '../dataset/Dataset';
 import Footer from '../Footer';
@@ -80,6 +81,15 @@ export default React.createClass({
                     tableData={this.state.tableData}
                     fieldId={this.props.fieldId}
                     />)
+        } else if (this.state.layout === "plot") {
+            imageComponent = (
+                <DataPlot
+                    iconSize={this.state.iconSize}
+                    imgJson={filteredImages}
+                    jstree={this.props.jstree}
+                    tableData={this.state.tableData}
+                    fieldId={this.props.fieldId}
+                    />)
         } else if (this.props.plateData) {
             imageComponent = (
                 <PlateGrid
@@ -122,6 +132,9 @@ export default React.createClass({
                             </button>
                             <button onClick={() => {this.setLayout("table")}}>
                                 list
+                            </button>
+                            <button onClick={() => {this.setLayout("plot")}}>
+                                plot
                             </button>
                         </div>
                     </div>

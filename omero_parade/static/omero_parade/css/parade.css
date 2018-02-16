@@ -227,3 +227,18 @@ input[type=range].parade:focus::-ms-fill-upper {
   background: rgb(239, 241, 244);
   border-bottom: 1px solid hsl(210,10%,70%);
 }
+
+.thumbnail_plot {
+  margin: 100px;
+  width: 500px;
+  height: 300px;
+  box-sizing: border-box;
+  border: solid black 1px;
+  position: relative;
+}
+
+.thumbnail_plot img{
+  position: absolute;
+  width: 20px;
+  height: 20px;
+}
