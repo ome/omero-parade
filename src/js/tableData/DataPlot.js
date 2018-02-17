@@ -3,12 +3,37 @@ import React, { Component } from 'react';
 import ImageIcon from '../dataset/ImageIcon';
 import { getHeatmapColor } from '../util';
 
+const styles = {
+    xAxisSelect: {
+        position: 'absolute',
+        right: '50%',
+        top: '100%',
+    },
+    yAxisSelect: {
+        position: 'absolute',
+        right: '100%',
+        top: '50%',
+        transform: 'rotate(-90deg)',
+    },
+}
 export default React.createClass({
 
     getInitialState: function() {
         return {
             xAxisName: undefined,
             yAxisName: undefined,
+        }
+    },
+
+    setAxisName: function(axis, event, otherAxis) {
+        // Set BOTH axis names.
+        // Since we start with both undefined, as soon as
+        // user picks one to change, we set both.
+        let name = event.target.value;
+        if (axis === 'x') {
+            this.setState({xAxisName: name, yAxisName: otherAxis});
+        } else {
+            this.setState({yAxisName: name, xAxisName: otherAxis});
         }
     },
 
@@ -99,8 +124,8 @@ export default React.createClass({
             yAxisName = axisNames[0];
         }
         console.log('xAxisName, yAxisName', xAxisName, yAxisName);
-
-        let dataRanges = Object.keys(tableData).reduce((prev, name) => {
+        axisNames = Object.keys(tableData);
+        let dataRanges = axisNames.reduce((prev, name) => {
             let mn = Object.values(tableData[name]).reduce((p, v) => Math.min(p, v));
             let mx = Object.values(tableData[name]).reduce((p, v) => Math.max(p, v));
             prev[name] = [mn, mx]
@@ -116,6 +141,17 @@ export default React.createClass({
         return (
             <div className="parade_centrePanel">
                 <div className="thumbnail_plot">
+                    <select onChange={(event) => {this.setAxisName('y', event, xAxisName)}}
+                            value={yAxisName}
+                            style={styles.yAxisSelect}>
+                        {axisNames.map((n, i) => (<option key={i} value={n}> {n}</option>))}
+                    </select>
+                    <select onChange={(event) => {this.setAxisName('x', event, yAxisName)}}
+                            value={xAxisName}
+                            style={styles.xAxisSelect}>
+                        {axisNames.map((n, i) => (<option key={i} value={n}> {n}</option>))}
+                    </select>
+
                     {imgJson.map(image => (
                         <img alt="image"
                             key={image.id}
@@ -124,7 +160,7 @@ export default React.createClass({
                             onClick={event => {this.handleIconClick(image, event)}}
 
                             style={{left: getAxisPercent(xAxisName, tableData[xAxisName][image.id]) + '%',
-                                    top: getAxisPercent(yAxisName, tableData[yAxisName][image.id]) + '%'}}
+                                    top: (100 - getAxisPercent(yAxisName, tableData[yAxisName][image.id])) + '%'}}
                         />
                     ))}
                 </div>
