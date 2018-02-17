@@ -16,6 +16,7 @@
   right: 0;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .plateContainer {
@@ -230,15 +231,30 @@ input[type=range].parade:focus::-ms-fill-upper {
 
 .thumbnail_plot {
   margin: 50px 100px;
-  width: 500px;
-  height: 350px;
+  width: 502px;
+  height: 352px;
   box-sizing: border-box;
   border: solid black 1px;
   position: relative;
 }
 
-.thumbnail_plot img{
+.thumbnail_plot_canvas {
+  margin: 10px;
+  width: 480px;
+  height: 330px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.thumbnail_plot img {
   position: absolute;
   width: 20px;
   height: 20px;
+  margin: -10px;
+  box-sizing: border-box;
 }
+
+.thumbnail_plot img.ui-selected {
+  border: solid #87ABD2 3px;
+}
+

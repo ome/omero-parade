@@ -6,7 +6,7 @@ import { getHeatmapColor } from '../util';
 const styles = {
     xAxisSelect: {
         position: 'absolute',
-        right: '50%',
+        right: '40%',
         top: '100%',
     },
     yAxisSelect: {
@@ -22,6 +22,7 @@ export default React.createClass({
         return {
             xAxisName: undefined,
             yAxisName: undefined,
+            selectedImageIds: [],
         }
     },
 
@@ -37,9 +38,43 @@ export default React.createClass({
         }
     },
 
+    componentDidMount: function() {
+        // var jstree = this.props.jstree;
+        $(this.refs.thumb_plot_canvas).selectable({
+            filter: 'img',
+            distance: 2,
+            stop: () => {
+                // TODO: If Dataset Images.... make the same selection in the jstree etc
+                console.log('stop...')
+                let imageIds = [];
+                let wellIds = [];
+                $(".ui-selected").each(function(){
+                    imageIds.push(parseInt($(this).attr('data-id'), 10));
+                    if ($(this).attr('data-wellId')) {
+                        wellIds.push(parseInt($(this).attr('data-wellId'), 10));
+                    }
+                });
+                console.log('wellIds, imageIds', wellIds, imageIds);
+                if (wellIds.length > 0) {
+                    this.setSelectedWells(wellIds);
+                } else {
+                    this.setState({selectedImageIds: imageIds});
+                }
+            },
+            start: () => {
+                this.setState({selectedImageIds: []});
+            }
+        });
+    },
+
+    componentWillUnmount: function() {
+        // cleanup plugin
+        $(this.refs.dataIcons).selectable( "destroy" );
+    },
+
     setSelectedWells: function(wellIds) {
 
-        this.setState({selectedWellIds: wellIds});
+        this.setState({selectedImageIds: wellIds});
 
         var well_index = this.props.fieldId;
         var selected_objs = wellIds.map(wId => ({id: 'well-' + wId, index: this.props.fieldId}))
@@ -106,9 +141,13 @@ export default React.createClass({
 
         let xAxisName = this.state.xAxisName;
         let yAxisName = this.state.yAxisName;
+        let selectedImageIds = this.state.selectedImageIds;
 
         // Available axes are dataTable keys.
         let axisNames = Object.keys(tableData);
+        if (axisNames.length < 2) {
+            return (<div>Choose more data to load</div>)
+        }
 
         if (xAxisName !== undefined) {
             axisNames.splice(axisNames.indexOf(xAxisName), 1);
@@ -123,7 +162,6 @@ export default React.createClass({
         if (yAxisName == undefined) {
             yAxisName = axisNames[0];
         }
-        console.log('xAxisName, yAxisName', xAxisName, yAxisName);
         axisNames = Object.keys(tableData);
         let dataRanges = axisNames.reduce((prev, name) => {
             let mn = Object.values(tableData[name]).reduce((p, v) => Math.min(p, v));
@@ -131,7 +169,6 @@ export default React.createClass({
             prev[name] = [mn, mx]
             return prev;
         }, {});
-        console.log('dataRanges', dataRanges);
         function getAxisPercent(name, value) {
             let minMax = dataRanges[name];
             let fraction = (value - minMax[0])/(minMax[1] - minMax[0]);
@@ -152,17 +189,22 @@ export default React.createClass({
                         {axisNames.map((n, i) => (<option key={i} value={n}> {n}</option>))}
                     </select>
 
-                    {imgJson.map(image => (
-                        <img alt="image"
-                            key={image.id}
-                            src={"/webgateway/render_thumbnail/" + image.id + "/"}
-                            title={image.name}
-                            onClick={event => {this.handleIconClick(image, event)}}
+                    <div className="thumbnail_plot_canvas" ref="thumb_plot_canvas">
+                        {imgJson.map(image => (
+                            <img alt="image"
+                                className={selectedImageIds.indexOf(image.id) > -1 ? 'ui-selected' : ''}
+                                key={image.id}
+                                data-id={image.id}
+                                data-wellId={image.wellId}
+                                src={"/webgateway/render_thumbnail/" + image.id + "/"}
+                                title={image.name}
+                                onClick={event => {this.handleIconClick(image, event)}}
 
-                            style={{left: getAxisPercent(xAxisName, tableData[xAxisName][image.id]) + '%',
-                                    top: (100 - getAxisPercent(yAxisName, tableData[yAxisName][image.id])) + '%'}}
-                        />
-                    ))}
+                                style={{left: getAxisPercent(xAxisName, tableData[xAxisName][image.id]) + '%',
+                                        top: (100 - getAxisPercent(yAxisName, tableData[yAxisName][image.id])) + '%'}}
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
         );
