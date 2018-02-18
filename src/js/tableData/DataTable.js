@@ -14,18 +14,17 @@ export default React.createClass({
     },
 
     componentDidMount: function() {
-        let dtype = this.props.imgJson[0].wellId ? 'well' : 'image';
-        let idAttr = (dtype === 'well' ? 'data-wellId': 'data-id')
         $(this.refs.dataTable).selectable({
             filter: 'img',
             distance: 2,
             stop: () => {
+                let dtype = this.props.imgJson[0].wellId ? 'well' : 'image';
+                let idAttr = (dtype === 'well' ? 'data-wellId': 'data-id');
                 // Make the same selection in the jstree etc
                 let ids = [];
                 $(".parade_dataTable .ui-selected").each(function(){
                     ids.push(parseInt($(this).attr(idAttr), 10));
                 });
-                console.log('dype', dtype, ids);
                 this.props.setImagesWellsSelected(dtype, ids);
             },
         });
@@ -166,7 +165,7 @@ export default React.createClass({
                         <tr key={image.id}>
                             <td>
                                 <img alt="image"
-                                    className={(image.selected || selectedWellIds.indexOf(image.id)) > -1 ? 'ui-selected' : ''}
+                                    className={(image.selected || selectedWellIds.indexOf(image.wellId)) > -1 ? 'ui-selected' : ''}
                                     width={iconSize + "px"}
                                     height={iconSize + "px"}
                                     src={"/webgateway/render_thumbnail/" + image.id + "/"}

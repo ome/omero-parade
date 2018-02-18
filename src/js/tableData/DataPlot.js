@@ -49,7 +49,6 @@ export default React.createClass({
                 $(".thumbnail_plot_canvas .ui-selected").each(function(){
                     ids.push(parseInt($(this).attr(idAttr), 10));
                 });
-                console.log('dype', dtype, ids);
                 this.props.setImagesWellsSelected(dtype, ids);
             },
         });
@@ -100,8 +99,6 @@ export default React.createClass({
             return fraction * 100;
         }
 
-        console.log('DataPlot', imgJson)
-
         return (
             <div className="parade_centrePanel">
                 <div className="thumbnail_plot">
@@ -119,7 +116,7 @@ export default React.createClass({
                     <div className="thumbnail_plot_canvas" ref="thumb_plot_canvas">
                         {imgJson.map(image => (
                             <img alt="image"
-                                className={(image.selected || selectedWellIds.indexOf(image.id)) > -1 ? 'ui-selected' : ''}
+                                className={(image.selected || selectedWellIds.indexOf(image.wellId)) > -1 ? 'ui-selected' : ''}
                                 key={image.id}
                                 data-id={image.id}
                                 data-wellId={image.wellId}

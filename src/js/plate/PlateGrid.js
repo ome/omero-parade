@@ -5,118 +5,28 @@ import Well from './Well';
 
 const PlateGrid = React.createClass({
 
-
-    // Uses the url ?show=well-123 or image-123 to get well IDs from data
-    getWellIdsFromUrlQuery: function(data) {
-        var param = OME.getURLParameter('show'),
-            wellIds = [];
-        if (param) {
-            param.split("|").forEach(function(p) {
-                var wellId, imgId;
-                if (p.split("-")[0] === "well") {
-                    wellId = parseInt(p.split("-")[1], 10);
-                } else if (p.split("-")[0] === "image") {
-                    imgId = parseInt(p.split("-")[1], 10);
-                }
-                // Validate well Id is in this plate
-                wellId = this.getWellId(data, wellId, imgId);
-                if (wellId) {
-                    wellIds.push(wellId);
-                }
-            }.bind(this));
-        }
-        return wellIds;
-    },
-
-    // Find well in data using wellId OR imageId, return wellId
-    getWellId: function (data, wellId, imageId) {
-        var wellId;
-        data.grid.forEach(function(row){
-            row.forEach(function(well) {
-                if (well && (well.id === imageId || well.wellId === wellId)) {
-                    wellId = well.wellId;
-                }
-            });
-        });
-        return wellId;
-    },
-
     getInitialState: function() {
-        return {
-            selectedWellIds: [],
-        }
+        return {}
     },
 
-    setSelectedWells: function(wellIds) {
-
-        this.setState({selectedWellIds: wellIds});
-
-        var well_index = this.props.fieldId;
-        var selected_objs = wellIds.map(wId => ({id: 'well-' + wId, index: this.props.fieldId}))
-        $("body")
-            .data("selected_objects.ome", selected_objs)
-            .trigger("selection_change.ome");
-        // Update the buttons above jstree as if nothing selected
-        // (but don't actually change selection in jstree).
-        if (buttonsShowHide) {
-            buttonsShowHide([]);
-        }
-    },
-
-    handleWellClick: function(event, wellId) {
-        // update selected state for range of wells etc...
-        var isWellSelected = function(wellId) {
-            return (this.state.selectedWellIds.indexOf(wellId) > -1);
-        }.bind(this);
-
-        if (event.shiftKey) {
-            // select range
-            var wellIds = [],
-                selectedIdxs = [];
-            // make a list of all well IDs, and index of selected wells...
-            this.state.data.grid.forEach(function(row){
-                row.forEach(function(w){
-                    if (w) {
-                        wellIds.push(w.wellId);
-                        if (isWellSelected(w.wellId)) {
-                            selectedIdxs.push(wellIds.length-1);
-                        }
-                    }
+    componentDidMount: function() {
+        $(this.refs.plateGrid).selectable({
+            filter: 'td.well',
+            distance: 2,
+            stop: () => {
+                // Make the same selection in the jstree etc
+                let ids = [];
+                $(".plateGrid .ui-selected").each(function(){
+                    ids.push(parseInt($(this).attr('data-wellId'), 10));
                 });
-            });
-            // extend the range of selected wells with index of clicked well...
-            var clickedIdx = wellIds.indexOf(wellId),
-                newSel = [],
-                startIdx = Math.min(clickedIdx, selectedIdxs[0]),
-                endIdx = Math.max(clickedIdx, selectedIdxs[selectedIdxs.length-1]);
-            //...and select all wells within that range
-            wellIds.forEach(function(wellId, idx){
-                if (startIdx <= idx && idx <= endIdx) {
-                    newSel.push(wellId);
-                }
-            });
-            this.setSelectedWells(newSel);
+                this.props.setImagesWellsSelected('well', ids);
+            },
+        });
+    },
 
-        } else if (event.metaKey) {
-            // toggle selection of well
-            var found = false;
-            // make a new list from old, removing clicked well
-            var s = this.state.selectedWellIds.map(function(id){
-                if (wellId !== id) {
-                    return id;
-                } else {
-                    found = true;
-                }
-            });
-            // if well wasn't already seleced, then select it
-            if (!found) {
-                s.push(wellId);
-            }
-            this.setSelectedWells(s);
-        } else {
-            // Select only this well
-            this.setSelectedWells([wellId]);
-        }
+    componentWillUnmount: function() {
+        // cleanup plugin
+        $(this.refs.dataIcons).selectable( "destroy" );
     },
 
     render: function() {
@@ -126,8 +36,8 @@ const PlateGrid = React.createClass({
                 width: iconSize + 'px',
                 height: iconSize + 'px',
             },
-            selectedWellIds = this.state.selectedWellIds,
-            handleWellClick = this.handleWellClick,
+            selectedWellIds = this.props.selectedWellIds,
+            handleImageWellClicked = this.props.handleImageWellClicked,
             tableData = this.props.tableData,
             filteredIds = this.props.filteredImages.map(i => i.id);
         if (!data) {
@@ -139,8 +49,8 @@ const PlateGrid = React.createClass({
             return (<th key={l}>{l}</th>);
         });
         var grid = data.grid;
-        var rows = data.rowlabels.map(function(r, rowIndex){
-            var wells = data.collabels.map(function(c, colIndex){
+        var rows = data.rowlabels.map((r, rowIndex) => {
+            var wells = data.collabels.map((c, colIndex) => {
                 var well = grid[rowIndex][colIndex];
                 if (well) {
                     var hidden = (filteredIds !== undefined && filteredIds.indexOf(well.id) === -1);
@@ -158,7 +68,7 @@ const PlateGrid = React.createClass({
                             selected={selected}
                             hidden={hidden}
                             iconSize={iconSize}
-                            handleWellClick={handleWellClick}
+                            handleWellClick={(event) => {handleImageWellClicked(well, event)}}
                             row={r}
                             col={c}
                             imgTableData={imgTableData} />
@@ -179,7 +89,7 @@ const PlateGrid = React.createClass({
         });
 
         return (
-            <div className="plateGrid">
+            <div className="plateGrid" ref="plateGrid">
                 <table>
                     <tbody>
                         <tr>
