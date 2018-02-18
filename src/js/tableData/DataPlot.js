@@ -22,7 +22,6 @@ export default React.createClass({
         return {
             xAxisName: undefined,
             yAxisName: undefined,
-            selectedImageIds: [],
         }
     },
 
@@ -39,31 +38,20 @@ export default React.createClass({
     },
 
     componentDidMount: function() {
-        // var jstree = this.props.jstree;
+        let dtype = this.props.imgJson[0].wellId ? 'well' : 'image';
+        let idAttr = (dtype === 'well' ? 'data-wellId': 'data-id')
         $(this.refs.thumb_plot_canvas).selectable({
             filter: 'img',
             distance: 2,
             stop: () => {
-                // TODO: If Dataset Images.... make the same selection in the jstree etc
-                console.log('stop...')
-                let imageIds = [];
-                let wellIds = [];
-                $(".ui-selected").each(function(){
-                    imageIds.push(parseInt($(this).attr('data-id'), 10));
-                    if ($(this).attr('data-wellId')) {
-                        wellIds.push(parseInt($(this).attr('data-wellId'), 10));
-                    }
+                // Make the same selection in the jstree etc
+                let ids = [];
+                $(".thumbnail_plot_canvas .ui-selected").each(function(){
+                    ids.push(parseInt($(this).attr(idAttr), 10));
                 });
-                console.log('wellIds, imageIds', wellIds, imageIds);
-                if (wellIds.length > 0) {
-                    this.setSelectedWells(wellIds);
-                } else {
-                    this.setState({selectedImageIds: imageIds});
-                }
+                console.log('dype', dtype, ids);
+                this.props.setImagesWellsSelected(dtype, ids);
             },
-            start: () => {
-                this.setState({selectedImageIds: []});
-            }
         });
     },
 
@@ -72,76 +60,12 @@ export default React.createClass({
         $(this.refs.dataIcons).selectable( "destroy" );
     },
 
-    setSelectedWells: function(wellIds) {
-
-        this.setState({selectedImageIds: wellIds});
-
-        var well_index = this.props.fieldId;
-        var selected_objs = wellIds.map(wId => ({id: 'well-' + wId, index: this.props.fieldId}))
-        $("body")
-            .data("selected_objects.ome", selected_objs)
-            .trigger("selection_change.ome");
-        // Update the buttons above jstree as if nothing selected
-        // (but don't actually change selection in jstree).
-        if (buttonsShowHide) {
-            buttonsShowHide([]);
-        }
-    },
-
-    handleIconClick: function(image, event) {
-        // Might be a Dataset image OR a Well that is selected.
-        let imageId = image.id;
-        let wellId = image.wellId;
-        if (wellId) {
-            this.setSelectedWells([wellId]);
-            return;
-        }
-        let jstree = this.props.jstree;
-        let containerNode = OME.getTreeImageContainerBestGuess(imageId);
-
-        let selIds = this.props.imgJson.filter(i => i.selected).map(i => i.id);
-        let imgIds = this.props.imgJson.map(i => i.id);
-        let clickedIndex = imgIds.indexOf(imageId);
-
-        let toSelect = [];
-
-        // handle shift
-        if (event.shiftKey && selIds.length > 0) {
-            // if any selected already, select range...
-            let firstSelIndex = imgIds.indexOf(selIds[0]);
-            let lastSelIndex = imgIds.indexOf(selIds[selIds.length - 1]);
-            firstSelIndex = Math.min(firstSelIndex, clickedIndex);
-            lastSelIndex = Math.max(lastSelIndex, clickedIndex);
-            toSelect = imgIds.slice(firstSelIndex, lastSelIndex + 1);
-        } else if (event.metaKey) {
-            // handle Cmd -> toggle selection
-            if (selIds.indexOf(imageId) === -1) {
-                selIds.push(imageId)
-                toSelect = selIds;
-            } else {
-                toSelect = selIds.filter(i => i !== imageId);
-            }
-        } else {
-            // Only select clicked image
-            toSelect = [imageId];
-        }
-        if (jstree) {
-            jstree.deselect_all();
-            let nodes = toSelect.map(iid => jstree.locate_node('image-' + iid, containerNode)[0]);
-            jstree.select_node(nodes);
-            // we also focus the node, so that hotkey events come from the node
-            if (nodes.length > 0) {
-                $("#" + nodes[0].id).children('.jstree-anchor').focus();
-            }
-        }
-    },
-
     render() {
-        let {imgJson, iconSize, tableData} = this.props;
+        let {imgJson, iconSize, tableData,
+             handleImageWellClicked, selectedWellIds} = this.props;
 
         let xAxisName = this.state.xAxisName;
         let yAxisName = this.state.yAxisName;
-        let selectedImageIds = this.state.selectedImageIds;
 
         // Available axes are dataTable keys.
         let axisNames = Object.keys(tableData);
@@ -170,10 +94,13 @@ export default React.createClass({
             return prev;
         }, {});
         function getAxisPercent(name, value) {
+            if (!value) return 0;
             let minMax = dataRanges[name];
             let fraction = (value - minMax[0])/(minMax[1] - minMax[0]);
             return fraction * 100;
         }
+
+        console.log('DataPlot', imgJson)
 
         return (
             <div className="parade_centrePanel">
@@ -192,14 +119,13 @@ export default React.createClass({
                     <div className="thumbnail_plot_canvas" ref="thumb_plot_canvas">
                         {imgJson.map(image => (
                             <img alt="image"
-                                className={selectedImageIds.indexOf(image.id) > -1 ? 'ui-selected' : ''}
+                                className={(image.selected || selectedWellIds.indexOf(image.id)) > -1 ? 'ui-selected' : ''}
                                 key={image.id}
                                 data-id={image.id}
                                 data-wellId={image.wellId}
                                 src={"/webgateway/render_thumbnail/" + image.id + "/"}
                                 title={image.name}
-                                onClick={event => {this.handleIconClick(image, event)}}
-
+                                onClick={event => {handleImageWellClicked(image, event)}}
                                 style={{left: getAxisPercent(xAxisName, tableData[xAxisName][image.id]) + '%',
                                         top: (100 - getAxisPercent(yAxisName, tableData[yAxisName][image.id])) + '%'}}
                             />

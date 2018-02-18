@@ -254,7 +254,6 @@ input[type=range].parade:focus::-ms-fill-upper {
   box-sizing: border-box;
 }
 
-.thumbnail_plot img.ui-selected {
+.parade_centrePanel img.ui-selected {
   border: solid #87ABD2 3px;
 }
-

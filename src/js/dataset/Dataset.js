@@ -5,67 +5,24 @@ import ImageIcon from './ImageIcon'
 const Dataset = React.createClass({
 
     componentDidMount: function() {
-        var jstree = this.props.jstree;
         $(this.refs.dataIcons).selectable({
-            filter: 'li.row',
+            filter: 'li.datasetThumb',
             distance: 2,
-            stop: function() {
+            stop: () => {
                 // Make the same selection in the jstree etc
-                $(".ui-selected").each(function(){
-                    var imageId = $(this).attr('data-id');
-                    var containerNode = OME.getTreeImageContainerBestGuess(imageId);
-                    var selectedNode = jstree.locate_node('image-' + imageId, containerNode)[0];
-                    jstree.select_node(selectedNode);
+                let ids = [];
+                $(".parade_centrePanel .ui-selected").each(function(){
+                    ids.push(parseInt($(this).attr('data-id'), 10));
                 });
+                console.log('Dataset', ids);
+                this.props.setImagesWellsSelected('image', ids);
             },
-            start: function() {
-                jstree.deselect_all();
-            }
         });
     },
 
     componentWillUnmount: function() {
         // cleanup plugin
         $(this.refs.dataIcons).selectable( "destroy" );
-    },
-
-    handleIconClick: function(imageId, event) {
-        let jstree = this.props.jstree;
-        let containerNode = OME.getTreeImageContainerBestGuess(imageId);
-
-        let selIds = this.props.imgJson.filter(i => i.selected).map(i => i.id);
-        let imgIds = this.props.imgJson.map(i => i.id);
-        let clickedIndex = imgIds.indexOf(imageId);
-
-        let toSelect = [];
-
-        // handle shift
-        if (event.shiftKey && selIds.length > 0) {
-            // if any selected already, select range...
-            let firstSelIndex = imgIds.indexOf(selIds[0]);
-            let lastSelIndex = imgIds.indexOf(selIds[selIds.length - 1]);
-            firstSelIndex = Math.min(firstSelIndex, clickedIndex);
-            lastSelIndex = Math.max(lastSelIndex, clickedIndex);
-            toSelect = imgIds.slice(firstSelIndex, lastSelIndex + 1);
-        } else if (event.metaKey) {
-            // handle Cmd -> toggle selection
-            if (selIds.indexOf(imageId) === -1) {
-                selIds.push(imageId)
-                toSelect = selIds;
-            } else {
-                toSelect = selIds.filter(i => i !== imageId);
-            }
-        } else {
-            // Only select clicked image
-            toSelect = [imageId];
-        }
-        jstree.deselect_all();
-        let nodes = toSelect.map(iid => jstree.locate_node('image-' + iid, containerNode)[0]);
-        jstree.select_node(nodes);
-        // we also focus the node, so that hotkey events come from the node
-        if (nodes.length > 0) {
-            $("#" + nodes[0].id).children('.jstree-anchor').focus();
-        }
     },
 
     render() {
