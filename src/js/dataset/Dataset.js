@@ -39,7 +39,7 @@ const Dataset = React.createClass({
                             image={image}
                             key={image.id}
                             iconSize={iconSize}
-                            handleIconClick={this.handleIconClick} />
+                            handleImageWellClicked={this.props.handleImageWellClicked} />
                     ))}
                 </ul>
             </div>

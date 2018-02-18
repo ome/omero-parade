@@ -100,7 +100,6 @@ export default React.createClass({
 
     render() {
         let {imgJson, iconSize, tableData, selectedWellIds} = this.props;
-
         if (this.state.sortBy != undefined) {
             let orderedImageIds;
             if (this.state.sortBy === "cluster") {

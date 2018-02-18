@@ -12,7 +12,7 @@ export default React.createClass({
     getInitialState: function() {
         return {
             iconSize: 50,
-            layout: "table",   // "icon" or "table"
+            layout: "icon",   // "icon", "plot" or "table"
             dataProviders: [],
             tableData: {},
             selectedWellIds: [],

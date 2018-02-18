@@ -13,8 +13,11 @@ export default React.createClass({
 
     componentDidMount: function() {
         // list available filters (TODO: only for current data? e.g. plate)
+        let url = window.PARADE_FILTERS_URL;
+        if (this.props.plateId) url += '?plate=' + this.props.plateId;
+        if (this.props.datasetId) url += '?dataset=' + this.props.plateId;
         $.ajax({
-            url: window.PARADE_FILTERS_URL,
+            url: url,
             dataType: 'json',
             cache: false,
             success: function(data) {
