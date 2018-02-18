@@ -7,7 +7,7 @@ from omero_parade.utils import get_image_ids
 
 
 def get_dataproviders(request, conn):
-    return ["ROI_count"]
+    return ["ROI_count", "sizeT"]
 
 
 def get_data(request, data_name, conn):
@@ -33,3 +33,15 @@ def get_data(request, data_name, conn):
             roi_counts[i[0].val] = i[1].val
         
         return roi_counts
+
+    if data_name == "sizeT":
+        # Want to get sizeT for images
+        params = ParametersI()
+        params.addIds(img_ids)
+        query = "select pixels.image.id, pixels.sizeT from Pixels pixels "\
+                "where pixels.image.id in (:ids)"
+        p = query_service.projection(query, params, conn.SERVICE_OPTS)
+        size_t = {}
+        for i in p:
+            size_t[i[0].val] = i[1].val
+        return size_t
