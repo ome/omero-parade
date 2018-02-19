@@ -7,7 +7,13 @@ from omero_parade.utils import get_image_ids
 
 
 def get_dataproviders(request, conn):
-    return ["ROI_count", "sizeT"]
+    rv = ["ROI_count", "sizeT"]
+    #  Check if Plate images have ROI stats as map annotation...
+    plate_id = request.GET.get('plate')
+    ns = "roi.pixel.intensities.summary"
+    if plate_id and get_image_map_annotations(conn, plate_id, 0, ns):
+        rv.append("ROI_stats_max_size")
+    return rv
 
 
 def get_data(request, data_name, conn):
@@ -21,6 +27,11 @@ def get_data(request, data_name, conn):
         img_ids = [i.id for i in conn.getObjects('Image', opts={'dataset': dataset_id})]
     query_service = conn.getQueryService()
 
+    if data_name == "ROI_stats_max_size":
+        if plate_id:
+            ns = "roi.pixel.intensities.summary"
+            return get_image_map_annotations(conn, plate_id, 0, ns, "Max Points")
+
     if data_name == "ROI_count":
         # Want to get ROI count for images
         params = ParametersI()
@@ -31,7 +42,6 @@ def get_data(request, data_name, conn):
         roi_counts = {}
         for i in p:
             roi_counts[i[0].val] = i[1].val
-        
         return roi_counts
 
     if data_name == "sizeT":
@@ -45,3 +55,27 @@ def get_data(request, data_name, conn):
         for i in p:
             size_t[i[0].val] = i[1].val
         return size_t
+
+
+def get_image_map_annotations(conn, plate_id, field_id, ns, key=None):
+    """Get image IDs for images in Plate"""
+    conn.SERVICE_OPTS.setOmeroGroup('-1')
+    query_service = conn.getQueryService()
+    iids = get_image_ids(conn, plate_id, field_id)
+    params = ParametersI()
+    params.addIds(iids)
+    query = """select oal from ImageAnnotationLink as oal
+            join fetch oal.details.owner
+            left outer join fetch oal.child as ch
+            left outer join fetch oal.parent as pa
+            where pa.id in (:ids)
+            and ch.ns='%s'""" % ns
+    links = query_service.findAllByQuery(query, params, conn.SERVICE_OPTS)
+    if key is None:
+        return links
+    map_values = {}
+    for l in links:
+        for kv in l.child.getMapValue():
+            if key == kv.name:
+                map_values[l.parent.id.val] = long(kv.value)
+    return map_values
