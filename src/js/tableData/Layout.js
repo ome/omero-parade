@@ -192,7 +192,7 @@ export default React.createClass({
         }
 
         return(
-                <div className="plateContainer">
+                <div className="parade_layout_container">
                     <div className="layoutHeader">
                         <select defaultValue={"--"} onChange={this.handleAddData}>
                             <option

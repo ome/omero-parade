@@ -19,7 +19,7 @@
   height: 100%;
 }
 
-.plateContainer {
+.parade_layout_container {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -252,11 +252,18 @@ input[type=range].parade:focus::-ms-fill-upper {
   width: 20px;
   height: 20px;
   margin: -10px;
+}
+
+.parade_layout_container img {
   box-sizing: border-box;
 }
 
 .parade_centrePanel img.ui-selected {
   border: solid #87ABD2 3px;
+}
+
+.plateGrid td.ui-selected img {
+  border: solid transparent 3px;
 }
 
 .parade_removeFilter {
