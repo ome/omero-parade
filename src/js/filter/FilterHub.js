@@ -42,6 +42,17 @@ export default React.createClass({
         });
     },
 
+    handleRemoveFilter: function(filterIndex) {
+        let fNames = [...this.state.filterNames];
+        let fValues = [...this.state.filterValues];
+        fNames.splice(filterIndex, 1);
+        fValues.splice(filterIndex, 1);
+        this.setState({
+            filterNames: fNames,
+            filterValues: fValues
+        });
+    },
+
     setIconSize: function(size) {
         this.setState({iconSize: parseInt(size, 10)});
     },
@@ -84,6 +95,7 @@ export default React.createClass({
                         addFilter={this.addFilter}
                         handleFilterLoaded={this.handleFilterLoaded}
                         handleFilterChange={this.handleFilterChange}
+                        handleRemoveFilter={this.handleRemoveFilter}
                         filterNames={this.state.filterNames}
                         filterValues={this.state.filterValues}
                         />

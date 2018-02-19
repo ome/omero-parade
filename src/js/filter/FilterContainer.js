@@ -7,7 +7,6 @@ export default React.createClass({
     getInitialState: function() {
         return {
             filters: [],
-            selectedFilters: [],
         }
     },
 
@@ -60,7 +59,7 @@ export default React.createClass({
                 {
                     this.props.filterNames.map((fname, idx) => (
                         <ParadeFilter
-                            key={""+idx}
+                            key={fname + idx}
                             filterIndex={idx}
                             name={fname}
                             datasetId={this.props.datasetId}
@@ -68,6 +67,7 @@ export default React.createClass({
                             fieldId={this.props.fieldId}
                             handleFilterLoaded={this.props.handleFilterLoaded}
                             handleFilterChange={this.props.handleFilterChange}
+                            handleRemoveFilter={this.props.handleRemoveFilter}
                         />
                     ))
                 }

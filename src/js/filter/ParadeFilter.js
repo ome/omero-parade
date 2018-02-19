@@ -41,7 +41,8 @@ export default React.createClass({
 
     render: function() {
         return(
-            <div>{this.props.name}
+            <div className="parade_filter">
+                {this.props.name}
                 {this.state.filterParams.map(p => {
                     return <FilterInput
                                 param={p}
@@ -49,6 +50,11 @@ export default React.createClass({
                                 onChange={this.handleFilterInput}
                             />
                 })}
+                <button
+                    className="parade_removeFilter"
+                    onClick={() => {this.props.handleRemoveFilter(this.props.filterIndex)}}>
+                    X 
+                </button>
             </div>
         )
     }

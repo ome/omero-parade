@@ -28,10 +28,11 @@
 .filterContainer {
   background: rgb(239, 241, 244);
   border-bottom: 1px solid hsl(210, 32%, 87%);
-  padding: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
-.filterContainer>div {
+.parade_filter {
   margin: 5px;
 }
 
@@ -256,4 +257,14 @@ input[type=range].parade:focus::-ms-fill-upper {
 
 .parade_centrePanel img.ui-selected {
   border: solid #87ABD2 3px;
+}
+
+.parade_removeFilter {
+  margin-left: 20px;
+  border-radius: 15px;
+  visibility: hidden;
+}
+
+.parade_filter:hover .parade_removeFilter {
+  visibility: visible;
 }
