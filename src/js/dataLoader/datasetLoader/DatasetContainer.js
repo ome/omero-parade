@@ -1,7 +1,6 @@
 
 import React, { Component } from 'react';
-import Dataset from './Dataset'
-import FilterHub from '../filter/FilterHub'
+import FilterHub from '../../filter/FilterHub'
 
 
 const DatasetContainer = React.createClass({

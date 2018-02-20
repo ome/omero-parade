@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
-import FilterContainer from '../filter/FilterContainer';
-import Layout from '../tableData/Layout';
+import FilterContainer from './FilterContainer';
+import Layout from '../dataView/Layout';
 
 export default React.createClass({
 

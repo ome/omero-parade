@@ -1,10 +1,9 @@
 
 import React, { Component } from 'react';
-import FilterContainer from '../filter/FilterContainer';
-import DataTable from './DataTable';
-import DataPlot from './DataPlot';
-import PlateGrid from '../plate/PlateGrid';
-import Dataset from '../dataset/Dataset';
+import Dataset from './dataset/Dataset';
+import PlateGrid from './plate/PlateGrid';
+import DataPlot from './plot/DataPlot';
+import DataTable from './table/DataTable';
 import Footer from '../Footer';
 
 export default React.createClass({
@@ -24,7 +23,6 @@ export default React.createClass({
     },
 
     setLayout: function(layout) {
-        console.log(layout);
         this.setState({layout: layout});
     },
 

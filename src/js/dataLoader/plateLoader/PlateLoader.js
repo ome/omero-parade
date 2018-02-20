@@ -1,8 +1,6 @@
 
 import React, { Component } from 'react';
-import FilterHub from '../filter/FilterHub';
-import PlateGrid from '../plate/PlateGrid';
-import Footer from '../Footer';
+import FilterHub from '../../filter/FilterHub';
 
 export default React.createClass({
 

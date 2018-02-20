@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
-import FieldsLoader from './FieldsLoader'
-import DatasetContainer from '../dataset/DatasetContainer';
+import FieldsLoader from './plateLoader/FieldsLoader'
+import DatasetContainer from './datasetLoader/DatasetContainer';
 
 
 const DataContainer = React.createClass({
