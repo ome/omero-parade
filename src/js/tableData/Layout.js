@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import FilterContainer from '../filter/FilterContainer';
 import DataTable from './DataTable';
+import DataPlot from './DataPlot';
 import PlateGrid from '../plate/PlateGrid';
 import Dataset from '../dataset/Dataset';
 import Footer from '../Footer';
@@ -11,9 +12,10 @@ export default React.createClass({
     getInitialState: function() {
         return {
             iconSize: 50,
-            layout: "table",   // "icon" or "table"
+            layout: "icon",   // "icon", "plot" or "table"
             dataProviders: [],
             tableData: {},
+            selectedWellIds: [],
         }
     },
 
@@ -65,6 +67,83 @@ export default React.createClass({
         }
     },
 
+    handleImageWellClicked: function(obj, event) {
+        // Might be a Dataset image OR a Well that is selected.
+        let imageId = obj.id;
+        let wellId = obj.wellId;
+        if (wellId) {
+            // TODO - handle Shift/Ctrl-click
+            this.setSelectedWells([wellId]);
+            return;
+        }
+        let selIds = this.props.filteredImages.filter(i => i.selected).map(i => i.id);
+        let imgIds = this.props.filteredImages.map(i => i.id);
+        let clickedIndex = imgIds.indexOf(imageId);
+
+        let toSelect = [];
+        // handle shift
+        if (event.shiftKey && selIds.length > 0) {
+            // if any selected already, select range...
+            let firstSelIndex = imgIds.indexOf(selIds[0]);
+            let lastSelIndex = imgIds.indexOf(selIds[selIds.length - 1]);
+            firstSelIndex = Math.min(firstSelIndex, clickedIndex);
+            lastSelIndex = Math.max(lastSelIndex, clickedIndex);
+            toSelect = imgIds.slice(firstSelIndex, lastSelIndex + 1);
+        } else if (event.metaKey) {
+            // handle Cmd -> toggle selection
+            if (selIds.indexOf(imageId) === -1) {
+                selIds.push(imageId)
+                toSelect = selIds;
+            } else {
+                toSelect = selIds.filter(i => i !== imageId);
+            }
+        } else {
+            // Only select clicked image
+            toSelect = [imageId];
+        }
+        this.setSelectedImages(toSelect);
+    },
+
+    setImagesWellsSelected: function(dtype, ids) {
+        // Selected state of IMAGES is handled in jstree
+        // Selected state of WELLS is handled by this.state 
+        if (dtype === 'well') {
+            this.setSelectedWells(ids);
+        } else {
+            this.setSelectedImages(ids);
+        }
+    },
+
+    setSelectedWells: function(wellIds) {
+        this.setState({selectedWellIds: wellIds});
+        // Trigger loading Wells in right panel...
+        var well_index = this.props.fieldId;
+        var selected_objs = wellIds.map(wId => ({id: 'well-' + wId, index: this.props.fieldId}))
+        $("body")
+            .data("selected_objects.ome", selected_objs)
+            .trigger("selection_change.ome");
+        // Update the buttons above jstree as if nothing selected
+        // (but don't actually change selection in jstree).
+        if (buttonsShowHide) {
+            buttonsShowHide([]);
+        }
+    },
+
+    setSelectedImages: function(imageIds) {
+        let jstree = this.props.jstree;
+        if (jstree) {
+            jstree.deselect_all();
+            if (imageIds.length === 0) return;
+            let containerNode = OME.getTreeImageContainerBestGuess(imageIds[0]);
+            let nodes = imageIds.map(iid => jstree.locate_node('image-' + iid, containerNode)[0]);
+            jstree.select_node(nodes);
+            // we also focus the node, so that hotkey events come from the node
+            if (nodes.length > 0) {
+                $("#" + nodes[0].id).children('.jstree-anchor').focus();
+            }
+        }
+    },
+
     render: function() {
         if (this.props.plateData === undefined && this.props.filteredImages === undefined) {
             return(<div></div>)
@@ -76,9 +155,20 @@ export default React.createClass({
                 <DataTable
                     iconSize={this.state.iconSize}
                     imgJson={filteredImages}
-                    jstree = {this.props.jstree}
+                    selectedWellIds={this.state.selectedWellIds}
+                    handleImageWellClicked = {this.handleImageWellClicked}
+                    setImagesWellsSelected = {this.setImagesWellsSelected}
                     tableData={this.state.tableData}
-                    fieldId={this.props.fieldId}
+                    />)
+        } else if (this.state.layout === "plot") {
+            imageComponent = (
+                <DataPlot
+                    iconSize={this.state.iconSize}
+                    imgJson={filteredImages}
+                    tableData={this.state.tableData}
+                    selectedWellIds={this.state.selectedWellIds}
+                    handleImageWellClicked = {this.handleImageWellClicked}
+                    setImagesWellsSelected = {this.setImagesWellsSelected}
                     />)
         } else if (this.props.plateData) {
             imageComponent = (
@@ -87,21 +177,24 @@ export default React.createClass({
                     plateData={this.props.plateData}
                     filteredImages={filteredImages}
                     tableData={this.state.tableData}
-                    fieldId={this.props.fieldId}
+                    selectedWellIds={this.state.selectedWellIds}
+                    handleImageWellClicked = {this.handleImageWellClicked}
+                    setImagesWellsSelected = {this.setImagesWellsSelected}
                     />)
         } else {
             imageComponent = (
                 <Dataset
                     iconSize={this.state.iconSize}
                     imgJson={filteredImages}
-                    jstree = {this.props.jstree}
+                    handleImageWellClicked = {this.handleImageWellClicked}
+                    setImagesWellsSelected = {this.setImagesWellsSelected}
                     />)
         }
 
         return(
-                <div className="plateContainer">
+                <div className="parade_layout_container">
                     <div className="layoutHeader">
-                        <select defaultValue={"--"} onChange={this.handleAddData}>
+                        <select value={"--"} defaultValue={"--"} onChange={this.handleAddData}>
                             <option
                                 value="--" >
                                 Add table data...
@@ -122,6 +215,9 @@ export default React.createClass({
                             </button>
                             <button onClick={() => {this.setLayout("table")}}>
                                 list
+                            </button>
+                            <button onClick={() => {this.setLayout("plot")}}>
+                                plot
                             </button>
                         </div>
                     </div>

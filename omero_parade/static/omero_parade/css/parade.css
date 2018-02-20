@@ -16,9 +16,10 @@
   right: 0;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
-.plateContainer {
+.parade_layout_container {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -27,10 +28,11 @@
 .filterContainer {
   background: rgb(239, 241, 244);
   border-bottom: 1px solid hsl(210, 32%, 87%);
-  padding: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
-.filterContainer>div {
+.parade_filter {
   margin: 5px;
 }
 
@@ -226,4 +228,50 @@ input[type=range].parade:focus::-ms-fill-upper {
   padding: 5px;
   background: rgb(239, 241, 244);
   border-bottom: 1px solid hsl(210,10%,70%);
+}
+
+.thumbnail_plot {
+  margin: 50px 100px;
+  width: 502px;
+  height: 352px;
+  box-sizing: border-box;
+  border: solid black 1px;
+  position: relative;
+}
+
+.thumbnail_plot_canvas {
+  margin: 10px;
+  width: 480px;
+  height: 330px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.thumbnail_plot img {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  margin: -10px;
+}
+
+.parade_layout_container img {
+  box-sizing: border-box;
+}
+
+.parade_centrePanel img.ui-selected {
+  border: solid #87ABD2 3px;
+}
+
+.plateGrid td.ui-selected img {
+  border: solid transparent 3px;
+}
+
+.parade_removeFilter {
+  margin-left: 20px;
+  border-radius: 15px;
+  visibility: hidden;
+}
+
+.parade_filter:hover .parade_removeFilter {
+  visibility: visible;
 }

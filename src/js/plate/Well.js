@@ -50,6 +50,7 @@ const Well = React.createClass({
 
         return (
             <td className={"well " + cls}
+                data-wellId={id}
                 title={""+row+col}>
                 <div
                     style={divStyle}

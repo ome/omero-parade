@@ -18,7 +18,7 @@ const ImageIcon = React.createClass({
 
     handleIconClick: function(event) {
         // this.setState ({selected: true});
-        this.props.handleIconClick(this.props.image.id, event);
+        this.props.handleImageWellClicked(this.props.image, event);
     },
 
     // getInitialState: function() {

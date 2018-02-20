@@ -6,12 +6,18 @@ from omero.constants.namespaces import NSBULKANNOTATIONS
 from omero.model import OriginalFileI
 
 def get_filters(request, conn):
-    return ["Table"]
+    if request.GET.get('plate', None) is not None:
+        # TODO: Could actually check if there is a table on this Plate
+        return ["Table"]
+    return []
 
 def get_script(request, script_name, conn):
     """Return a JS function to filter images by various params."""
     plate_id = request.GET.get('plate')
     query_service = conn.getQueryService()
+
+    if plate_id is None:
+        return JsonResponse({'Error': 'Plate ID not specified'})
 
     if script_name == "Table":
 

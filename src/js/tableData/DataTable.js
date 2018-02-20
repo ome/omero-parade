@@ -14,26 +14,19 @@ export default React.createClass({
     },
 
     componentDidMount: function() {
-        var jstree = this.props.jstree;
-        $(this.refs.dataIcons).selectable({
-            filter: 'li.row',
+        $(this.refs.dataTable).selectable({
+            filter: 'img',
             distance: 2,
-            stop: function() {
+            stop: () => {
+                let dtype = this.props.imgJson[0].wellId ? 'well' : 'image';
+                let idAttr = (dtype === 'well' ? 'data-wellId': 'data-id');
                 // Make the same selection in the jstree etc
-                $(".ui-selected").each(function(){
-                    var imageId = $(this).attr('data-id');
-                    var containerNode = OME.getTreeImageContainerBestGuess(imageId);
-                    var selectedNode = jstree.locate_node('image-' + imageId, containerNode)[0];
-                    if (jstree) {
-                        jstree.select_node(selectedNode);
-                    }
+                let ids = [];
+                $(".parade_dataTable .ui-selected").each(function(){
+                    ids.push(parseInt($(this).attr(idAttr), 10));
                 });
+                this.props.setImagesWellsSelected(dtype, ids);
             },
-            start: function() {
-                if (jstree) {
-                    jstree.deselect_all();
-                }
-            }
         });
     },
 
@@ -56,70 +49,6 @@ export default React.createClass({
         this.setState({
             showHeatmapColumns: showHeatmapColumns
         });
-    },
-
-    setSelectedWells: function(wellIds) {
-
-        this.setState({selectedWellIds: wellIds});
-
-        var well_index = this.props.fieldId;
-        var selected_objs = wellIds.map(wId => ({id: 'well-' + wId, index: this.props.fieldId}))
-        $("body")
-            .data("selected_objects.ome", selected_objs)
-            .trigger("selection_change.ome");
-        // Update the buttons above jstree as if nothing selected
-        // (but don't actually change selection in jstree).
-        if (buttonsShowHide) {
-            buttonsShowHide([]);
-        }
-    },
-
-    handleIconClick: function(image, event) {
-        // Might be a Dataset image OR a Well that is selected.
-        let imageId = image.id;
-        let wellId = image.wellId;
-        if (wellId) {
-            this.setSelectedWells([wellId]);
-            return;
-        }
-        let jstree = this.props.jstree;
-        let containerNode = OME.getTreeImageContainerBestGuess(imageId);
-
-        let selIds = this.props.imgJson.filter(i => i.selected).map(i => i.id);
-        let imgIds = this.props.imgJson.map(i => i.id);
-        let clickedIndex = imgIds.indexOf(imageId);
-
-        let toSelect = [];
-
-        // handle shift
-        if (event.shiftKey && selIds.length > 0) {
-            // if any selected already, select range...
-            let firstSelIndex = imgIds.indexOf(selIds[0]);
-            let lastSelIndex = imgIds.indexOf(selIds[selIds.length - 1]);
-            firstSelIndex = Math.min(firstSelIndex, clickedIndex);
-            lastSelIndex = Math.max(lastSelIndex, clickedIndex);
-            toSelect = imgIds.slice(firstSelIndex, lastSelIndex + 1);
-        } else if (event.metaKey) {
-            // handle Cmd -> toggle selection
-            if (selIds.indexOf(imageId) === -1) {
-                selIds.push(imageId)
-                toSelect = selIds;
-            } else {
-                toSelect = selIds.filter(i => i !== imageId);
-            }
-        } else {
-            // Only select clicked image
-            toSelect = [imageId];
-        }
-        if (jstree) {
-            jstree.deselect_all();
-            let nodes = toSelect.map(iid => jstree.locate_node('image-' + iid, containerNode)[0]);
-            jstree.select_node(nodes);
-            // we also focus the node, so that hotkey events come from the node
-            if (nodes.length > 0) {
-                $("#" + nodes[0].id).children('.jstree-anchor').focus();
-            }
-        }
     },
 
     clusterTableData: function() {
@@ -170,8 +99,7 @@ export default React.createClass({
     },
 
     render() {
-        let {imgJson, iconSize, tableData} = this.props;
-
+        let {imgJson, iconSize, tableData, selectedWellIds} = this.props;
         if (this.state.sortBy != undefined) {
             let orderedImageIds;
             if (this.state.sortBy === "cluster") {
@@ -211,7 +139,7 @@ export default React.createClass({
 
         return (
             <div className="parade_centrePanel">
-                <table className="parade_dataTable">
+                <table className="parade_dataTable" ref="dataTable">
                     <tbody>
                     <tr>
                         <td>
@@ -236,11 +164,14 @@ export default React.createClass({
                         <tr key={image.id}>
                             <td>
                                 <img alt="image"
+                                    className={(image.selected || selectedWellIds.indexOf(image.wellId)) > -1 ? 'ui-selected' : ''}
                                     width={iconSize + "px"}
                                     height={iconSize + "px"}
                                     src={"/webgateway/render_thumbnail/" + image.id + "/"}
                                     title={image.name}
-                                    onClick={event => {this.handleIconClick(image, event)}} />
+                                    data-id={image.id}
+                                    data-wellId={image.wellId}
+                                    onClick={event => {this.props.handleImageWellClicked(image, event)}} />
                             </td>
                             <td>
                                 {image.name}
