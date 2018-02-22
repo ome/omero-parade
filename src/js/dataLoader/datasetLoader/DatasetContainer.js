@@ -1,29 +1,9 @@
 
 import React, { Component } from 'react';
-import Dataset from './Dataset'
-import FilterHub from '../filter/FilterHub'
+import FilterHub from '../../filter/FilterHub'
 
 
 const DatasetContainer = React.createClass({
-
-    deselectHiddenThumbs: function() {
-        var imageIds = this._thumbsToDeselect;
-        if (imageIds.length === 0) {
-            return;
-        }
-        var jstree = this.props.jstree;
-        var containerNode = OME.getTreeImageContainerBestGuess(imageIds[0]);
-        if (containerNode) {
-            imageIds.forEach(function(iid){
-                var selectedNode = jstree.locate_node('image-' + iid, containerNode)[0];
-                jstree.deselect_node(selectedNode, true);
-            });
-        }
-    },
-
-    setThumbsToDeselect: function(imageIds) {
-        this._thumbsToDeselect = imageIds;
-    },
 
     marshalNode: function(node) {
         var parentNode = this.props.parentNode;
@@ -45,21 +25,6 @@ const DatasetContainer = React.createClass({
             // share ID will be needed to open image viewer
             iData.shareId = node.data.obj.shareId;
         }
-        // Thumb version: random to break cache if thumbnails are -1 'in progress'
-        // or we're refreshing 1 or all thumbnails
-        // if (node.data.obj.thumbVersion != undefined ||
-        //         event.type === "refreshThumbnails" ||
-        //         event.type === "refreshThumb") {
-        //     var thumbVersion = node.data.obj.thumbVersion;
-        //     if (thumbVersion === -1 || event.type === "refreshThumbnails" || (
-        //             event.type === "refreshThumb" && data.imageId === iData.id)) {
-        //         thumbVersion = getRandom();
-        //         // We cache this to prevent new thumbnails requested on every
-        //         // selection change. Refreshing of tree will reset thumbVersion.
-        //         node.data.obj.thumbVersion = thumbVersion;
-        //     }
-        //     iData.thumbVersion = thumbVersion;
-        // }
         return iData;
     },
 
@@ -96,7 +61,7 @@ const DatasetContainer = React.createClass({
 
         return (<FilterHub
                 datasetId={this.props.parentNode.data.obj.id}
-                jstree = {this.props.jstree}
+                setSelectedImages = {this.props.setSelectedImages}
                 images={imgJson}
             />)
     }

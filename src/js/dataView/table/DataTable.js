@@ -1,7 +1,6 @@
 
 import React, { Component } from 'react';
-import ImageIcon from '../dataset/ImageIcon';
-import { getHeatmapColor } from '../util';
+import { getHeatmapColor } from '../../util';
 import clusterfck from 'clusterfck';
 
 export default React.createClass({

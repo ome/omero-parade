@@ -1,10 +1,25 @@
 
 import React, { Component } from 'react';
-import FieldsLoader from './FieldsLoader'
-import DatasetContainer from '../dataset/DatasetContainer';
+import FieldsLoader from './plateLoader/FieldsLoader'
+import DatasetContainer from './datasetLoader/DatasetContainer';
 
 
 const DataContainer = React.createClass({
+
+    setSelectedImages: function(imageIds) {
+        let jstree = this.props.jstree;
+        if (jstree) {
+            jstree.deselect_all();
+            if (imageIds.length === 0) return;
+            let containerNode = OME.getTreeImageContainerBestGuess(imageIds[0]);
+            let nodes = imageIds.map(iid => jstree.locate_node('image-' + iid, containerNode)[0]);
+            jstree.select_node(nodes);
+            // we also focus the node, so that hotkey events come from the node
+            if (nodes.length > 0) {
+                $("#" + nodes[0].id).children('.jstree-anchor').focus();
+            }
+        }
+    },
 
     render: function() {
         var parentNode = this.props.parentNode;
@@ -26,14 +41,14 @@ const DataContainer = React.createClass({
         }
         // We pass key to <FieldsLoader> so that if key doesn't change,
         // Plate won't mount (load data) again
-        var inst = this.props.inst;
+        var jstree = this.props.jstree;
         var parentId = parentNode.data.id;
         var dtype = parentNode.type;
 
         let rv = (<div>OOps {dtype}</div>);
         if (dtype == "plate" || dtype == "aquisition") {
             if (dtype == "acquisition") {
-                parentId = inst.get_node(inst.get_parent(parentNode)).data.id;
+                parentId = jstree.get_node(jstree.get_parent(parentNode)).data.id;
             }
 
             rv = (
@@ -46,8 +61,9 @@ const DataContainer = React.createClass({
         if (dtype === "dataset") {
             rv = (
                 <DatasetContainer
-                    jstree={inst}
-                    parentNode={parentNode}/>
+                    jstree={jstree}
+                    parentNode={parentNode}
+                    setSelectedImages={this.setSelectedImages}/>
             )
         }
         return rv;

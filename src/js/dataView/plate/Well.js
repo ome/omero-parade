@@ -1,6 +1,5 @@
 
 import React, { Component } from 'react';
-import { getHeatmapColor } from '../util'
 
 const Well = React.createClass({
 

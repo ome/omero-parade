@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
-import FilterContainer from '../filter/FilterContainer';
-import Layout from '../tableData/Layout';
+import FilterContainer from './FilterContainer';
+import Layout from '../dataView/Layout';
 
 export default React.createClass({
 
@@ -103,7 +103,7 @@ export default React.createClass({
                         datasetId={this.props.datasetId}
                         plateId={this.props.plateId}
                         fieldId={this.props.fieldId}
-                        jstree={this.props.jstree}
+                        setSelectedImages={this.props.setSelectedImages}
                         plateData={this.props.plateData}
                         filteredImages={filteredImages}
                         />

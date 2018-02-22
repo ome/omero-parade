@@ -11,6 +11,22 @@ $(function() {
   window.PARADE_INDEX_URL = "{% url 'parade_index' %}";
   window.PARADE_DATAPROVIDERS_URL = "{% url 'parade_dataproviders' %}";
 
+
+  // TODO: this should be handled by omeroweb_center_plugin()
+  // to call load_plugin_content() when needed.
+  // Start listening for Node Loading events on the tree...
+  // If a node loads and it's selected, update_thumbs...
+  $("#dataTree").on('load_node.jstree', function(event, data){
+      if (data.node.state.selected) {
+          // update_thumbnails_panel(event, data);
+          var datatree = $.jstree.reference('#dataTree');
+          if (!datatree) return;
+          var tree_selected = datatree.get_selected(true);
+          omero_parade.default(tree_selected, datatree);
+      }
+  });
+
+
   $("#omero_parade").omeroweb_center_plugin({
     plugin_index: pluginIndex,        // From the Django template loop
     empty_on_sel_change: false,       // Do not completely erase content when changing selection

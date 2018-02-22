@@ -1,10 +1,9 @@
 
 import React, { Component } from 'react';
-import FilterContainer from '../filter/FilterContainer';
-import DataTable from './DataTable';
-import DataPlot from './DataPlot';
-import PlateGrid from '../plate/PlateGrid';
-import Dataset from '../dataset/Dataset';
+import Dataset from './dataset/Dataset';
+import PlateGrid from './plate/PlateGrid';
+import DataPlot from './plot/DataPlot';
+import DataTable from './table/DataTable';
 import Footer from '../Footer';
 
 export default React.createClass({
@@ -24,7 +23,6 @@ export default React.createClass({
     },
 
     setLayout: function(layout) {
-        console.log(layout);
         this.setState({layout: layout});
     },
 
@@ -101,7 +99,7 @@ export default React.createClass({
             // Only select clicked image
             toSelect = [imageId];
         }
-        this.setSelectedImages(toSelect);
+        this.props.setSelectedImages(toSelect);
     },
 
     setImagesWellsSelected: function(dtype, ids) {
@@ -110,7 +108,7 @@ export default React.createClass({
         if (dtype === 'well') {
             this.setSelectedWells(ids);
         } else {
-            this.setSelectedImages(ids);
+            this.props.setSelectedImages(ids);
         }
     },
 
@@ -126,21 +124,6 @@ export default React.createClass({
         // (but don't actually change selection in jstree).
         if (buttonsShowHide) {
             buttonsShowHide([]);
-        }
-    },
-
-    setSelectedImages: function(imageIds) {
-        let jstree = this.props.jstree;
-        if (jstree) {
-            jstree.deselect_all();
-            if (imageIds.length === 0) return;
-            let containerNode = OME.getTreeImageContainerBestGuess(imageIds[0]);
-            let nodes = imageIds.map(iid => jstree.locate_node('image-' + iid, containerNode)[0]);
-            jstree.select_node(nodes);
-            // we also focus the node, so that hotkey events come from the node
-            if (nodes.length > 0) {
-                $("#" + nodes[0].id).children('.jstree-anchor').focus();
-            }
         }
     },
 
@@ -194,7 +177,7 @@ export default React.createClass({
         return(
                 <div className="parade_layout_container">
                     <div className="layoutHeader">
-                        <select value={"--"} defaultValue={"--"} onChange={this.handleAddData}>
+                        <select value={"--"} onChange={this.handleAddData}>
                             <option
                                 value="--" >
                                 Add table data...
