@@ -5,6 +5,7 @@ const styles = {
     footer: {
         position: 'relative',
         height: 25,
+        flex: '0 0 25px',
         borderRight: 0,
         borderBottom: 'solid 1px hsl(210,10%,90%)',
         overflow: 'hidden',
