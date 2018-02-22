@@ -38,7 +38,7 @@ const App = React.createClass({
     getParentNode: function() {
         // See http://will-moore.github.io/react-render-purely-props-and-state/
         var selected = this.props.selected,
-            inst = this.props.jstree;
+            jstree = this.props.jstree;
         if (this.renderNothing(selected)) {
             return;
         }
@@ -50,7 +50,7 @@ const App = React.createClass({
             return selected[0];
         }
         if (dtype === "image") {
-            return inst.get_node(inst.get_parent(selected[0]));
+            return jstree.get_node(jstree.get_parent(selected[0]));
         }
     },
 
@@ -63,7 +63,7 @@ const App = React.createClass({
             return (
                 <DataContainer
                     parentNode={parentNode}
-                    inst={this.props.jstree} />
+                    jstree={this.props.jstree} />
             )
             // } else {
             //     // handles tag, orphaned, dataset, share
@@ -73,7 +73,7 @@ const App = React.createClass({
             //     return (
             //         <DatasetContainer
             //             parentNode={parentNode}
-            //             inst={this.props.jstree} />
+            //             jstree={this.props.jstree} />
             //     )
             // }
         }

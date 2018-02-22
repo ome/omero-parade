@@ -103,7 +103,7 @@ export default React.createClass({
                         datasetId={this.props.datasetId}
                         plateId={this.props.plateId}
                         fieldId={this.props.fieldId}
-                        jstree={this.props.jstree}
+                        setSelectedImages={this.props.setSelectedImages}
                         plateData={this.props.plateData}
                         filteredImages={filteredImages}
                         />

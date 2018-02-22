@@ -40,7 +40,7 @@ export default React.createClass({
     render: function() {
         return(
             <div className="filterContainer">
-                <select value={"--"} defaultValue={"--"} onChange={this.handleAddFilter}>
+                <select value={"--"} onChange={this.handleAddFilter}>
                     <option
                         value="--" >
                         Add filter...

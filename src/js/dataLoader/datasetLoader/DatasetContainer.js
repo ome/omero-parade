@@ -5,25 +5,6 @@ import FilterHub from '../../filter/FilterHub'
 
 const DatasetContainer = React.createClass({
 
-    deselectHiddenThumbs: function() {
-        var imageIds = this._thumbsToDeselect;
-        if (imageIds.length === 0) {
-            return;
-        }
-        var jstree = this.props.jstree;
-        var containerNode = OME.getTreeImageContainerBestGuess(imageIds[0]);
-        if (containerNode) {
-            imageIds.forEach(function(iid){
-                var selectedNode = jstree.locate_node('image-' + iid, containerNode)[0];
-                jstree.deselect_node(selectedNode, true);
-            });
-        }
-    },
-
-    setThumbsToDeselect: function(imageIds) {
-        this._thumbsToDeselect = imageIds;
-    },
-
     marshalNode: function(node) {
         var parentNode = this.props.parentNode;
         var dateFormatOptions = {
@@ -80,7 +61,7 @@ const DatasetContainer = React.createClass({
 
         return (<FilterHub
                 datasetId={this.props.parentNode.data.obj.id}
-                jstree = {this.props.jstree}
+                setSelectedImages = {this.props.setSelectedImages}
                 images={imgJson}
             />)
     }
