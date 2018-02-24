@@ -1,10 +1,27 @@
+#
+# Copyright (c) 2018 University of Dundee.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
 
 from omero.sys import ParametersI
 from omero.rtypes import rint
 
+
 def get_image_ids(conn, plate_id, field_id=0):
     """Get image IDs for images in Plate"""
-    
+
     conn.SERVICE_OPTS.setOmeroGroup('-1')
     query_service = conn.getQueryService()
     params = ParametersI()
@@ -20,6 +37,7 @@ def get_image_ids(conn, plate_id, field_id=0):
     img_ids = [i[0].val for i in p]
     return img_ids
 
+
 def get_well_ids(conn, plate_id):
     """Get well IDs for Plate"""
     conn.SERVICE_OPTS.setOmeroGroup('-1')
@@ -32,9 +50,10 @@ def get_well_ids(conn, plate_id):
     p = query_service.projection(query, params, conn.SERVICE_OPTS)
     return [i[0].val for i in p]
 
+
 def get_well_image_ids(conn, plate_id, field_id=0):
     """Get dict of {wellId: imageId} for Plate"""
-    
+
     conn.SERVICE_OPTS.setOmeroGroup('-1')
     query_service = conn.getQueryService()
     params = ParametersI()

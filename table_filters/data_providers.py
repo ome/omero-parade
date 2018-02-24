@@ -1,10 +1,25 @@
+#
+# Copyright (c) 2018 University of Dundee.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
 
-from omero.rtypes import rint
-from django.http import JsonResponse
 from omero.sys import ParametersI
 from omero.constants.namespaces import NSBULKANNOTATIONS
 from omero.model import OriginalFileI
 from omero_parade.utils import get_well_image_ids
+
 
 def get_dataproviders(request, conn):
     # Can provide data from any table column
@@ -25,7 +40,8 @@ def get_dataproviders(request, conn):
     # Just use the first Table we find
     # TODO: handle multiple tables!?
     file_id = links[0].child.file.id.val
-    table = shared_resources.openTable(OriginalFileI(file_id), conn.SERVICE_OPTS)
+    table = shared_resources.openTable(OriginalFileI(file_id),
+                                       conn.SERVICE_OPTS)
     column_names = [col.name for col in table.getHeaders()]
     return ["Table_%s" % c for c in column_names]
 
@@ -57,7 +73,8 @@ def get_data(request, data_name, conn):
         # TODO: handle multiple tables!?
         file_id = links[0].child.file.id.val
 
-        table = shared_resources.openTable(OriginalFileI(file_id), conn.SERVICE_OPTS)
+        table = shared_resources.openTable(OriginalFileI(file_id),
+                                           conn.SERVICE_OPTS)
         headers = table.getHeaders()
         column_names = [col.name for col in headers]
         col_index = column_names.index(column_name)
@@ -74,5 +91,4 @@ def get_data(request, data_name, conn):
             img_id = img_ids[well_id]
             table_data[img_id] = value
 
-        print table_data
         return table_data

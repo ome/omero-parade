@@ -1,3 +1,20 @@
+#
+# Copyright (c) 2018 University of Dundee.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 """Django views methods."""
 
 import omero
@@ -8,8 +25,10 @@ from omeroweb.webclient.decorators import login_required
 from omero.rtypes import rlong, unwrap
 from . import parade_settings
 
+
 def index(request):
     return JsonResponse({"Index": "Placeholder"})
+
 
 def get_long_or_default(request, name, default):
     """
@@ -93,7 +112,8 @@ def dataprovider_list(request, conn=None, **kwargs):
         try:
             module = __import__('%s.data_providers' % m)
             if hasattr(module.data_providers, 'get_dataproviders'):
-                dps.extend(module.data_providers.get_dataproviders(request, conn))
+                data = module.data_providers.get_dataproviders(request, conn)
+                dps.extend(data)
         except ImportError:
             pass
 
@@ -109,8 +129,10 @@ def get_data(request, data_name, conn=None, **kwargs):
         try:
             module = __import__('%s.data_providers' % m)
             if hasattr(module.data_providers, 'get_dataproviders'):
-                if data_name in module.data_providers.get_dataproviders(request, conn):
-                    data = module.data_providers.get_data(request, data_name, conn)
+                dp = module.data_providers.get_dataproviders(request, conn)
+                if data_name in dp:
+                    data = module.data_providers.get_data(request, data_name,
+                                                          conn)
                     return JsonResponse({'data': data})
         except ImportError:
             pass

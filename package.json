@@ -1,15 +1,14 @@
 {
   "name": "omero_parade",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "\"React.js based centre panel for webclient\"",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node_modules/.bin/webpack-dev-server --progress --inline --hot",
-    "dev": "node_modules/.bin/webpack --config webpack.config.js --watch"
+    "dev": "node_modules/.bin/webpack --config webpack.config.js --watch",
+    "build": "node_modules/.bin/webpack --progress"
   },
-  "author": "William Moore",
-  "license": "GPL-3.0",
   "dependencies": {
     "axios": "^0.14.0",
     "babel-core": "^6.13.2",
