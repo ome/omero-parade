@@ -6,6 +6,7 @@ from omero.constants.namespaces import NSBULKANNOTATIONS
 from omero.model import OriginalFileI
 from omero_parade.utils import get_well_image_ids
 
+
 def get_dataproviders(request, conn):
     # Can provide data from any table column
     plate_id = request.GET.get('plate', None)
@@ -25,7 +26,8 @@ def get_dataproviders(request, conn):
     # Just use the first Table we find
     # TODO: handle multiple tables!?
     file_id = links[0].child.file.id.val
-    table = shared_resources.openTable(OriginalFileI(file_id), conn.SERVICE_OPTS)
+    table = shared_resources.openTable(OriginalFileI(file_id),
+                                       conn.SERVICE_OPTS)
     column_names = [col.name for col in table.getHeaders()]
     return ["Table_%s" % c for c in column_names]
 
@@ -57,7 +59,8 @@ def get_data(request, data_name, conn):
         # TODO: handle multiple tables!?
         file_id = links[0].child.file.id.val
 
-        table = shared_resources.openTable(OriginalFileI(file_id), conn.SERVICE_OPTS)
+        table = shared_resources.openTable(OriginalFileI(file_id),
+                                           conn.SERVICE_OPTS)
         headers = table.getHeaders()
         column_names = [col.name for col in headers]
         col_index = column_names.index(column_name)
@@ -74,5 +77,4 @@ def get_data(request, data_name, conn):
             img_id = img_ids[well_id]
             table_data[img_id] = value
 
-        print table_data
         return table_data

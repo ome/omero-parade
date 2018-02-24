@@ -1,8 +1,6 @@
 
 from django.http import JsonResponse
-import json
 from omero.sys import ParametersI
-from omero.rtypes import rint
 from omero_parade.utils import get_image_ids
 
 
@@ -24,13 +22,15 @@ def get_data(request, data_name, conn):
     if plate_id and field_id:
         img_ids = get_image_ids(conn, plate_id, field_id)
     elif dataset_id:
-        img_ids = [i.id for i in conn.getObjects('Image', opts={'dataset': dataset_id})]
+        objects = conn.getObjects('Image', opts={'dataset': dataset_id})
+        img_ids = [i.id for i in objects]
     query_service = conn.getQueryService()
 
     if data_name == "ROI_stats_max_size":
         if plate_id:
             ns = "roi.pixel.intensities.summary"
-            return get_image_map_annotations(conn, plate_id, 0, ns, "Max Points")
+            return get_image_map_annotations(conn, plate_id, 0, ns,
+                                             "Max Points")
 
     if data_name == "ROI_count":
         # Want to get ROI count for images

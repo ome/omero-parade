@@ -8,8 +8,10 @@ from omeroweb.webclient.decorators import login_required
 from omero.rtypes import rlong, unwrap
 from . import parade_settings
 
+
 def index(request):
     return JsonResponse({"Index": "Placeholder"})
+
 
 def get_long_or_default(request, name, default):
     """
@@ -93,7 +95,8 @@ def dataprovider_list(request, conn=None, **kwargs):
         try:
             module = __import__('%s.data_providers' % m)
             if hasattr(module.data_providers, 'get_dataproviders'):
-                dps.extend(module.data_providers.get_dataproviders(request, conn))
+                data = module.data_providers.get_dataproviders(request, conn)
+                dps.extend(data)
         except ImportError:
             pass
 
@@ -109,8 +112,10 @@ def get_data(request, data_name, conn=None, **kwargs):
         try:
             module = __import__('%s.data_providers' % m)
             if hasattr(module.data_providers, 'get_dataproviders'):
-                if data_name in module.data_providers.get_dataproviders(request, conn):
-                    data = module.data_providers.get_data(request, data_name, conn)
+                dp = module.data_providers.get_dataproviders(request, conn)
+                if data_name in dp:
+                    data = module.data_providers.get_data(request, data_name,
+                                                          conn)
                     return JsonResponse({'data': data})
         except ImportError:
             pass

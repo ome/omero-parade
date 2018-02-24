@@ -7,8 +7,7 @@
 
 import sys
 import json
-from omeroweb.settings import process_custom_settings, report_settings, \
-    str_slash
+from omeroweb.settings import process_custom_settings, report_settings
 
 # load settings
 PARADE_SETTINGS_MAPPING = {
@@ -17,7 +16,8 @@ PARADE_SETTINGS_MAPPING = {
         ["PARADE_FILTERS",
          '["omero_parade", "annotation_filters", "table_filters"]',
          json.loads,
-         ("Filters for filtering data. Each is a python module that contains an omero_filter module"
+         ("Filters for filtering data. Each is a python module \
+          that contains an omero_filter module"
           "that has a get_filters function")],
 }
 

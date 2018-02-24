@@ -5,11 +5,13 @@ from omero.sys import ParametersI
 from omero.constants.namespaces import NSBULKANNOTATIONS
 from omero.model import OriginalFileI
 
+
 def get_filters(request, conn):
     if request.GET.get('plate', None) is not None:
         # TODO: Could actually check if there is a table on this Plate
         return ["Table"]
     return []
+
 
 def get_script(request, script_name, conn):
     """Return a JS function to filter images by various params."""
@@ -34,7 +36,8 @@ def get_script(request, script_name, conn):
         # TODO: handle multiple tables!?
         file_id = links[0].child.file.id.val
 
-        table = shared_resources.openTable(OriginalFileI(file_id), conn.SERVICE_OPTS)
+        table = shared_resources.openTable(OriginalFileI(file_id),
+                                           conn.SERVICE_OPTS)
         if not table:
             return JsonResponse({'ERROR': 'Failed to open table'})
 
@@ -49,7 +52,8 @@ def get_script(request, script_name, conn):
             # key is column Name, values are list of col_data
             table_data[name] = col.values
 
-        # Return a JS function that will be passed an object e.g. {'type': 'Image', 'id': 1}
+        # Return a JS function that will be passed an object
+        # e.g. {'type': 'Image', 'id': 1}
         # and should return true or false
         f = """(function filter(data, params) {
             if (isNaN(params.count) || params.count == '') return true;
@@ -65,7 +69,7 @@ def get_script(request, script_name, conn):
         filter_params = [{'name': 'column_name',
                           'type': 'text',
                           'values': column_names[1:],   # 1st column is Well
-                          'default': column_names[1],},
+                          'default': column_names[1]},
                          {'name': 'operator',
                           'type': 'text',
                           'values': ['>', '=', '<'],

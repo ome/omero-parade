@@ -2,9 +2,10 @@
 from omero.sys import ParametersI
 from omero.rtypes import rint
 
+
 def get_image_ids(conn, plate_id, field_id=0):
     """Get image IDs for images in Plate"""
-    
+
     conn.SERVICE_OPTS.setOmeroGroup('-1')
     query_service = conn.getQueryService()
     params = ParametersI()
@@ -20,6 +21,7 @@ def get_image_ids(conn, plate_id, field_id=0):
     img_ids = [i[0].val for i in p]
     return img_ids
 
+
 def get_well_ids(conn, plate_id):
     """Get well IDs for Plate"""
     conn.SERVICE_OPTS.setOmeroGroup('-1')
@@ -32,9 +34,10 @@ def get_well_ids(conn, plate_id):
     p = query_service.projection(query, params, conn.SERVICE_OPTS)
     return [i[0].val for i in p]
 
+
 def get_well_image_ids(conn, plate_id, field_id=0):
     """Get dict of {wellId: imageId} for Plate"""
-    
+
     conn.SERVICE_OPTS.setOmeroGroup('-1')
     query_service = conn.getQueryService()
     params = ParametersI()
