@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from omero.rtypes import rint
 from django.http import JsonResponse
 import json
 from omero.sys import ParametersI

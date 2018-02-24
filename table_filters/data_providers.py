@@ -15,8 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from omero.rtypes import rint
-from django.http import JsonResponse
 from omero.sys import ParametersI
 from omero.constants.namespaces import NSBULKANNOTATIONS
 from omero.model import OriginalFileI

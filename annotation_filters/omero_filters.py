@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from omero.rtypes import rint
 from django.http import JsonResponse
 import json
 from omero.sys import ParametersI
@@ -31,13 +30,13 @@ def get_script(request, script_name, conn):
     dataset_id = request.GET.get('dataset')
     plate_id = request.GET.get('plate')
     dtype = "Image"
-    jsObjectAttr = "id"
+    js_object_attr = "id"
     if dataset_id:
         objects = conn.getObjects('Image', opts={'dataset': dataset_id})
         obj_ids = [i.id for i in objects]
     elif plate_id:
         dtype = "Well"
-        jsObjectAttr = "wellId"
+        js_object_attr = "wellId"
         obj_ids = get_well_ids(conn, plate_id)
     query_service = conn.getQueryService()
 
@@ -64,7 +63,7 @@ def get_script(request, script_name, conn):
             index = ratings[data.%s] == params.rating
             return (params.rating === '-' || index);
         })
-        """ % (json.dumps(ratings), jsObjectAttr)
+        """ % (json.dumps(ratings), js_object_attr)
 
         filter_params = [{'name': 'rating',
                           'type': 'text',
@@ -103,7 +102,7 @@ def get_script(request, script_name, conn):
                     comments[data.%s].indexOf(params.comment) > -1
             return (params.comment === '' || index);
         })
-        """ % (json.dumps(comments), jsObjectAttr, jsObjectAttr)
+        """ % (json.dumps(comments), js_object_attr, js_object_attr)
 
         filter_params = [{'name': 'comment',
                           'type': 'text',
@@ -146,7 +145,7 @@ def get_script(request, script_name, conn):
             index = tags[data.%s] && tags[data.%s].indexOf(params.tag) > -1
             return (params.tag === 'Choose_Tag' ||  index);
         })
-        """ % (json.dumps(tags), jsObjectAttr, jsObjectAttr)
+        """ % (json.dumps(tags), js_object_attr, js_object_attr)
 
         all_tags.insert(0, "Choose_Tag")
 

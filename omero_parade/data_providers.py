@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.http import JsonResponse
 from omero.sys import ParametersI
 from omero_parade.utils import get_image_ids
 
