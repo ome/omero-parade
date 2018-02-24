@@ -2,3 +2,5 @@
 .DS_Store
 /omero_parade/static/omero_parade/js/bundle.min.js
 *.pyc
+dist
+*.egg-info
