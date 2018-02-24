@@ -1,18 +1,62 @@
-# omero-parade
-OMERO.web plugin for displaying Dataset thumbnails or Plates in webclient center panel
+.. image:: https://travis-ci.org/ome/omero-parade.svg?branch=master
+    :target: https://travis-ci.org/ome/omero-parade
+
+.. image:: https://badge.fury.io/py/omero-parade.svg
+    :target: https://badge.fury.io/py/omero-parade
+
+OMERO.parade
+============
+
+An OMERO.web app for displaying Dataset thumbnails or Plates in OMERO.web centre panel
+
+For full details see `SUPPORT.md <https://github.com/ome/omero-parade/blob/master/SUPPORT.md>`_.
+
+Requirements
+============
+
+* OMERO 5.4.0 or newer.
 
 
-Install
--------
+Installing from PyPI
+====================
 
-Build for development:
+This section assumes that an OMERO.web is already installed.
 
-	$ cd omero-parade
-	$ npm install
+Install the app using `pip <https://pip.pypa.io/en/stable/>`_:
 
-	$ npm run dev
+::
 
-Add to config:
+    $ pip install -U omero-parade
 
-	$ bin/omero config append omero.web.apps '"omero_parade"'
-	$ bin/omero config append omero.web.ui.center_plugins '["Parade", "omero_parade/init.js.html", "omero_parade"]'
+Add parade custom app to your installed web apps:
+
+::
+
+    $ bin/omero config append omero.web.apps '"omero_parade"'
+
+Display parade in the centre of the webclient:
+
+::
+
+    $ bin/omero config append omero.web.ui.center_plugins '["Parade",
+      "omero_parade/init.js.html", "omero_parade"]' 
+
+
+Now restart OMERO.web as normal.
+
+Build
+=====
+
+In order to build you need:
+
+* npm version equal or greater to 3.0!
+
+::
+
+    $ npm install
+
+To build an uncompressed version, run:
+
+::
+
+    $ npm run dev
