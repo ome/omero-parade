@@ -21,13 +21,11 @@
 # Version: 1.0
 
 import os
-import sys
 import setuptools.command.install
 import setuptools.command.develop
 import setuptools.command.sdist
 from distutils.core import Command
 from setuptools import setup, find_packages
-from setuptools.command.test import test as test_command
 
 VERSION = "0.0.1"
 
@@ -42,6 +40,7 @@ def read_file(fname):
 
 
 cmdclass = {}
+
 
 class NpmInstall(Command):
 
@@ -77,6 +76,7 @@ class RunProd(Command):
             self.run_command(command)
 
         self.spawn(['npm', 'run', 'build'])
+
 
 cmdclass['run_prod'] = RunProd
 
