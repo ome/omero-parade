@@ -43,12 +43,10 @@ def search(request, conn=None, **kwargs):
 
     images = []
     if search.hasNext(conn.SERVICE_OPTS):
-        images = [{'id': i.id.val,
-                   'name': i.name.val}
-                   for i in search.results(conn.SERVICE_OPTS)]
+        for i in search.results(conn.SERVICE_OPTS):
+            images.append({'id': i.id.val, 'name': i.name.val})
 
     return JsonResponse({'data': images})
-
 
 
 def get_long_or_default(request, name, default):
