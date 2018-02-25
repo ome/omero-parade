@@ -30,11 +30,14 @@ def get_script(request, script_name, conn):
     dataset_id = request.GET.get('dataset')
     plate_id = request.GET.get('plate')
     field_id = request.GET.get('field')
+    image_ids = request.GET.getlist('image')
     if plate_id and field_id:
         img_ids = get_image_ids(conn, plate_id, field_id)
     elif dataset_id:
         objects = conn.getObjects('Image', opts={'dataset': dataset_id})
         img_ids = [i.id for i in objects]
+    else:
+        img_ids = [long(i) for i in image_ids]
     query_service = conn.getQueryService()
 
     if script_name == "ROI_count":

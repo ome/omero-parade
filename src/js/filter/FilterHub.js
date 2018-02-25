@@ -89,6 +89,7 @@ export default React.createClass({
                         datasetId={this.props.datasetId}
                         plateId={this.props.plateId}
                         fieldId={this.props.fieldId}
+                        images={this.props.images}
                         addFilter={this.addFilter}
                         handleFilterLoaded={this.handleFilterLoaded}
                         handleFilterChange={this.handleFilterChange}
