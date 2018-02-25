@@ -21,7 +21,7 @@ export default React.createClass({
         let url= PARADE_INDEX_URL + "search/?query=" + this.state.text;
         $.getJSON(url,
             data => {
-                console.log(data.results);
+                console.log(data.data);
                 this.props.setSearchResults(data.data);
             }
         );

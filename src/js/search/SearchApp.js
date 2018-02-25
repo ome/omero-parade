@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import SearchForm from './SearchForm';
+import FilterHub from '../filter/FilterHub';
 
 export default React.createClass({
 
@@ -16,6 +17,10 @@ export default React.createClass({
         });
     },
 
+    setSelectedImages: function(images) {
+        console.log('TODO setSelectedImages...', images)
+    },
+
     render: function() {
         return (
             <div className="columnContainer">
@@ -24,11 +29,11 @@ export default React.createClass({
                         setSearchResults={this.setSearchResults} />
                 </div>
                 <div className="paradeCentrePanel">
-                    {this.state.searchResults.map(image => (
-                        <p key={image.id}>
-                            ID: {image.id}, {image.name}
-                        </p>
-                    ))}
+                    <FilterHub
+                        // datasetId={this.props.parentNode.data.obj.id}
+                        setSelectedImages = {this.setSelectedImages}
+                        images={this.state.searchResults}
+                    />
                 </div>
 
                 <div className="rightPanel">

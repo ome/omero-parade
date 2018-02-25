@@ -3,6 +3,10 @@ body {
   margin: 0;
 }
 
+ul {
+  list-style: none;
+}
+
 /* the reactroot */
 .columnContainer {
   display: flex;
@@ -14,6 +18,7 @@ body {
 
 .paradeCentrePanel {
   flex-grow: 1;
+  position: relative;
 }
 
 .leftPanel, .rightPanel {

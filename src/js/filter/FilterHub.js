@@ -62,9 +62,6 @@ export default React.createClass({
     },
 
     render: function() {
-        if (this.props.fieldId === undefined && this.props.datasetId === undefined) {
-            return(<div></div>)
-        }
 
         // Images could be from parent PlateLoader OR DatasetLoader
         let images = this.props.images;
