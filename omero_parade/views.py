@@ -23,11 +23,32 @@ import omero.clients
 from django.http import Http404, JsonResponse
 from omeroweb.webclient.decorators import login_required
 from omero.rtypes import rlong, unwrap
+from django.shortcuts import render
 from . import parade_settings
 
 
 def index(request):
-    return JsonResponse({"Index": "Placeholder"})
+    return render(request, "omero_parade/index.html", {})
+
+
+@login_required()
+def search(request, conn=None, **kwargs):
+    """Do a FullText search using text from ?query=text."""
+    search = conn.createSearchService()
+    text = request.GET.get('query', None)
+    if text is None:
+        return JsonResponse({'error': 'Search with ?query=text'})
+    search.onlyType("Image", conn.SERVICE_OPTS)
+    search.byFullText(text, conn.SERVICE_OPTS)
+
+    images = []
+    if search.hasNext(conn.SERVICE_OPTS):
+        images = [{'id': i.id.val,
+                   'name': i.name.val}
+                   for i in search.results(conn.SERVICE_OPTS)]
+
+    return JsonResponse({'data': images})
+
 
 
 def get_long_or_default(request, name, default):

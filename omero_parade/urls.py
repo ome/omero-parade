@@ -27,6 +27,9 @@ urlpatterns = patterns(
     # Home page
     url(r'^$', views.index, name="parade_index"),
 
+    # GET search results. Use ?query=foo
+    url(r'^search/$', views.search, name='parade_search'),
+
     # list fields in Plate ?plate=123 or Acquisition ?run=456
     url(r'^api/fields/$', views.api_field_list, name='parade_fields'),
 
