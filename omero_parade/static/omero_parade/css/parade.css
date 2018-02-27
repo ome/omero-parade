@@ -15,6 +15,44 @@
  along with this program.  If not, see <http:www.gnu.org/licenses/>.
 */
 
+body {
+  margin: 0;
+}
+
+ul {
+  list-style: none;
+}
+
+/* the reactroot */
+.columnContainer {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.paradeCentrePanel {
+  flex-grow: 1;
+  position: relative;
+}
+
+.leftPanel, .rightPanel {
+  flex: 0 0 350px;
+  height: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.leftPanel {
+  border-right: solid #ddd 1px;
+}
+
+.rightPanel {
+  border-left: solid #ddd 1px;
+}
+
+
 .parade_icon_layout {
 	background: url(../images/icon_layout.png) no-repeat scroll center center transparent;
 }

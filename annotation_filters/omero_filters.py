@@ -29,6 +29,7 @@ def get_script(request, script_name, conn):
     """Return a JS function to filter images by various params."""
     dataset_id = request.GET.get('dataset')
     plate_id = request.GET.get('plate')
+    image_ids = request.GET.getlist('image')
     dtype = "Image"
     js_object_attr = "id"
     if dataset_id:
@@ -38,6 +39,8 @@ def get_script(request, script_name, conn):
         dtype = "Well"
         js_object_attr = "wellId"
         obj_ids = get_well_ids(conn, plate_id)
+    else:
+        obj_ids = [long(i) for i in image_ids]
     query_service = conn.getQueryService()
 
     if script_name == "Rating":
@@ -60,7 +63,7 @@ def get_script(request, script_name, conn):
         # and should return true or false
         f = """(function filter(data, params) {
             var ratings = %s;
-            index = ratings[data.%s] == params.rating
+            var index = ratings[data.%s] == params.rating
             return (params.rating === '-' || index);
         })
         """ % (json.dumps(ratings), js_object_attr)
@@ -98,7 +101,7 @@ def get_script(request, script_name, conn):
         # and should return true or false
         f = """(function filter(data, params) {
             var comments = %s;
-            index = comments[data.%s] &&
+            var index = comments[data.%s] &&
                     comments[data.%s].indexOf(params.comment) > -1
             return (params.comment === '' || index);
         })
@@ -142,7 +145,7 @@ def get_script(request, script_name, conn):
         # and should return true or false
         f = """(function filter(data, params) {
             var tags = %s;
-            index = tags[data.%s] && tags[data.%s].indexOf(params.tag) > -1
+            var index = tags[data.%s] && tags[data.%s].indexOf(params.tag) > -1
             return (params.tag === 'Choose_Tag' ||  index);
         })
         """ % (json.dumps(tags), js_object_attr, js_object_attr)

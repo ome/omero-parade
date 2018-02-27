@@ -34,9 +34,17 @@ export default React.createClass({
         // like OPEN_WITH list.
 
         var url = window.PARADE_INDEX_URL + 'filters/script/' + this.props.name;
-        if (this.props.datasetId) url += '?dataset=' + this.props.datasetId;
-        if (this.props.plateId) url += '?plate=' + this.props.plateId;
-        if (this.props.fieldId !== undefined) url += '&field=' + this.props.fieldId;
+        if (this.props.plateId) {
+            url += '?plate=' + this.props.plateId;
+            if (this.props.fieldId !== undefined) {
+                url += '&field=' + this.props.fieldId;
+            }
+        }
+        else if (this.props.datasetId) {
+            url += '?dataset=' + this.props.datasetId;
+        } else {
+            url += '?' + this.props.images.map(i => 'image=' + i.id).join('&');
+        }
         $.getJSON(url, function(data){
             // Response has filter function - Needs eval()
             var f = eval(data.f);

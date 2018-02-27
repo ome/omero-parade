@@ -31,8 +31,14 @@ export default React.createClass({
     componentDidMount: function() {
         // list available filters (TODO: only for current data? e.g. plate)
         let url = window.PARADE_FILTERS_URL;
-        if (this.props.plateId) url += '?plate=' + this.props.plateId;
-        if (this.props.datasetId) url += '?dataset=' + this.props.plateId;
+        if (this.props.plateId) {
+            url += '?plate=' + this.props.plateId;
+        }
+        else if (this.props.datasetId) {
+            url += '?dataset=' + this.props.datasetId;
+        } else {
+            url += '?' + this.props.images.map(i => 'image=' + i.id).join('&');
+        }
         $.ajax({
             url: url,
             dataType: 'json',
@@ -83,6 +89,7 @@ export default React.createClass({
                             datasetId={this.props.datasetId}
                             plateId={this.props.plateId}
                             fieldId={this.props.fieldId}
+                            images={this.props.images}
                             handleFilterLoaded={this.props.handleFilterLoaded}
                             handleFilterChange={this.props.handleFilterChange}
                             handleRemoveFilter={this.props.handleRemoveFilter}
