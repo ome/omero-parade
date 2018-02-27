@@ -92,7 +92,7 @@ class Sdist(setuptools.command.sdist.sdist):
 cmdclass['sdist'] = Sdist
 
 
-setup(name="omero-figure",
+setup(name="omero-parade",
       packages=find_packages(exclude=['ez_setup']),
       version=VERSION,
       description=DESCRIPTION,
