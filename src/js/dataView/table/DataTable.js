@@ -40,7 +40,7 @@ class DataTable extends React.Component {
             distance: 2,
             stop: () => {
                 let dtype = this.props.imgJson[0].wellId ? 'well' : 'image';
-                let idAttr = (dtype === 'well' ? 'data-wellId': 'data-id');
+                let idAttr = (dtype === 'well' ? 'data-wellid': 'data-id');
                 // Make the same selection in the jstree etc
                 let ids = [];
                 $(".parade_dataTable .ui-selected").each(function(){
@@ -191,7 +191,7 @@ class DataTable extends React.Component {
                                     src={"/webgateway/render_thumbnail/" + image.id + "/"}
                                     title={image.name}
                                     data-id={image.id}
-                                    data-wellId={image.wellId}
+                                    data-wellid={image.wellId}
                                     onClick={event => {this.props.handleImageWellClicked(image, event)}} />
                             </td>
                             <td>

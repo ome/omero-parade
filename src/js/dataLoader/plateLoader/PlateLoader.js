@@ -40,15 +40,11 @@ class PlateLoader extends React.Component {
             url: url,
             dataType: 'json',
             cache: false,
-            success: function(data) {
-                if (this.isMounted()) {
-                    this.setState({
-                        data: data,
-                    });
-                }
-            }.bind(this),
-                error: function(xhr, status, err) {
-            }.bind(this)
+            success: data => {
+                this.setState({
+                    data: data,
+                });
+            }
         });
     }
 

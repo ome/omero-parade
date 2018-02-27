@@ -27,7 +27,7 @@ class FilterContainer extends React.Component {
         this.state = {
             filters: [],
         }
-        this.handleFilterChange = this.handleAddFilter.bind(this);
+        this.handleAddFilter = this.handleAddFilter.bind(this);
     }
 
     componentDidMount() {
@@ -46,11 +46,9 @@ class FilterContainer extends React.Component {
             dataType: 'json',
             cache: false,
             success: data => {
-                if (this.isMounted()) {
-                    this.setState({
-                        filters: data.data,
-                    });
-                }
+                this.setState({
+                    filters: data.data,
+                });
             }
         });
     }

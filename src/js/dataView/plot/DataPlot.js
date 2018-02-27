@@ -40,6 +40,7 @@ class DataPlot extends React.Component {
             xAxisName: undefined,
             yAxisName: undefined,
         }
+        this.setAxisName = this.setAxisName.bind(this);
     }
 
     setAxisName(axis, event, otherAxis) {
@@ -56,7 +57,7 @@ class DataPlot extends React.Component {
 
     componentDidMount() {
         let dtype = this.props.imgJson[0].wellId ? 'well' : 'image';
-        let idAttr = (dtype === 'well' ? 'data-wellId': 'data-id')
+        let idAttr = (dtype === 'well' ? 'data-wellid': 'data-id')
         $(this.refs.thumb_plot_canvas).selectable({
             filter: 'img',
             distance: 2,
@@ -136,7 +137,7 @@ class DataPlot extends React.Component {
                                 className={(image.selected || selectedWellIds.indexOf(image.wellId)) > -1 ? 'ui-selected' : ''}
                                 key={image.id}
                                 data-id={image.id}
-                                data-wellId={image.wellId}
+                                data-wellid={image.wellId}
                                 src={"/webgateway/render_thumbnail/" + image.id + "/"}
                                 title={image.name}
                                 onClick={event => {handleImageWellClicked(image, event)}}

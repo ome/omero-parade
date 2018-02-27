@@ -52,16 +52,12 @@ class Plate extends React.Component {
             data: data,
             dataType: 'json',
             cache: false,
-            success: function(data) {
-                if (this.isMounted()) {
-                    this.setState({
-                        fields: data.data,
-                        selectedField: data.data[0]
-                    });
-                }
-            }.bind(this),
-                error: function(xhr, status, err) {
-            }.bind(this)
+            success: data => {
+                this.setState({
+                    fields: data.data,
+                    selectedField: data.data[0]
+                });
+            }
         });
     }
 

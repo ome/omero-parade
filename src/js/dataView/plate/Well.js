@@ -66,7 +66,7 @@ class Well extends React.Component {
 
         return (
             <td className={"well " + cls}
-                data-wellId={id}
+                data-wellid={id}
                 title={""+row+col}>
                 <div
                     style={divStyle}

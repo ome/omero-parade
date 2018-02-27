@@ -35,7 +35,7 @@ class PlateGrid extends React.Component {
                 // Make the same selection in the jstree etc
                 let ids = [];
                 $(".plateGrid .ui-selected").each(function(){
-                    ids.push(parseInt($(this).attr('data-wellId'), 10));
+                    ids.push(parseInt($(this).attr('data-wellid'), 10));
                 });
                 this.props.setImagesWellsSelected('well', ids);
             },
