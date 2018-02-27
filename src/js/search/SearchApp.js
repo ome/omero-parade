@@ -3,25 +3,28 @@ import ReactDOM from 'react-dom';
 import SearchForm from './SearchForm';
 import FilterHub from '../filter/FilterHub';
 
-export default React.createClass({
+class SearchApp extends React.Component {
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props);
+        this.state = {
             searchResults: []
         }
-    },
+        this.searchResults = this.setSearchResults.bind(this);
+        this.setSelectedImages = this.setSelectedImages.bind(this);
+    }
 
-    setSearchResults: function(results) {
+    setSearchResults(results) {
         this.setState({
             searchResults: results
         });
-    },
+    }
 
-    setSelectedImages: function(images) {
+    setSelectedImages(images) {
         console.log('TODO setSelectedImages...', images)
-    },
+    }
 
-    render: function() {
+    render() {
         return (
             <div className="columnContainer">
                 <div className="leftPanel">
@@ -40,4 +43,6 @@ export default React.createClass({
             </div>
         )
     }
-});
+}
+
+export default SearchApp

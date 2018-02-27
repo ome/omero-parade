@@ -32,16 +32,17 @@ const styles = {
         transform: 'rotate(-90deg)',
     },
 }
-export default React.createClass({
+class DataPlot extends React.Component {
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props);
+        this.state = {
             xAxisName: undefined,
             yAxisName: undefined,
         }
-    },
+    }
 
-    setAxisName: function(axis, event, otherAxis) {
+    setAxisName(axis, event, otherAxis) {
         // Set BOTH axis names.
         // Since we start with both undefined, as soon as
         // user picks one to change, we set both.
@@ -51,9 +52,9 @@ export default React.createClass({
         } else {
             this.setState({yAxisName: name, xAxisName: otherAxis});
         }
-    },
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         let dtype = this.props.imgJson[0].wellId ? 'well' : 'image';
         let idAttr = (dtype === 'well' ? 'data-wellId': 'data-id')
         $(this.refs.thumb_plot_canvas).selectable({
@@ -68,12 +69,12 @@ export default React.createClass({
                 this.props.setImagesWellsSelected(dtype, ids);
             },
         });
-    },
+    }
 
-    componentWillUnmount: function() {
+    componentWillUnmount() {
         // cleanup plugin
         $(this.refs.dataIcons).selectable( "destroy" );
-    },
+    }
 
     render() {
         let {imgJson, iconSize, tableData,
@@ -148,4 +149,6 @@ export default React.createClass({
             </div>
         );
     }
-});
+}
+
+export default DataPlot

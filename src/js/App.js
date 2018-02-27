@@ -16,15 +16,23 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-import React from 'react';
+import React, { Component } from 'react';
 import DataContainer from './dataLoader/DataContainer'
 
 
-const App = React.createClass({
+class App extends Component {
 
-    parentTypes: ["dataset", "orphaned", "tag", "share", "plate", "acquisition"],
+    constructor(props) {
+        super(props);
+        this.parentTypes = ["dataset",
+                            "orphaned",
+                            "tag",
+                            "share",
+                            "plate",
+                            "acquisition"]
+    }
 
-    renderNothing: function(selected) {
+    renderNothing(selected) {
         if (selected.length === 0) {
             if (this.previousParent) {
                 return false;
@@ -41,18 +49,18 @@ const App = React.createClass({
         if (this.parentTypes.indexOf(dtype) === -1) {
             return true;
         }
-    },
+    }
 
-    componentWillReceiveProps: function(nextProps) {
+    componentWillReceiveProps(nextProps) {
         // When props change...
         // If nothing is selected AND the previous node is valid
         // We continue to render that node (Dataset)
         if (nextProps.selected.length !== 0) {
             delete(this.previousParent);
         }
-    },
+    }
 
-    getParentNode: function() {
+    getParentNode() {
         // See http://will-moore.github.io/react-render-purely-props-and-state/
         var selected = this.props.selected,
             jstree = this.props.jstree;
@@ -69,9 +77,9 @@ const App = React.createClass({
         if (dtype === "image") {
             return jstree.get_node(jstree.get_parent(selected[0]));
         }
-    },
+    }
 
-    render: function() {
+    render() {
         // parentNode may be null if not suitable to display
         let parentNode = this.getParentNode();
 
@@ -99,7 +107,6 @@ const App = React.createClass({
             <div></div>
         );
     }
-});
-
+}
 
 export default App

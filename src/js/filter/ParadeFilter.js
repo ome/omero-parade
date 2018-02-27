@@ -20,15 +20,17 @@ import React, { Component } from 'react';
 import FilterInput from './FilterInput';
 
 
-export default React.createClass({
+class ParadeFilter extends React.Component {
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props);
+        this.state = {
             filterParams: [],
         }
-    },
+        this.handleFilterInput = this.handleFilterInput.bind(this);
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         // Load /filter/?filter=filterName&plate=plateId script
         // which adds itself to the PARADE_FILTERS list,
         // like OPEN_WITH list.
@@ -59,13 +61,13 @@ export default React.createClass({
                 filterParams: data.params
             })
         }.bind(this));
-    },
+    }
     
-    handleFilterInput: function(paramName, value) {
+    handleFilterInput(paramName, value) {
         this.props.handleFilterChange(this.props.filterIndex, paramName, value);
-    },
+    }
 
-    render: function() {
+    render() {
         return(
             <div className="parade_filter">
                 {this.props.name}
@@ -84,4 +86,6 @@ export default React.createClass({
             </div>
         )
     }
-});
+}
+
+export default ParadeFilter

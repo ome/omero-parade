@@ -20,9 +20,9 @@ import React, { Component } from 'react';
 import { getHeatmapColor } from '../util'
 
 
-const FilterInput = React.createClass({
+class FilterInput extends React.Component {
     
-    render: function() {
+    render() {
         let param = this.props.param;
         let filterChanged = this.props.onChange;
         let onChange = function (event) {
@@ -59,6 +59,6 @@ const FilterInput = React.createClass({
             />
         )
     }
-});
+}
 
 export default FilterInput

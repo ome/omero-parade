@@ -31,31 +31,33 @@ const styles = {
     }
 }
 
-const ImageIcon = React.createClass({
+class ImageIcon extends React.Component {
 
-    handleIconClick: function(event) {
+    constructor(props) {
+        super(props);
+        this.handleIconClick = this.handleIconClick.bind(this);
+        this.getIconSizes = this.getIconSizes.bind(this);
+    }
+
+    handleIconClick(event) {
         // this.setState ({selected: true});
         this.props.handleImageWellClicked(this.props.image, event);
-    },
+    }
 
-    // getInitialState: function() {
-    //     return {selected: this.props.image.selected};
-    // },
-
-    getIconSizes: function() {
+    getIconSizes() {
         var width = this.props.iconSize;
         return {'width': width, 'max-height': width}
-    },
+    }
 
     // After rendering, scroll selectd icon into view
     // NB: scrollIntoViewIfNeeded() is provided by polyfill
-    componentDidUpdate: function() {
+    componentDidUpdate() {
         if (this.props.image.selected && this.refs.icon) {
             this.refs.icon.scrollIntoViewIfNeeded();
         }
-    },
+    }
 
-    render: function() {
+    render() {
 
         var image = this.props.image,
             iconSizes = this.getIconSizes(),
@@ -87,6 +89,6 @@ const ImageIcon = React.createClass({
             </li>
         )
     }
-});
+}
 
 export default ImageIcon

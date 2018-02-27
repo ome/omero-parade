@@ -19,16 +19,17 @@
 import React, { Component } from 'react';
 import FilterHub from '../../filter/FilterHub';
 
-export default React.createClass({
+class PlateLoader extends React.Component {
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props);
+        this.state = {
             data: undefined,
             selectedWellIds: [],
         }
-    },
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         var plateId = this.props.plateId,
             fieldId = this.props.fieldId;
 
@@ -49,9 +50,9 @@ export default React.createClass({
                 error: function(xhr, status, err) {
             }.bind(this)
         });
-    },
+    }
 
-    render: function() {
+    render() {
         if (this.props.fieldId === undefined) {
             return(<div></div>)
         }
@@ -77,4 +78,6 @@ export default React.createClass({
                     plateData={this.state.data}
                 />)
     }
-});
+}
+
+export default PlateLoader

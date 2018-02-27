@@ -20,15 +20,17 @@ import React, { Component } from 'react';
 import ParadeFilter from './ParadeFilter';
 
 
-export default React.createClass({
+class FilterContainer extends React.Component {
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props);
+        this.state = {
             filters: [],
         }
-    },
+        this.handleFilterChange = this.handleAddFilter.bind(this);
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         // list available filters (TODO: only for current data? e.g. plate)
         let url = window.PARADE_FILTERS_URL;
         if (this.props.plateId) {
@@ -43,25 +45,25 @@ export default React.createClass({
             url: url,
             dataType: 'json',
             cache: false,
-            success: function(data) {
+            success: data => {
                 if (this.isMounted()) {
                     this.setState({
                         filters: data.data,
                     });
                 }
-            }.bind(this)
+            }
         });
-    },
+    }
 
-    handleAddFilter: function(event) {
+    handleAddFilter(event) {
         // When user chooses to ADD a filter by Name, setState of parent
         var filterName = event.target.value;
         if (filterName !== "--") {
             this.props.addFilter(filterName);
         }
-    },
+    }
 
-    render: function() {
+    render() {
         return(
             <div className="filterContainer">
                 <select value={"--"} onChange={this.handleAddFilter}>
@@ -99,4 +101,6 @@ export default React.createClass({
             </div>
         )
     }
-});
+}
+
+export default FilterContainer

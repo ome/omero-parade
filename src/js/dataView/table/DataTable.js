@@ -20,16 +20,21 @@ import React, { Component } from 'react';
 import { getHeatmapColor } from '../../util';
 import clusterfck from 'clusterfck';
 
-export default React.createClass({
+class DataTable extends React.Component {
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props);
+        this.state = {
             showHeatmapColumns: {},
             sortBy: undefined,
         }
-    },
+        this.handleSortTable = this.handleSortTable.bind(this);
+        this.handleShowHeatmap = this.handleShowHeatmap.bind(this);
+        this.clusterTableData = this.clusterTableData.bind(this);
+        this.traverseCluster = this.traverseCluster.bind(this);
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         $(this.refs.dataTable).selectable({
             filter: 'img',
             distance: 2,
@@ -44,30 +49,30 @@ export default React.createClass({
                 this.props.setImagesWellsSelected(dtype, ids);
             },
         });
-    },
+    }
 
-    componentWillUnmount: function() {
+    componentWillUnmount() {
         // cleanup plugin
         $(this.refs.dataIcons).selectable( "destroy" );
-    },
+    }
 
-    handleSortTable: function(event, name) {
+    handleSortTable(event, name) {
         event.preventDefault();
         this.setState({
             sortBy: name
         });
-    },
+    }
 
-    handleShowHeatmap: function(event, name) {
+    handleShowHeatmap(event, name) {
         let checked = event.target.checked;
         let showHeatmapColumns = Object.assign({}, this.state.showHeatmapColumns);
         showHeatmapColumns[name] = checked;
         this.setState({
             showHeatmapColumns: showHeatmapColumns
         });
-    },
+    }
 
-    clusterTableData: function() {
+    clusterTableData() {
         // make a list of data for each image from state.tableData
         // Each item of tableData is already a dict of {imageId: value}
         let dataKeys = Object.keys(this.props.tableData);
@@ -97,9 +102,9 @@ export default React.createClass({
 
         let orderedImageIds = orderedResults.map(res => clusterLookup[res.join(",")]);
         return orderedImageIds;
-    },
+    }
 
-    traverseCluster: function(clusters) {
+    traverseCluster(clusters) {
 
         let out = [];
         function traverseNode(node) {
@@ -112,7 +117,7 @@ export default React.createClass({
         }
         clusters.forEach(n => {traverseNode(n)});
         return out;
-    },
+    }
 
     render() {
         let {imgJson, iconSize, tableData, selectedWellIds} = this.props;
@@ -206,4 +211,6 @@ export default React.createClass({
             </div>
         );
     }
-});
+}
+
+export default DataTable

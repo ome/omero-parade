@@ -21,9 +21,9 @@ import FieldsLoader from './plateLoader/FieldsLoader'
 import DatasetContainer from './datasetLoader/DatasetContainer';
 
 
-const DataContainer = React.createClass({
+class DataContainer extends React.Component {
 
-    setSelectedImages: function(imageIds) {
+    setSelectedImages(imageIds) {
         let jstree = this.props.jstree;
         if (jstree) {
             jstree.deselect_all();
@@ -36,9 +36,9 @@ const DataContainer = React.createClass({
                 $("#" + nodes[0].id).children('.jstree-anchor').focus();
             }
         }
-    },
+    }
 
-    render: function() {
+    render() {
         var parentNode = this.props.parentNode;
 
         // If not loaded, show nothing (don't know how many children plate will have)
@@ -85,6 +85,6 @@ const DataContainer = React.createClass({
         }
         return rv;
     }
-});
+}
 
 export default DataContainer

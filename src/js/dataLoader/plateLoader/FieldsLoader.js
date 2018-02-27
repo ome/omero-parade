@@ -19,9 +19,17 @@
 import React, { Component } from 'react';
 import PlateLoader from './PlateLoader';
 
-const Plate = React.createClass({
+class Plate extends React.Component {
 
-    componentDidMount: function() {
+    constructor(props) {
+        super(props);
+        this.state = {
+            fields: [],
+            selectedField: undefined,
+        }
+    }
+
+    componentDidMount() {
         var parentNode = this.props.parentNode,
             plateId = this.props.plateId,
             objId = parentNode.data.id;
@@ -55,16 +63,9 @@ const Plate = React.createClass({
                 error: function(xhr, status, err) {
             }.bind(this)
         });
-    },
+    }
 
-    getInitialState: function() {
-        return {
-            fields: [],
-            selectedField: undefined,
-        }
-    },
-
-    render: function() {
+    render() {
         return (
             <PlateLoader
                 key={this.state.selectedField}
@@ -72,6 +73,6 @@ const Plate = React.createClass({
                 fieldId={this.state.selectedField} />
         )
     }
-});
+}
 
 export default Plate

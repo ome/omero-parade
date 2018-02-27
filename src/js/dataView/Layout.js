@@ -23,27 +23,34 @@ import DataPlot from './plot/DataPlot';
 import DataTable from './table/DataTable';
 import Footer from '../Footer';
 
-export default React.createClass({
+class Layout extends React.Component {
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props);
+        this.state = {
             iconSize: 50,
             layout: "icon",   // "icon", "plot" or "table"
             dataProviders: [],
             tableData: {},
             selectedWellIds: [],
         }
-    },
+        this.setIconSize = this.setIconSize.bind(this);
+        this.setLayout = this.setLayout.bind(this);
+        this.handleAddData = this.handleAddData.bind(this);
+        this.handleImageWellClicked = this.handleImageWellClicked.bind(this);
+        this.setImagesWellsSelected = this.setImagesWellsSelected.bind(this);
+        this.setSelectedWells = this.setSelectedWells.bind(this);
+    }
 
-    setIconSize: function(size) {
+    setIconSize(size) {
         this.setState({iconSize: parseInt(size, 10)});
-    },
+    }
 
-    setLayout: function(layout) {
+    setLayout(layout) {
         this.setState({layout: layout});
-    },
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         // list available data providers (TODO: only for current data? e.g. plate)
         let url = window.PARADE_DATAPROVIDERS_URL;
         if (this.props.datasetId) url += '?dataset=' + this.props.datasetId;
@@ -52,18 +59,15 @@ export default React.createClass({
             url: url,
             dataType: 'json',
             cache: false,
-            success: function(data) {
-                if (this.isMounted()) {
-                    console.log(data);
-                    this.setState({
-                        dataProviders: data.data,
-                    });
-                }
-            }.bind(this)
+            success: data => {
+                this.setState({
+                    dataProviders: data.data,
+                });
+            }
         });
-    },
+    }
 
-    handleAddData: function(event) {
+    handleAddData(event) {
         // When user chooses to ADD data by Name, load it...
         var dataName = event.target.value;
         if (dataName !== "--") {
@@ -80,9 +84,9 @@ export default React.createClass({
                 });
             });
         }
-    },
+    }
 
-    handleImageWellClicked: function(obj, event) {
+    handleImageWellClicked(obj, event) {
         // Might be a Dataset image OR a Well that is selected.
         let imageId = obj.id;
         let wellId = obj.wellId;
@@ -117,9 +121,9 @@ export default React.createClass({
             toSelect = [imageId];
         }
         this.props.setSelectedImages(toSelect);
-    },
+    }
 
-    setImagesWellsSelected: function(dtype, ids) {
+    setImagesWellsSelected(dtype, ids) {
         // Selected state of IMAGES is handled in jstree
         // Selected state of WELLS is handled by this.state 
         if (dtype === 'well') {
@@ -127,9 +131,9 @@ export default React.createClass({
         } else {
             this.props.setSelectedImages(ids);
         }
-    },
+    }
 
-    setSelectedWells: function(wellIds) {
+    setSelectedWells(wellIds) {
         this.setState({selectedWellIds: wellIds});
         // Trigger loading Wells in right panel...
         var well_index = this.props.fieldId;
@@ -142,9 +146,9 @@ export default React.createClass({
         if (buttonsShowHide) {
             buttonsShowHide([]);
         }
-    },
+    }
 
-    render: function() {
+    render() {
         if (this.props.plateData === undefined && this.props.filteredImages === undefined) {
             return(<div></div>)
         }
@@ -227,4 +231,6 @@ export default React.createClass({
                         setIconSize={this.setIconSize} />
                 </div>)
     }
-});
+}
+
+export default Layout
