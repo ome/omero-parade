@@ -26,7 +26,7 @@ export default React.createClass({
             }
         }
         else if (this.props.datasetId) {
-            url += '?dataset=' + this.props.plateId;
+            url += '?dataset=' + this.props.datasetId;
         } else {
             url += '?' + this.props.images.map(i => 'image=' + i.id).join('&');
         }

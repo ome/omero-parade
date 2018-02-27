@@ -30,7 +30,6 @@ export default React.createClass({
                 </div>
                 <div className="paradeCentrePanel">
                     <FilterHub
-                        // datasetId={this.props.parentNode.data.obj.id}
                         setSelectedImages = {this.setSelectedImages}
                         images={this.state.searchResults}
                     />
