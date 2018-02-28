@@ -150,3 +150,42 @@ also be passed in a params object with the user input.
                     'f': f,
                     'params': filter_params,
                 })
+
+
+Custom Data Providers
+=====================
+
+Custom data providers return numerical data for Wells or Images that can
+be shown in a table for sorting, or plotted in a graph.
+
+Using the same setup as for filtering above, each module listed in the
+``omero.web.parade.filters`` setting can also contain a ``data_providers.py``
+file that implements two methods ``get_dataproviders`` and ``get_data``.
+
+Examples for ``omero_parade/data_providers.py``
+
+::
+
+    def get_dataproviders(request, conn):
+        return ["ROI_count"]
+
+
+    def get_data(request, data_name, conn):
+        """Return data for images in a Dataset or Plate."""
+        dataset_id = request.GET.get('dataset')
+        plate_id = request.GET.get('plate')
+        field_id = request.GET.get('field')
+
+        # ... get img_ids for container, then...
+
+        if data_name == "ROI_count":
+            # Want to get ROI count for images
+            params = ParametersI()
+            params.addIds(img_ids)
+            query = "select roi.image.id, count(roi.id) from Roi roi "\
+                    "where roi.image.id in (:ids) group by roi.image"
+            p = query_service.projection(query, params, conn.SERVICE_OPTS)
+            roi_counts = {}
+            for i in p:
+                roi_counts[i[0].val] = i[1].val
+            return roi_counts
