@@ -92,9 +92,10 @@ implement 2 methods: ``get_filters`` and ``get_script``.
 The ``get_filters`` method is used to compile the list of filters returned
 by the URL ``/omero_parade/filters/``.
 
-Some examples of ``get_filters``:
+Some examples of ``get_filters``
 
 ::
+
     # Return a list of filter names.
     def get_filters(request, conn):
         return ["Rating", "Comment", "Tag"]
@@ -102,7 +103,9 @@ Some examples of ``get_filters``:
 The request may include ``plate`` or ``dataset`` ID if we only want to
 support the filter for certain data types. In this example we could even
 check whether an OMERO.table exists on the plate.
+
 ::
+
     def get_filters(request, conn):
         if request.GET.get('plate', None) is not None:
             return ["Table"]
