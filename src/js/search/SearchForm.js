@@ -8,6 +8,8 @@ class SearchForm extends React.Component {
         this.state = {
             text: "",
         }
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
     
     handleChange(e) {
@@ -22,7 +24,6 @@ class SearchForm extends React.Component {
         let url= PARADE_INDEX_URL + "search/?query=" + this.state.text;
         $.getJSON(url,
             data => {
-                console.log(data.data);
                 this.props.setSearchResults(data.data);
             }
         );
