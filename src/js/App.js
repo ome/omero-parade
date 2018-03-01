@@ -24,7 +24,8 @@ class App extends Component {
 
     constructor(props) {
         super(props);
-        this.parentTypes = ["dataset",
+        this.parentTypes = ["project",
+                            "dataset",
                             "orphaned",
                             "tag",
                             "share",

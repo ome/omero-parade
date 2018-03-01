@@ -52,16 +52,25 @@ class DatasetContainer extends React.Component{
     }
 
     getImageNodes() {
-        let imgNodes = [],
-            jstree = this.props.jstree;
+        // If we have a Dataset parent, simply get child images.
+        // If we have a Project, iterate through each Dataset to get images.
+        let jstree = this.props.jstree;
+        let dtype = this.props.parentNode.type;
+        let imgNodes = [];
+        if (dtype === "dataset") {
+            imgNodes = this.props.parentNode.children.map(ch => jstree.get_node(ch));
+        } else if (dtype === "project") {
+            imgNodes = this.props.parentNode.children.reduce((prev, dataset) => {
+                let ds_node = jstree.get_node(dataset);
+                // will get empty array if Dataset node is not loaded
+                let images = ds_node.children.map(ch => jstree.get_node(ch));
+                prev = prev.concat(images);
+                return prev;
+            }, []);
+        }
 
-        this.props.parentNode.children.forEach(function(ch){
-            var childNode = jstree.get_node(ch);
-            // Ignore non-images under tags or 'deleted' under shares
-            if (childNode.type == "image") {
-                imgNodes.push(childNode);
-            }
-        });
+        // Ignore non-images under tags or 'deleted' under shares
+        imgNodes = imgNodes.filter(node => node.type === "image");
         return imgNodes;
     }
 

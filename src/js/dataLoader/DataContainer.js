@@ -80,7 +80,7 @@ class DataContainer extends React.Component {
                     key={key}/>
             )
         }
-        if (dtype === "dataset") {
+        if (dtype === "dataset" || dtype === "project") {
             rv = (
                 <DatasetContainer
                     jstree={jstree}
