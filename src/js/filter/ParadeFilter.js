@@ -36,14 +36,14 @@ class ParadeFilter extends React.Component {
         // like OPEN_WITH list.
 
         var url = window.PARADE_INDEX_URL + 'filters/script/' + this.props.name;
-        if (this.props.plateId) {
-            url += '?plate=' + this.props.plateId;
+        if (this.props.parentType === "plate") {
+            url += '?plate=' + this.props.parentId;
             if (this.props.fieldId !== undefined) {
                 url += '&field=' + this.props.fieldId;
             }
         }
-        else if (this.props.datasetId) {
-            url += '?dataset=' + this.props.datasetId;
+        else if (this.props.parentType === "dataset") {
+            url += '?dataset=' + this.props.parentId;
         } else {
             url += '?' + this.props.images.map(i => 'image=' + i.id).join('&');
         }
