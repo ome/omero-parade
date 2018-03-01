@@ -158,8 +158,11 @@ also be passed in a params object with the user input.
 Custom Data Providers
 =====================
 
-Custom data providers return numerical data for Wells or Images that can
+Custom data providers return numerical data for Images that can
 be shown in a table for sorting, or plotted in a graph.
+NB: Even if data applies to Wells, you need to map this to Image ID, since
+that is the common denominator that is used to identify images in the
+various list, grid or plot layouts.
 
 Using the same setup as for filtering above, each module listed in the
 ``omero.web.parade.filters`` setting can also contain a ``data_providers.py``
