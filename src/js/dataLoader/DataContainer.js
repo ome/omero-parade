@@ -23,6 +23,11 @@ import DatasetContainer from './datasetLoader/DatasetContainer';
 
 class DataContainer extends React.Component {
 
+    constructor(props) {
+        super(props);
+        this.setSelectedImages = this.setSelectedImages.bind(this);
+    }
+
     setSelectedImages(imageIds) {
         let jstree = this.props.jstree;
         if (jstree) {

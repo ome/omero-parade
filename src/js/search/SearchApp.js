@@ -10,7 +10,7 @@ class SearchApp extends React.Component {
         this.state = {
             searchResults: []
         }
-        this.searchResults = this.setSearchResults.bind(this);
+        this.setSearchResults = this.setSearchResults.bind(this);
         this.setSelectedImages = this.setSelectedImages.bind(this);
     }
 
