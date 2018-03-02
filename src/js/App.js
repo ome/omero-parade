@@ -88,20 +88,12 @@ class App extends Component {
             let dtype = parentNode.type;
             return (
                 <DataContainer
+                    // key to force re-mounting when parent changes
+                    // This is node ID not Project or Dataset ID
+                    key={parentNode.id}
                     parentNode={parentNode}
                     jstree={this.props.jstree} />
             )
-            // } else {
-            //     // handles tag, orphaned, dataset, share
-            //     // Cache this parentNode. If next selection == 0, still show this
-            //     // E.g. if image in Dataset is de-selected
-            //     this.previousParent = parentNode;
-            //     return (
-            //         <DatasetContainer
-            //             parentNode={parentNode}
-            //             jstree={this.props.jstree} />
-            //     )
-            // }
         }
 
         return (

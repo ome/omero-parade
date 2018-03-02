@@ -33,7 +33,6 @@ class FilterContainer extends React.Component {
     componentDidMount() {
         // list available filters (TODO: only for current data? e.g. plate)
         let url = window.PARADE_FILTERS_URL;
-        console.log('this.props.parentType, this.props.parentId', this.props.parentType, this.props.parentId)
         if (this.props.parentType && this.props.parentId) {
             url += '?' + this.props.parentType + '=' + this.props.parentId;
         } else {
