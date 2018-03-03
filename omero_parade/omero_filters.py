@@ -18,7 +18,7 @@
 from django.http import JsonResponse
 import json
 from omero.sys import ParametersI
-from omero_parade.utils import get_image_ids
+from omero_parade.utils import get_image_ids, get_project_image_ids
 
 
 def get_filters(request, conn):
@@ -27,11 +27,14 @@ def get_filters(request, conn):
 
 def get_script(request, script_name, conn):
     """Return a JS function to filter images by various params."""
+    project_id = request.GET.get('project')
     dataset_id = request.GET.get('dataset')
     plate_id = request.GET.get('plate')
     field_id = request.GET.get('field')
     image_ids = request.GET.getlist('image')
-    if plate_id and field_id:
+    if project_id:
+        img_ids = get_project_image_ids(conn, project_id)
+    elif plate_id and field_id:
         img_ids = get_image_ids(conn, plate_id, field_id)
     elif dataset_id:
         objects = conn.getObjects('Image', opts={'dataset': dataset_id})
