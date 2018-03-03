@@ -182,7 +182,8 @@ class DataTable extends React.Component {
                         ))}
                     </tr>
                     {imgJson.map(image => (
-                        <tr key={image.id}>
+                        <tr
+                            key={image.id + (image.parent ? image.parent : "")}>
                             <td>
                                 <img alt="image"
                                     className={(image.selected || selectedWellIds.indexOf(image.wellId)) > -1 ? 'ui-selected' : ''}
