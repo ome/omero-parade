@@ -44,6 +44,8 @@ class ParadeFilter extends React.Component {
         }
         else if (this.props.parentType === "dataset") {
             url += '?dataset=' + this.props.parentId;
+        } else if (this.props.parentType === "project") {
+            url += '?project=' + this.props.parentId;
         } else {
             url += '?' + this.props.images.map(i => 'image=' + i.id).join('&');
         }
