@@ -31,7 +31,6 @@ class Dataset extends React.Component {
                 $(".parade_centrePanel .ui-selected").each(function(){
                     ids.push(parseInt($(this).attr('data-id'), 10));
                 });
-                console.log('Dataset', ids);
                 this.props.setImagesWellsSelected('image', ids);
             },
         });
@@ -54,7 +53,8 @@ class Dataset extends React.Component {
                     {imgJson.map(image => (
                         <ImageIcon
                             image={image}
-                            key={image.id}
+                            // If images in Datasets, use parent to make unique
+                            key={image.id + (image.parent ? image.parent : "")}
                             iconSize={iconSize}
                             handleImageWellClicked={this.props.handleImageWellClicked} />
                     ))}

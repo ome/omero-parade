@@ -42,6 +42,7 @@ class DatasetContainer extends React.Component{
             'data': JSON.parse(JSON.stringify(node.data)),
             'selected': node.state.selected,
             'date': date,
+            'parent': node.parent,
         };
         // If image is in share and share is not owned by user...
         if (node.data.obj.shareId && !parentNode.data.obj.isOwned) {
@@ -63,8 +64,11 @@ class DatasetContainer extends React.Component{
             imgNodes = this.props.parentNode.children.reduce((prev, dataset) => {
                 let ds_node = jstree.get_node(dataset);
                 // will get empty array if Dataset node is not loaded
-                let images = ds_node.children.map(ch => jstree.get_node(ch));
-                prev = prev.concat(images);
+                // Only include images if Dataset expanded
+                if (ds_node.state.opened) {
+                    let images = ds_node.children.map(ch => jstree.get_node(ch));
+                    prev = prev.concat(images);
+                }
                 return prev;
             }, []);
         }

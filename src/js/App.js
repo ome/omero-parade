@@ -44,9 +44,11 @@ class App extends Component {
         if (dtype === "image") {
             return false;
         }
+        // Don't support multiple selection of anything except images
         if (selected.length > 1 && dtype !== "image") {
             return true;
         }
+        // Only some parent types supported
         if (this.parentTypes.indexOf(dtype) === -1) {
             return true;
         }
@@ -56,28 +58,52 @@ class App extends Component {
         // When props change...
         // If nothing is selected AND the previous node is valid
         // We continue to render that node (Dataset)
-        if (nextProps.selected.length !== 0) {
-            delete(this.previousParent);
-        }
+        // if (nextProps.selected.length !== 0) {
+        //     delete(this.previousParent);
+        // }
     }
 
     getParentNode() {
         // See http://will-moore.github.io/react-render-purely-props-and-state/
+
+        // If parentNode is a Dataset, but we're already showing Parent project
+        // we want to keep the same Project as parent
+
+        // OR if nothing is selected, we continue to render same parent
+
         var selected = this.props.selected,
             jstree = this.props.jstree;
+
+        // If unsupported objects selected, we return and show nothing
         if (this.renderNothing(selected)) {
             return;
         }
+        
+        // If nothing selected, continue to show same parent / data
         if (selected.length === 0 && this.previousParent) {
             return this.previousParent;
         }
+
+        // If a supported parent is selected, will only be 1
+        let parentNode;
         var dtype = selected[0].type;
         if (this.parentTypes.indexOf(dtype) > -1) {
-            return selected[0];
+            parentNode = selected[0];
         }
+
+        // Selected an image, we simply show it's container
         if (dtype === "image") {
-            return jstree.get_node(jstree.get_parent(selected[0]));
+            parentNode = jstree.get_node(jstree.get_parent(selected[0]));
         }
+
+        // If we've got a Dataset within Project, return the Project
+        if (parentNode) {
+            let p = jstree.get_node(jstree.get_parent(parentNode));
+            if (p.type === "project") {
+                parentNode = p;
+            }
+        }
+        return parentNode;
     }
 
     render() {
@@ -85,7 +111,7 @@ class App extends Component {
         let parentNode = this.getParentNode();
 
         if (parentNode) {
-            let dtype = parentNode.type;
+            this.previousParent = parentNode;
             return (
                 <DataContainer
                     // key to force re-mounting when parent changes
