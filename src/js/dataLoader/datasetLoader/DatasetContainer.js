@@ -42,7 +42,9 @@ class DatasetContainer extends React.Component{
             'data': JSON.parse(JSON.stringify(node.data)),
             'selected': node.state.selected,
             'date': date,
-            'parent': node.parent,
+            'parent': node.parent,  // jstree node_id string e.g. 'j1_118'
+            'datasetName': node.datasetName,
+            'datasetId': node.datasetId,
         };
         // If image is in share and share is not owned by user...
         if (node.data.obj.shareId && !parentNode.data.obj.isOwned) {
@@ -63,10 +65,16 @@ class DatasetContainer extends React.Component{
         } else if (dtype === "project") {
             imgNodes = this.props.parentNode.children.reduce((prev, dataset) => {
                 let ds_node = jstree.get_node(dataset);
+                let ds_name = ds_node.text;
+                let ds_id = ds_node.data.id;
+                // console.log(ds_id, ds_node);
                 // will get empty array if Dataset node is not loaded
                 // Only include images if Dataset expanded
                 if (ds_node.state.opened) {
                     let images = ds_node.children.map(ch => jstree.get_node(ch));
+                    // add datasetName to each image
+                    images = images.map(i => Object.assign({}, i,
+                        {datasetName: ds_name, datasetId: ds_id}))
                     prev = prev.concat(images);
                 }
                 return prev;

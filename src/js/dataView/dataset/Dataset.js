@@ -45,20 +45,42 @@ class Dataset extends React.Component {
         let {imgJson, iconSize, setIconSize, 
              layout, setLayout} = this.props;
 
+        // imgJson may come from several Datasets
+        // Each image has datasetName and datasetId
+        // Create list of datases [ {name: 'name', id:1, images: [imgs]} ]
+        let datasets = imgJson.reduce((prev, img, idx, imgList) => {
+            // if the last dataset is different from current one,
+            // start new Dataset
+            if (idx === 0 || imgList[idx - 1].datasetId !== img.datasetId) {
+                prev.push({name: img.datasetName,
+                           id: img.datasetId,
+                           images: []})
+            }
+            // Add image to the last Dataset
+            prev[prev.length-1].images.push(img);
+            return prev;
+        }, []);
+
         return (
             <div className="parade_centrePanel">
-                <ul
-                    ref="dataIcons"
-                    className={layout + "Layout"}>
-                    {imgJson.map(image => (
-                        <ImageIcon
-                            image={image}
-                            // If images in Datasets, use parent to make unique
-                            key={image.id + (image.parent ? image.parent : "")}
-                            iconSize={iconSize}
-                            handleImageWellClicked={this.props.handleImageWellClicked} />
-                    ))}
-                </ul>
+                {datasets.map(dataset => (
+                    <div key={dataset.id}>
+                        <h2>{dataset.name}</h2>
+                        <ul
+                            ref="dataIcons"
+                            className={layout + "Layout"}>
+                            {dataset.images.map(image => (
+                                <ImageIcon
+                                    image={image}
+                                    // If images in Datasets, use parent to make unique
+                                    key={image.id + (image.parent ? image.parent : "")}
+                                    iconSize={iconSize}
+                                    handleImageWellClicked={this.props.handleImageWellClicked} />
+                            ))}
+                        </ul>
+                        <div style={{clear: 'both'}}></div>
+                    </div>
+                ))}
             </div>
         );
     }
