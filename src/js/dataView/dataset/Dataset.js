@@ -62,12 +62,12 @@ class Dataset extends React.Component {
         }, []);
 
         return (
-            <div className="parade_centrePanel">
+            <div className="parade_centrePanel"
+                ref="dataIcons">
                 {datasets.map(dataset => (
                     <div key={dataset.id}>
                         <h2>{dataset.name}</h2>
                         <ul
-                            ref="dataIcons"
                             className={layout + "Layout"}>
                             {dataset.images.map(image => (
                                 <ImageIcon

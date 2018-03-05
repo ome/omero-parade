@@ -34,7 +34,10 @@ class DataContainer extends React.Component {
             jstree.deselect_all();
             if (imageIds.length === 0) return;
             let containerNode = OME.getTreeImageContainerBestGuess(imageIds[0]);
-            let nodes = imageIds.map(iid => jstree.locate_node('image-' + iid, containerNode)[0]);
+            let nodes = imageIds.map(iid => {
+                let containerNode = OME.getTreeImageContainerBestGuess(iid);
+                return jstree.locate_node('image-' + iid, containerNode)[0]
+            });
             jstree.select_node(nodes);
             // we also focus the node, so that hotkey events come from the node
             if (nodes.length > 0) {
