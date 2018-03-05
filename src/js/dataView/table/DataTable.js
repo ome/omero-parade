@@ -26,6 +26,7 @@ class DataTable extends React.Component {
         this.state = {
             showHeatmapColumns: {},
             sortBy: undefined,
+            sortReverse: false,
         }
         this.handleSortTable = this.handleSortTable.bind(this);
         this.handleShowHeatmap = this.handleShowHeatmap.bind(this);
@@ -55,9 +56,11 @@ class DataTable extends React.Component {
 
     handleSortTable(event, name) {
         event.preventDefault();
-        this.setState({
-            sortBy: name
-        });
+        // if already sorting by this key, toggle sortReverse
+        this.setState(prevState => ({
+            sortBy: name,
+            sortReverse: prevState.sortBy === name ? !prevState.sortReverse : false,
+        }));
     }
 
     handleShowHeatmap(event, name) {
@@ -77,10 +80,11 @@ class DataTable extends React.Component {
             // Add a sortKey to imgJson
             imgJson = imgJson.map(i => Object.assign(i, {sortKey: colDataToSort[i.id]}));
             // sort...
+            let reverse = this.state.sortReverse ? -1 : 1;
             imgJson.sort((a, b) => {
-                if (a.sortKey === undefined) return -1;
-                if (b.sortKey === undefined) return 1;
-                return a.sortKey < b.sortKey ? -1 : 1;
+                if (a.sortKey === undefined) return -reverse;
+                if (b.sortKey === undefined) return reverse;
+                return a.sortKey < b.sortKey ? -reverse : reverse;
             });
         }
 
