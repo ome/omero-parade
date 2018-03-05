@@ -72,9 +72,20 @@ class Layout extends React.Component {
         var dataName = event.target.value;
         if (dataName !== "--") {
             var url = window.PARADE_INDEX_URL + 'data/' + dataName;
-            if (this.props.datasetId) url += '?dataset=' + this.props.datasetId;
-            if (this.props.plateId) url += '?plate=' + this.props.plateId;
-            if (this.props.fieldId !== undefined) url += '&field=' + this.props.fieldId;
+
+            if (this.props.parentType === "plate") {
+                url += '?plate=' + this.props.parentId;
+                if (this.props.fieldId !== undefined) {
+                    url += '&field=' + this.props.fieldId;
+                }
+            }
+            else if (this.props.parentType === "dataset") {
+                url += '?dataset=' + this.props.parentId;
+            } else if (this.props.parentType === "project") {
+                url += '?project=' + this.props.parentId;
+            } else {
+                url += '?' + this.props.images.map(i => 'image=' + i.id).join('&');
+            }
             $.getJSON(url, data => {
                 // Add data to table data
                 let td = Object.assign({}, this.state.tableData);
