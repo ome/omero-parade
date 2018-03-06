@@ -33,9 +33,11 @@ class Layout extends React.Component {
             dataProviders: [],
             tableData: {},
             selectedWellIds: [],
+            showDatasets: true,
         }
         this.setIconSize = this.setIconSize.bind(this);
         this.setLayout = this.setLayout.bind(this);
+        this.setShowDatasets = this.setShowDatasets.bind(this);
         this.handleAddData = this.handleAddData.bind(this);
         this.handleImageWellClicked = this.handleImageWellClicked.bind(this);
         this.setImagesWellsSelected = this.setImagesWellsSelected.bind(this);
@@ -48,6 +50,11 @@ class Layout extends React.Component {
 
     setLayout(layout) {
         this.setState({layout: layout});
+    }
+
+    setShowDatasets(event) {
+        let show = event.target.checked;
+        this.setState({showDatasets: show});
     }
 
     componentDidMount() {
@@ -201,6 +208,7 @@ class Layout extends React.Component {
                 <Dataset
                     iconSize={this.state.iconSize}
                     imgJson={filteredImages}
+                    showDatasets={this.state.showDatasets}
                     handleImageWellClicked = {this.handleImageWellClicked}
                     setImagesWellsSelected = {this.setImagesWellsSelected}
                     />)
@@ -225,6 +233,12 @@ class Layout extends React.Component {
                             })}
                         </select>
                         <div className="layoutButton">
+                            <label>
+                                Show Datasets
+                                <input  type="checkbox"
+                                        checked={this.state.showDatasets}
+                                        onChange={this.setShowDatasets} />
+                            </label>
                             <button onClick={() => {this.setLayout("icon")}}>
                                 grid
                             </button>
