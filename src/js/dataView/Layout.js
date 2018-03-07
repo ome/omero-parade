@@ -20,7 +20,7 @@ import React, { Component } from 'react';
 import Dataset from './dataset/Dataset';
 import PlateGrid from './plate/PlateGrid';
 import DataPlot from './plot/DataPlot';
-import DataTable from './table/DataTable';
+import Tables from './table/Tables';
 import Footer from '../Footer';
 
 class Layout extends React.Component {
@@ -174,10 +174,11 @@ class Layout extends React.Component {
         let imageComponent;
         if (this.state.layout === "table") {
             imageComponent = (
-                <DataTable
+                <Tables
                     iconSize={this.state.iconSize}
                     imgJson={filteredImages}
                     selectedWellIds={this.state.selectedWellIds}
+                    showDatasets={this.state.showDatasets}
                     handleImageWellClicked = {this.handleImageWellClicked}
                     setImagesWellsSelected = {this.setImagesWellsSelected}
                     tableData={this.state.tableData}
