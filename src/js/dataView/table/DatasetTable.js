@@ -23,7 +23,7 @@ class DatasetTable extends React.Component {
 
 
     render() {
-        let {imgJson, iconSize, tableData, selectedWellIds,
+        let {tableTitle, imgJson, iconSize, tableData, selectedWellIds,
              sortBy, sortReverse, showHeatmapColumns,
              handleSortTable, handleShowHeatmap,
              handleImageWellClicked} = this.props;
@@ -56,8 +56,10 @@ class DatasetTable extends React.Component {
         }
 
         return (
-            <table className="parade_dataTable" ref="dataTable">
-                <tbody>
+            <tbody>
+                {tableTitle ? <tr><th colSpan={columnNames.length + 2}>
+                                    {tableTitle}
+                              </th></tr> : ""}
                 <tr>
                     <td>
                     </td>
@@ -100,8 +102,7 @@ class DatasetTable extends React.Component {
                         ))}
                     </tr>
                 ))}
-                </tbody>
-            </table>
+            </tbody>
         );
     }
 }

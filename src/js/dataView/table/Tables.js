@@ -98,21 +98,20 @@ class Tables extends React.Component {
             }, []);
 
             components = datasets.map(dataset => (
-                <div key={dataset.id}>
-                    <h2>{dataset.name}</h2>
-                    <DatasetTable
-                        imgJson={dataset.images}
-                        iconSize={iconSize}
-                        tableData={tableData}
-                        sortBy={this.state.sortBy}
-                        sortReverse={this.state.sortReverse}
-                        selectedWellIds={selectedWellIds}
-                        showHeatmapColumns={this.state.showHeatmapColumns}
-                        handleSortTable={this.handleSortTable}
-                        handleShowHeatmap={this.handleShowHeatmap}
-                        handleImageWellClicked={handleImageWellClicked}
-                    />
-                </div>
+                <DatasetTable
+                    key={dataset.id}
+                    tableTitle={dataset.name}
+                    imgJson={dataset.images}
+                    iconSize={iconSize}
+                    tableData={tableData}
+                    sortBy={this.state.sortBy}
+                    sortReverse={this.state.sortReverse}
+                    selectedWellIds={selectedWellIds}
+                    showHeatmapColumns={this.state.showHeatmapColumns}
+                    handleSortTable={this.handleSortTable}
+                    handleShowHeatmap={this.handleShowHeatmap}
+                    handleImageWellClicked={handleImageWellClicked}
+                />
             ))
         } else {
             components = (
@@ -133,7 +132,9 @@ class Tables extends React.Component {
         return (
             <div className="parade_centrePanel"
                 ref="dataTable">
+                <table className="parade_dataTable">
                 {components}
+                </table>
             </div>
         );
     }
