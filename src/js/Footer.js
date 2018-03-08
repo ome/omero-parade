@@ -40,7 +40,7 @@ const styles = {
 class Footer extends React.Component {
     
     render() {
-        let setIconSize, iconSize = this.props;
+        let {setIconSize, iconSize} = this.props;
         return (
             <div style={styles.footer} >
                 <input
