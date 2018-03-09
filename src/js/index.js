@@ -16,7 +16,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-import React from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import SearchApp from './search/SearchApp';

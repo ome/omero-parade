@@ -20,36 +20,41 @@ import React, { Component } from 'react';
 import FilterContainer from './FilterContainer';
 import Layout from '../dataView/Layout';
 
-export default React.createClass({
+class FilterHub extends React.Component {
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props);
+        // We store various filter inputs & defaults in STATE
+        // but the filter functions are stored here
+        this.filterFunctions = [];
+        this.state = {
             filterNames: [],
             filterValues: [],   // [{'inputName':'value'}]
             iconSize: 50,
         }
-    },
+        this.addFilter = this.addFilter.bind(this);
+        this.handleFilterLoaded = this.handleFilterLoaded.bind(this);
+        this.handleFilterChange = this.handleFilterChange.bind(this);
+        this.handleRemoveFilter = this.handleRemoveFilter.bind(this);
+        this.setIconSize = this.setIconSize.bind(this);
+    }
 
-    // We store various filter inputs & defaults in STATE
-    // but the filter functions are stored here
-    filterFunctions: [],
-
-    addFilter: function(filterName) {
+    addFilter(filterName) {
         this.setState({
             filterNames: [...this.state.filterNames, filterName],
         });
-    },
+    }
 
-    handleFilterLoaded: function(filterIndex, filterFunc, defaultValues) {
+    handleFilterLoaded(filterIndex, filterFunc, defaultValues) {
         this.filterFunctions[filterIndex] = filterFunc;
         let filterValues = [...this.state.filterValues];    // new list
         filterValues[filterIndex] = defaultValues;
         this.setState({
             filterValues: filterValues,
         });
-    },
+    }
 
-    handleFilterChange: function(filterIndex, paramName, paramValue) {
+    handleFilterChange(filterIndex, paramName, paramValue) {
         let newValues = Object.assign({}, this.state.filterValues[filterIndex]);
         newValues[paramName] = paramValue;
         let filterValues = [...this.state.filterValues];    // new list
@@ -57,9 +62,9 @@ export default React.createClass({
         this.setState({
             filterValues: filterValues
         });
-    },
+    }
 
-    handleRemoveFilter: function(filterIndex) {
+    handleRemoveFilter(filterIndex) {
         let fNames = [...this.state.filterNames];
         let fValues = [...this.state.filterValues];
         fNames.splice(filterIndex, 1);
@@ -68,17 +73,13 @@ export default React.createClass({
             filterNames: fNames,
             filterValues: fValues
         });
-    },
+    }
 
-    setIconSize: function(size) {
+    setIconSize(size) {
         this.setState({iconSize: parseInt(size, 10)});
-    },
+    }
 
-    componentDidMount: function() {
-        
-    },
-
-    render: function() {
+    render() {
 
         // Images could be from parent PlateLoader OR DatasetLoader
         let images = this.props.images;
@@ -124,4 +125,6 @@ export default React.createClass({
                         />
                 </div>)
     }
-});
+}
+
+export default FilterHub

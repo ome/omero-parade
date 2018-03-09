@@ -18,14 +18,14 @@
 
 import React, { Component } from 'react';
 
-const Well = React.createClass({
+class Well extends React.Component {
 
-    // shouldComponentUpdate: function(nextProps, nextState) {
+    // shouldComponentUpdate(nextProps, nextState) {
     //     // Only re-render if visibility changes
     //     return this.props.hidden !== nextProps.hidden;
     // },
 
-    render: function() {
+    render() {
         let {id,
                iconSize,
                selected,
@@ -66,7 +66,7 @@ const Well = React.createClass({
 
         return (
             <td className={"well " + cls}
-                data-wellId={id}
+                data-wellid={id}
                 title={""+row+col}>
                 <div
                     style={divStyle}
@@ -80,6 +80,6 @@ const Well = React.createClass({
             </td>
         )
     }
-});
+}
 
 export default Well

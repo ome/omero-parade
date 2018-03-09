@@ -32,16 +32,18 @@ const styles = {
         transform: 'rotate(-90deg)',
     },
 }
-export default React.createClass({
+class DataPlot extends React.Component {
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props);
+        this.state = {
             xAxisName: undefined,
             yAxisName: undefined,
         }
-    },
+        this.setAxisName = this.setAxisName.bind(this);
+    }
 
-    setAxisName: function(axis, event, otherAxis) {
+    setAxisName(axis, event, otherAxis) {
         // Set BOTH axis names.
         // Since we start with both undefined, as soon as
         // user picks one to change, we set both.
@@ -51,11 +53,11 @@ export default React.createClass({
         } else {
             this.setState({yAxisName: name, xAxisName: otherAxis});
         }
-    },
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         let dtype = this.props.imgJson[0].wellId ? 'well' : 'image';
-        let idAttr = (dtype === 'well' ? 'data-wellId': 'data-id')
+        let idAttr = (dtype === 'well' ? 'data-wellid': 'data-id')
         $(this.refs.thumb_plot_canvas).selectable({
             filter: 'img',
             distance: 2,
@@ -68,12 +70,12 @@ export default React.createClass({
                 this.props.setImagesWellsSelected(dtype, ids);
             },
         });
-    },
+    }
 
-    componentWillUnmount: function() {
+    componentWillUnmount() {
         // cleanup plugin
         $(this.refs.dataIcons).selectable( "destroy" );
-    },
+    }
 
     render() {
         let {imgJson, iconSize, tableData,
@@ -135,7 +137,7 @@ export default React.createClass({
                                 className={(image.selected || selectedWellIds.indexOf(image.wellId)) > -1 ? 'ui-selected' : ''}
                                 key={image.id}
                                 data-id={image.id}
-                                data-wellId={image.wellId}
+                                data-wellid={image.wellId}
                                 src={"/webgateway/render_thumbnail/" + image.id + "/"}
                                 title={image.name}
                                 onClick={event => {handleImageWellClicked(image, event)}}
@@ -148,4 +150,6 @@ export default React.createClass({
             </div>
         );
     }
-});
+}
+
+export default DataPlot

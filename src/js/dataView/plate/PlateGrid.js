@@ -20,13 +20,14 @@ import React, { Component } from 'react';
 import Well from './Well';
 
 
-const PlateGrid = React.createClass({
+class PlateGrid extends React.Component {
 
-    getInitialState: function() {
-        return {}
-    },
+    constructor(props) {
+        super(props);
+        this.state = {}
+    }
 
-    componentDidMount: function() {
+    componentDidMount() {
         $(this.refs.plateGrid).selectable({
             filter: 'td.well',
             distance: 2,
@@ -34,19 +35,19 @@ const PlateGrid = React.createClass({
                 // Make the same selection in the jstree etc
                 let ids = [];
                 $(".plateGrid .ui-selected").each(function(){
-                    ids.push(parseInt($(this).attr('data-wellId'), 10));
+                    ids.push(parseInt($(this).attr('data-wellid'), 10));
                 });
                 this.props.setImagesWellsSelected('well', ids);
             },
         });
-    },
+    }
 
-    componentWillUnmount: function() {
+    componentWillUnmount() {
         // cleanup plugin
         $(this.refs.dataIcons).selectable( "destroy" );
-    },
+    }
 
-    render: function() {
+    render() {
         var data = this.props.plateData,
             iconSize = this.props.iconSize,
             placeholderStyle = {
@@ -119,6 +120,6 @@ const PlateGrid = React.createClass({
             </div>
         );
     }
-});
+}
 
 export default PlateGrid

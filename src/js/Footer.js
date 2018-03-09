@@ -37,18 +37,24 @@ const styles = {
     }
 }
 
-const Footer = ({setIconSize, iconSize}) => (
-    <div style={styles.footer} >
-        <input
-            type="range"
-            style={styles.slider}
-            className="parade"
-            min="30"
-            max="200"
-            value={iconSize}
-            onChange={(event) => {setIconSize(event.target.value)}}
-        />
-    </div>
-);
+class Footer extends React.Component {
+    
+    render() {
+        let setIconSize, iconSize = this.props;
+        return (
+            <div style={styles.footer} >
+                <input
+                    type="range"
+                    style={styles.slider}
+                    className="parade"
+                    min="30"
+                    max="200"
+                    value={iconSize}
+                    onChange={(event) => {setIconSize(event.target.value)}}
+                />
+            </div>
+        );
+    }
+}
 
 export default Footer

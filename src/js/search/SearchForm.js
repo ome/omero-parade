@@ -1,19 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-export default React.createClass({
+class SearchForm extends React.Component {
 
-    getInitialState: function() {
-        return {
+    constructor(props) {
+        super(props)
+        this.state = {
             text: "",
         }
-    },
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
     
-    handleChange: function(e) {
+    handleChange(e) {
         this.setState({ text: e.target.value });
-    },
+    }
 
-    handleSubmit: function(e) {
+    handleSubmit(e) {
         e.preventDefault();
         if (!this.state.text.length) {
             return;
@@ -21,13 +24,12 @@ export default React.createClass({
         let url= PARADE_INDEX_URL + "search/?query=" + this.state.text;
         $.getJSON(url,
             data => {
-                console.log(data.data);
                 this.props.setSearchResults(data.data);
             }
         );
-    },
+    }
 
-    render: function() {
+    render() {
         return (
             <form onSubmit={this.handleSubmit}>
                 <h2>Search</h2>
@@ -40,4 +42,6 @@ export default React.createClass({
             </form>
         )
     }
-});
+}
+
+export default SearchForm

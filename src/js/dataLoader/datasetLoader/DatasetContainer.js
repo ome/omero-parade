@@ -20,9 +20,15 @@ import React, { Component } from 'react';
 import FilterHub from '../../filter/FilterHub'
 
 
-const DatasetContainer = React.createClass({
+class DatasetContainer extends React.Component{
 
-    marshalNode: function(node) {
+    constructor(props) {
+        super(props);
+        this.marshalNode = this.marshalNode.bind(this);
+        this.getImageNodes = this.getImageNodes.bind(this);
+    }
+
+    marshalNode(node) {
         var parentNode = this.props.parentNode;
         var dateFormatOptions = {
             weekday: "short", year: "numeric", month: "short",
@@ -43,9 +49,9 @@ const DatasetContainer = React.createClass({
             iData.shareId = node.data.obj.shareId;
         }
         return iData;
-    },
+    }
 
-    getImageNodes: function() {
+    getImageNodes() {
         let imgNodes = [],
             jstree = this.props.jstree;
 
@@ -57,9 +63,9 @@ const DatasetContainer = React.createClass({
             }
         });
         return imgNodes;
-    },
+    }
 
-    render: function() {
+    render() {
         var imgNodes = this.getImageNodes();
 
         // Convert jsTree nodes into json for template
@@ -82,6 +88,6 @@ const DatasetContainer = React.createClass({
                 images={imgJson}
             />)
     }
-});
+}
 
 export default DatasetContainer

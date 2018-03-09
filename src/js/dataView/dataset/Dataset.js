@@ -19,9 +19,9 @@
 import React, { Component } from 'react';
 import ImageIcon from './ImageIcon'
 
-const Dataset = React.createClass({
+class Dataset extends React.Component {
 
-    componentDidMount: function() {
+    componentDidMount() {
         $(this.refs.dataIcons).selectable({
             filter: 'li.datasetThumb',
             distance: 2,
@@ -35,12 +35,12 @@ const Dataset = React.createClass({
                 this.props.setImagesWellsSelected('image', ids);
             },
         });
-    },
+    }
 
-    componentWillUnmount: function() {
+    componentWillUnmount() {
         // cleanup plugin
         $(this.refs.dataIcons).selectable( "destroy" );
-    },
+    }
 
     render() {
         let {imgJson, iconSize, setIconSize, 
@@ -62,6 +62,6 @@ const Dataset = React.createClass({
             </div>
         );
     }
-});
+}
 
 export default Dataset
