@@ -1,6 +1,6 @@
 {
   "name": "omero_parade",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "\"React.js based centre panel for webclient\"",
   "repository": {
     "type": "git",

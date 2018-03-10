@@ -27,7 +27,7 @@ import setuptools.command.sdist
 from distutils.core import Command
 from setuptools import setup, find_packages
 
-VERSION = "0.0.1"
+VERSION = "0.1.0"
 
 DESCRIPTION = "OMERO.parade creation app"
 AUTHOR = "The Open Microscopy Team"
