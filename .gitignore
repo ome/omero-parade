@@ -1,6 +1,7 @@
 /node_modules/
 .DS_Store
-/omero_parade/static/omero_parade/js/bundle.min.js
+/omero_parade/static/omero_parade/js/bundle.js
+/omero_parade/static/omero_parade/js/bundle.js.map
 *.pyc
 dist
 *.egg-info
