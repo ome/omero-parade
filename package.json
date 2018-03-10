@@ -9,7 +9,6 @@
   "license": "AGPL-3.0+",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack-dev-server --progress --config webpack.dev.js",
     "watch": "webpack --watch --config webpack.dev.js",
     "build": "webpack --progress --config webpack.prod.js",
     "build-dev": "webpack --progress --config webpack.dev.js"
@@ -29,7 +28,6 @@
     "babel-preset-react": "^6.24.1",
     "webpack": "^4.1.1",
     "webpack-cli": "^2.0.11",
-    "webpack-dev-server": "^3.1.1",
     "webpack-merge": "^4.1.2"
   }
 }
