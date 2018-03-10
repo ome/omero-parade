@@ -15,7 +15,7 @@
     "build-dev": "webpack --progress --config webpack.dev.js"
   },
   "dependencies": {
-    "axios": "^0.14.0",
+    "axios": "^0.17.1",
     "clusterfck": "^0.6.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0"
