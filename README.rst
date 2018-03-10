@@ -38,15 +38,16 @@ Display parade in the centre of the webclient:
 
 ::
 
-    $ bin/omero config append omero.web.ui.center_plugins '["Parade",
-      "omero_parade/init.js.html", "omero_parade"]' 
+    $ bin/omero config append omero.web.ui.center_plugins \
+        '["Parade", "omero_parade/init.js.html", "omero_parade"]'
 
 Add a link to the app in its own window:
 
 ::
 
-    $ bin/omero config append omero.web.ui.top_links '["Parade",
-      "parade_index", {"title": "Search and filter in OMERO.parade"}]'
+    $ bin/omero config append omero.web.ui.top_links \
+        '["Parade", "parade_index",
+          {"title": "Search and filter in OMERO.parade"}]'
 
 Now restart OMERO.web as normal.
 
