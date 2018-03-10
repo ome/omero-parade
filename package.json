@@ -2,6 +2,10 @@
   "name": "omero_parade",
   "version": "0.0.0",
   "description": "\"React.js based centre panel for webclient\"",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ome/omero-parade.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node_modules/.bin/webpack-dev-server --progress --inline --hot",
