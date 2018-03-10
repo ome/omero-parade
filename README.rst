@@ -50,12 +50,14 @@ Add a link to the app in its own window:
 
 Now restart OMERO.web as normal.
 
+
 Build
 =====
 
 In order to build you need:
 
-* npm version equal or greater to 3.0!
+* npm version equal or greater to 3.0! npm version equal or greater than
+5.0 is recommended!
 
 ::
 
@@ -65,7 +67,13 @@ To build an uncompressed version, run:
 
 ::
 
-    $ npm run dev
+    $ npm run build-dev
+
+To build an compressed, minified version for production, run:
+
+::
+
+    $ npm run build
 
 
 Custom Filtering
