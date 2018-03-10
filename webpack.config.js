@@ -13,14 +13,12 @@ module.exports = {
     port: 3333
   },
   module: {
-    loaders: [
+    rules: [
       {
-        test: /\.jsx?$/,
+        test: /\.(js|jsx)?$/,
         exclude: /(node_modules|bower_components)/,
-        loader: 'babel-loader',
-        query: {
-          presets: ['react', 'es2015'],
-          plugins: ['transform-class-properties'],
+        use: {
+          loader: 'babel-loader'
         }
       }
     ]
