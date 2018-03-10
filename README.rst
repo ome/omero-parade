@@ -57,7 +57,7 @@ Build
 In order to build you need:
 
 * npm version equal or greater to 3.0! npm version equal or greater than
-5.0 is recommended!
+5.2 is recommended!
 
 ::
 
