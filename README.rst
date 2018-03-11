@@ -64,6 +64,13 @@ In order to build you need:
 
     $ npm install
 
+To build an uncompressed version and automatically rebuild when source
+files change, run:
+
+::
+
+    $ npm run watch
+
 To build an uncompressed version, run:
 
 ::
