@@ -77,7 +77,7 @@ To build an uncompressed version, run:
 
     $ npm run build-dev
 
-To build an compressed, minified version for production, run:
+To build a compressed, minified version for production, run:
 
 ::
 
