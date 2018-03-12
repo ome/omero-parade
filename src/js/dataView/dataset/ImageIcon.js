@@ -45,8 +45,19 @@ class ImageIcon extends React.Component {
     }
 
     getIconSizes() {
-        var width = this.props.iconSize;
-        return {'width': width, 'max-height': width}
+        let longestSide = this.props.iconSize;
+        let width = this.props.image.data.obj.sizeX;
+        let height = this.props.image.data.obj.sizeY;
+        if (width > height) {
+            let ratio = height / width;
+            width = Math.min(longestSide, width);
+            height = width * ratio;
+        } else {
+            let ratio = width / height;
+            height = Math.min(longestSide, height);
+            width = height * ratio;
+        }
+        return {'width': width, 'height': height}
     }
 
     // After rendering, scroll selectd icon into view
