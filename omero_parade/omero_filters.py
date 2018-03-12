@@ -45,7 +45,9 @@ def get_script(request, script_name, conn):
 
         # Get ROI counts
         params = ParametersI()
-        params.addIds(img_ids)
+        # Include "-1" so that if we have no Image IDs that the query does
+        # not fail.  It will not match anything.
+        params.addIds([-1] + img_ids)
         query = "select roi.image.id, count(roi.id) from Roi roi "\
                 "where roi.image.id in (:ids) group by roi.image"
         p = query_service.projection(query, params, conn.SERVICE_OPTS)
