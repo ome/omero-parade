@@ -52,8 +52,12 @@ def get_script(request, script_name, conn):
         roi_counts = {}
         for i in p:
             roi_counts[i[0].val] = i[1].val
-        min_count = min(roi_counts.values())
-        max_count = max(roi_counts.values())
+        values = roi_counts.values()
+        min_count = 0
+        max_count = 0
+        if len(values) > 0:
+            min_count = min(roi_counts.values())
+            max_count = max(roi_counts.values())
 
         # Return a JS function that will be passed an object
         # e.g. {'type': 'Image', 'id': 1}
