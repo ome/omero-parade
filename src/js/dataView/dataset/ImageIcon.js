@@ -46,7 +46,7 @@ class ImageIcon extends React.Component {
 
     getIconSizes() {
         var width = this.props.iconSize;
-        return {'width': width, 'max-height': width}
+        return {'width': width, 'max_height': width}
     }
 
     // After rendering, scroll selectd icon into view
@@ -83,7 +83,7 @@ class ImageIcon extends React.Component {
             >
                     <img alt="image"
                         width={iconSizes.width + "px"}
-                        height={iconSizes.height + "px"}
+                        height={iconSizes.max_height + "px"}
                         src={"/webgateway/render_thumbnail/" + image.id + "/"}
                         title={image.name} />
             </li>
