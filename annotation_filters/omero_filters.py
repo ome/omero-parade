@@ -46,7 +46,7 @@ def get_script(request, script_name, conn):
     if script_name == "Rating":
 
         params = ParametersI()
-        # Include "-1" so that if we have no Image IDs that the query does
+        # Include "-1" so that if we have no object IDs that the query does
         # not fail.  It will not match anything.
         params.addIds([-1] + obj_ids)
         query = """select oal from %sAnnotationLink as oal
@@ -84,7 +84,7 @@ def get_script(request, script_name, conn):
     if script_name == "Comment":
 
         params = ParametersI()
-        # Include "-1" so that if we have no Image IDs that the query does
+        # Include "-1" so that if we have no object IDs that the query does
         # not fail.  It will not match anything.
         params.addIds([-1] + obj_ids)
         query = """select oal from %sAnnotationLink as oal
@@ -124,7 +124,7 @@ def get_script(request, script_name, conn):
     if script_name == "Tag":
 
         params = ParametersI()
-        # Include "-1" so that if we have no Image IDs that the query does
+        # Include "-1" so that if we have no object IDs that the query does
         # not fail.  It will not match anything.
         params.addIds([-1] + obj_ids)
         query = """select oal from %sAnnotationLink as oal
