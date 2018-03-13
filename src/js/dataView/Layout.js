@@ -53,8 +53,13 @@ class Layout extends React.Component {
     componentDidMount() {
         // list available data providers (TODO: only for current data? e.g. plate)
         let url = window.PARADE_DATAPROVIDERS_URL;
-        if (this.props.datasetId) url += '?dataset=' + this.props.datasetId;
-        else if (this.props.plateId) url += '?plate=' + this.props.plateId;
+        if (this.props.parentType === "project") {
+            url += '?project=' + this.props.parentId;
+        } else if (this.props.parentType === "dataset") {
+            url += '?dataset=' + this.props.parentId;
+        } else if (this.props.parentType == "plate") {
+            url += '?plate=' + this.props.parentId;
+        }
         $.ajax({
             url: url,
             dataType: 'json',
