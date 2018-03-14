@@ -20,7 +20,9 @@ import logging
 from omero.sys import ParametersI
 from omero.constants.namespaces import NSBULKANNOTATIONS
 from omero.model import OriginalFileI
-from omero_parade.utils import get_project_image_ids, get_well_image_ids
+from omero_parade.utils import get_dataset_image_ids, \
+    get_project_image_ids, \
+    get_well_image_ids
 from omeroweb.webgateway.views import _annotations
 
 logger = logging.getLogger(__name__)
@@ -65,13 +67,17 @@ def get_dataproviders(request, conn):
 def get_data(request, data_name, conn):
     """Return table data for images."""
     project_id = request.GET.get('project')
+    dataset_id = request.GET.get('dataset')
     plate_id = request.GET.get('plate')
     field_id = request.GET.get('field')
-    logger.debug(
-        'Project:%s Plate:%s Field:%s' % (project_id, plate_id, field_id))
+    logger.debug('Project:%s Dataset: %s Plate:%s Field:%s' % (
+        project_id, dataset_id, plate_id, field_id
+    ))
 
     if project_id is not None:
         img_ids = get_project_image_ids(conn, project_id)
+    elif dataset_id is not None:
+        img_ids = get_dataset_image_ids(conn, dataset_id)
     elif plate_id is not None and field_id is not None:
         # dict of well_id: img_id
         img_ids = get_well_image_ids(conn, plate_id, field_id)
@@ -85,26 +91,33 @@ def get_data(request, data_name, conn):
             index_column_name = 'Image'
             table = get_table(conn, 'Project', project_id)
 
+        if dataset_id is not None:
+            index_column_name = 'Image'
+            table = get_table(conn, 'Dataset', dataset_id)
+
         if plate_id is not None:
             index_column_name = 'Well'
             table = get_table(conn, 'Plate', plate_id)
 
         headers = table.getHeaders()
         column_names = [column.name for column in headers]
+        logger.debug('Column names: %r' % column_names)
         index_column_index = column_names.index(index_column_name)
         named_column_index = column_names.index(column_name)
 
         # Load appropriate index column and named column
+        number_of_rows = table.getNumberOfRows()
+        logger.debug('Number of rows: %d' % number_of_rows)
         column_data = table.read([
             index_column_index, named_column_index
-        ], 0, table.getNumberOfRows()).columns
+        ], 0, number_of_rows).columns
 
         table_data = {}
         index_ids = column_data[0].values
         values = column_data[1].values
 
         for index_id, value in zip(index_ids, values):
-            if project_id is not None:
+            if project_id is not None or dataset_id is not None:
                 table_data[index_id] = value
             if plate_id is not None:
                 table_data[img_ids[index_id]] = value

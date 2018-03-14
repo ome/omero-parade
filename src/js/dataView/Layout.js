@@ -55,10 +55,23 @@ class Layout extends React.Component {
         let url = window.PARADE_DATAPROVIDERS_URL;
         if (this.props.parentType === "project") {
             url += '?project=' + this.props.parentId;
-        } else if (this.props.parentType === "dataset") {
-            url += '?dataset=' + this.props.parentId;
-        } else if (this.props.parentType == "plate") {
-            url += '?plate=' + this.props.parentId;
+        } else if (this.props.datasetId
+                   || this.props.parentType === "dataset") {
+            // FIXME: Be compatible with older implementations that
+            // did not use a generic `parentId`.
+            let datasetId = this.props.datasetId;
+            if (!datasetId) {
+                datasetId = this.props.parentId;
+            }
+            url += '?dataset=' + datasetId;
+        } else if (this.props.plateId || this.props.parentType == "plate") {
+            // FIXME: Be compatible with older implementations that
+            // did not use a generic `parentId`.
+            let plateId = this.props.plateId;
+            if (!plateId) {
+                plateId = this.props.parentId;
+            }
+            url += '?plate=' + plateId;
         }
         $.ajax({
             url: url,
