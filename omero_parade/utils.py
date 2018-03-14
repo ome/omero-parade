@@ -72,3 +72,19 @@ def get_well_image_ids(conn, plate_id, field_id=0):
         img_id = i[1].val
         img_ids[well_id] = img_id
     return img_ids
+
+
+def get_project_image_ids(conn, project_id):
+    """Get image IDs for images in Project"""
+    conn.SERVICE_OPTS.setOmeroGroup('-1')
+    query_service = conn.getQueryService()
+    params = ParametersI()
+    params.addId(project_id)
+    query = "select link "\
+            "from DatasetImageLink link "\
+            "join fetch link.parent dataset "\
+            "join fetch dataset.projectLinks plink "\
+            "where plink.parent.id = :id "
+    p = query_service.projection(query, params, conn.SERVICE_OPTS)
+    img_ids = [i[0].val.child.id.val for i in p]
+    return img_ids
