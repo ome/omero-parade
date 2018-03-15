@@ -104,8 +104,8 @@ class FilterHub extends React.Component {
 
         return(<div className="reactContainer">
                     <FilterContainer
-                        datasetId={this.props.datasetId}
-                        plateId={this.props.plateId}
+                        parentType={this.props.parentType}
+                        parentId={this.props.parentId}
                         fieldId={this.props.fieldId}
                         images={this.props.images}
                         addFilter={this.addFilter}
@@ -116,8 +116,8 @@ class FilterHub extends React.Component {
                         filterValues={this.state.filterValues}
                         />
                     <Layout
-                        datasetId={this.props.datasetId}
-                        plateId={this.props.plateId}
+                        parentType={this.props.parentType}
+                        parentId={this.props.parentId}
                         fieldId={this.props.fieldId}
                         setSelectedImages={this.props.setSelectedImages}
                         plateData={this.props.plateData}

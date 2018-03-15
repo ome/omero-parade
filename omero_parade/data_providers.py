@@ -16,7 +16,7 @@
 #
 
 from omero.sys import ParametersI
-from omero_parade.utils import get_image_ids
+from omero_parade.utils import get_image_ids, get_project_image_ids
 
 
 def get_dataproviders(request, conn):
@@ -30,15 +30,18 @@ def get_dataproviders(request, conn):
 
 
 def get_data(request, data_name, conn):
-    """Return data for images in a Dataset or Plate."""
+    """Return data for images in a Project, Dataset or Plate."""
+    project_id = request.GET.get('project')
     dataset_id = request.GET.get('dataset')
     plate_id = request.GET.get('plate')
     field_id = request.GET.get('field')
-    if plate_id and field_id:
-        img_ids = get_image_ids(conn, plate_id, field_id)
+    if project_id:
+        img_ids = get_project_image_ids(conn, project_id)
     elif dataset_id:
         objects = conn.getObjects('Image', opts={'dataset': dataset_id})
         img_ids = [i.id for i in objects]
+    elif plate_id and field_id:
+        img_ids = get_image_ids(conn, plate_id, field_id)
     query_service = conn.getQueryService()
 
     if data_name == "ROI_stats_max_size":

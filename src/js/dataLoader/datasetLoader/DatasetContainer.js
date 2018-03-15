@@ -42,6 +42,9 @@ class DatasetContainer extends React.Component{
             'data': JSON.parse(JSON.stringify(node.data)),
             'selected': node.state.selected,
             'date': date,
+            'parent': node.parent,  // jstree node_id string e.g. 'j1_118'
+            'datasetName': node.datasetName,
+            'datasetId': node.datasetId,
         };
         // If image is in share and share is not owned by user...
         if (node.data.obj.shareId && !parentNode.data.obj.isOwned) {
@@ -52,16 +55,34 @@ class DatasetContainer extends React.Component{
     }
 
     getImageNodes() {
-        let imgNodes = [],
-            jstree = this.props.jstree;
+        // If we have a Dataset parent, simply get child images.
+        // If we have a Project, iterate through each Dataset to get images.
+        let jstree = this.props.jstree;
+        let dtype = this.props.parentNode.type;
+        let imgNodes = [];
+        if (dtype === "dataset") {
+            imgNodes = this.props.parentNode.children.map(ch => jstree.get_node(ch));
+        } else if (dtype === "project") {
+            imgNodes = this.props.parentNode.children.reduce((prev, dataset) => {
+                let ds_node = jstree.get_node(dataset);
+                let ds_name = ds_node.text;
+                let ds_id = ds_node.data.id;
+                // console.log(ds_id, ds_node);
+                // will get empty array if Dataset node is not loaded
+                // Only include images if Dataset expanded
+                if (ds_node.state.opened) {
+                    let images = ds_node.children.map(ch => jstree.get_node(ch));
+                    // add datasetName to each image
+                    images = images.map(i => Object.assign({}, i,
+                        {datasetName: ds_name, datasetId: ds_id}))
+                    prev = prev.concat(images);
+                }
+                return prev;
+            }, []);
+        }
 
-        this.props.parentNode.children.forEach(function(ch){
-            var childNode = jstree.get_node(ch);
-            // Ignore non-images under tags or 'deleted' under shares
-            if (childNode.type == "image") {
-                imgNodes.push(childNode);
-            }
-        });
+        // Ignore non-images under tags or 'deleted' under shares
+        imgNodes = imgNodes.filter(node => node.type === "image");
         return imgNodes;
     }
 
@@ -83,7 +104,8 @@ class DatasetContainer extends React.Component{
         }
 
         return (<FilterHub
-                datasetId={this.props.parentNode.data.obj.id}
+                parentType={this.props.parentNode.type}
+                parentId={this.props.parentNode.data.obj.id}
                 setSelectedImages = {this.props.setSelectedImages}
                 images={imgJson}
             />)

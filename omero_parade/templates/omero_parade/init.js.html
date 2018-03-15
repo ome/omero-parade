@@ -16,7 +16,7 @@ $(function() {
   // to call load_plugin_content() when needed.
   // Start listening for Node Loading events on the tree...
   // If a node loads and it's selected, update_thumbs...
-  $("#dataTree").on('load_node.jstree', function(event, data){
+  let treeChanged = function(event, data){
       if (data.node.state.selected) {
           // update_thumbnails_panel(event, data);
           var datatree = $.jstree.reference('#dataTree');
@@ -24,15 +24,17 @@ $(function() {
           var tree_selected = datatree.get_selected(true);
           omero_parade.omero_parade(tree_selected, datatree);
       }
-  });
+  }
+
+  $("#dataTree").on('load_node.jstree', treeChanged)
+                .on('open_node.jstree', treeChanged)
+                .on('close_node.jstree', treeChanged);
 
 
   $("#omero_parade").omeroweb_center_plugin({
     plugin_index: pluginIndex,        // From the Django template loop
     empty_on_sel_change: false,       // Do not completely erase content when changing selection
     load_plugin_content: function(selected, dtype, oid) {
-
-      // console.log(selected, dtype, oid);
 
       // this may have been called before datatree was initialised...
       var datatree = $.jstree.reference('#dataTree');

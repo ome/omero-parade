@@ -134,8 +134,8 @@ class DataPlot extends React.Component {
                     <div className="thumbnail_plot_canvas" ref="thumb_plot_canvas">
                         {imgJson.map(image => (
                             <img alt="image"
+                                key={image.id + (image.parent ? image.parent : "")}
                                 className={(image.selected || selectedWellIds.indexOf(image.wellId)) > -1 ? 'ui-selected' : ''}
-                                key={image.id}
                                 data-id={image.id}
                                 data-wellid={image.wellId}
                                 src={"/webgateway/render_thumbnail/" + image.id + "/"}
