@@ -17,8 +17,6 @@
 
 import logging
 
-from omero.sys import ParametersI
-from omero.constants.namespaces import NSBULKANNOTATIONS
 from omero.model import OriginalFileI
 from omero_parade.utils import get_dataset_image_ids, \
     get_project_image_ids, \
@@ -37,6 +35,7 @@ def get_table(conn, objtype, objid):
     shared_resources = conn.getSharedResources()
     return shared_resources.openTable(OriginalFileI(data['file']),
                                       conn.SERVICE_OPTS)
+
 
 def get_names(conn, objtype, objid):
     table = get_table(conn, objtype, objid)

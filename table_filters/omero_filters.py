@@ -18,10 +18,6 @@
 from django.http import JsonResponse
 import logging
 import json
-from omero.sys import ParametersI
-from omero.constants.namespaces import NSBULKANNOTATIONS
-from omero.model import OriginalFileI
-from omeroweb.webgateway.views import _annotations
 
 from .data_providers import get_table
 
@@ -36,7 +32,6 @@ def get_script(request, script_name, conn):
     """Return a JS function to filter images by various params."""
     project_id = request.GET.get('project')
     plate_id = request.GET.get('plate')
-    query_service = conn.getQueryService()
 
     if project_id is None and plate_id is None:
         return JsonResponse(
