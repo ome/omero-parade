@@ -53,7 +53,9 @@ def get_data(request, data_name, conn):
     if data_name == "ROI_count":
         # Want to get ROI count for images
         params = ParametersI()
-        params.addIds(img_ids)
+        # Include "-1" so that if we have no Image IDs that the query does
+        # not fail.  It will not match anything.
+        params.addIds([-1] + img_ids)
         query = "select roi.image.id, count(roi.id) from Roi roi "\
                 "where roi.image.id in (:ids) group by roi.image"
         p = query_service.projection(query, params, conn.SERVICE_OPTS)
@@ -65,7 +67,9 @@ def get_data(request, data_name, conn):
     if data_name == "sizeT":
         # Want to get sizeT for images
         params = ParametersI()
-        params.addIds(img_ids)
+        # Include "-1" so that if we have no Image IDs that the query does
+        # not fail.  It will not match anything.
+        params.addIds([-1] + img_ids)
         query = "select pixels.image.id, pixels.sizeT from Pixels pixels "\
                 "where pixels.image.id in (:ids)"
         p = query_service.projection(query, params, conn.SERVICE_OPTS)

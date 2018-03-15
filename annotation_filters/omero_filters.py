@@ -49,7 +49,9 @@ def get_script(request, script_name, conn):
     if script_name == "Rating":
 
         params = ParametersI()
-        params.addIds(obj_ids)
+        # Include "-1" so that if we have no object IDs that the query does
+        # not fail.  It will not match anything.
+        params.addIds([-1] + obj_ids)
         query = """select oal from %sAnnotationLink as oal
             join fetch oal.details.owner
             left outer join fetch oal.child as ch
@@ -85,7 +87,9 @@ def get_script(request, script_name, conn):
     if script_name == "Comment":
 
         params = ParametersI()
-        params.addIds(obj_ids)
+        # Include "-1" so that if we have no object IDs that the query does
+        # not fail.  It will not match anything.
+        params.addIds([-1] + obj_ids)
         query = """select oal from %sAnnotationLink as oal
             left outer join fetch oal.child as ch
             left outer join oal.parent as pa
@@ -123,7 +127,9 @@ def get_script(request, script_name, conn):
     if script_name == "Tag":
 
         params = ParametersI()
-        params.addIds(obj_ids)
+        # Include "-1" so that if we have no object IDs that the query does
+        # not fail.  It will not match anything.
+        params.addIds([-1] + obj_ids)
         query = """select oal from %sAnnotationLink as oal
             left outer join fetch oal.child as ch
             left outer join oal.parent as pa
