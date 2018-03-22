@@ -92,6 +92,17 @@ class Sdist(setuptools.command.sdist.sdist):
 cmdclass['sdist'] = Sdist
 
 
+class Install(setuptools.command.install.install):
+
+    def run(self):
+        if not os.path.isdir('omero_parade/static/omero_parade/js'):
+            self.run_command('run_prod')
+        setuptools.command.install.install.run(self)
+
+
+cmdclass['install'] = Install
+
+
 setup(name="omero-parade",
       packages=find_packages(exclude=['ez_setup']),
       version=VERSION,
