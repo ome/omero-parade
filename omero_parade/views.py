@@ -145,7 +145,7 @@ def dataprovider_list(request, conn=None, **kwargs):
 def get_data(request, data_name, conn=None, **kwargs):
     try:
         data_name = b64decode(data_name)
-    except:
+    except Exception:
         return JsonResponse(
             {'Error': 'Could not Base64 decode: %s' % data_name}
         )
