@@ -44,7 +44,9 @@ def get_script(request, script_name, conn):
             table = get_table(conn, 'Project', project_id)
 
         if plate_id is not None:
-            table = get_table(conn, 'Plate', plate_id)
+            table = get_table(conn, 'Screen.plateLinks.child', plate_id)
+            if table is None:
+                table = get_table(conn, 'Plate', plate_id)
 
         if not table:
             return JsonResponse({'ERROR': 'Failed to open table'})
