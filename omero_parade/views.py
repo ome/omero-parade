@@ -20,6 +20,8 @@
 import omero
 import omero.clients
 
+from base64 import b64decode
+
 from django.http import Http404, JsonResponse
 from omeroweb.webclient.decorators import login_required
 from omero.rtypes import rlong, unwrap
@@ -141,6 +143,12 @@ def dataprovider_list(request, conn=None, **kwargs):
 
 @login_required()
 def get_data(request, data_name, conn=None, **kwargs):
+    try:
+        data_name = b64decode(data_name)
+    except:
+        return JsonResponse(
+            {'Error': 'Could not Base64 decode: %s' % data_name}
+        )
 
     modules = parade_settings.PARADE_FILTERS
 
