@@ -135,6 +135,11 @@ def get_data(request, data_name, conn):
             if project_id is not None or dataset_id is not None:
                 table_data[index_id] = value
             if plate_id is not None:
-                table_data[img_ids[index_id]] = value
-
+                try:
+                    table_data[img_ids[index_id]] = value
+                except KeyError:
+                    # The table may have data from different plates in it.  We
+                    # only have a dictionary of well_id: img_id for the
+                    # current plate.
+                    pass
         return table_data
