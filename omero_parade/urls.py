@@ -47,6 +47,6 @@ urlpatterns = patterns(
         name='parade_dataproviders'),
 
     # Get the table data
-    url(r'^data/(?P<data_name>\w+)/$', views.get_data,
+    url(r'^data/(?P<data_name>[\w+\/=]+)/$', views.get_data,
         name='parade_data'),
 )
