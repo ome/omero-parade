@@ -63,6 +63,11 @@ def get_dataproviders(request, conn):
         return get_names(conn, 'Dataset', dataset_id)
 
     if plate_id is not None:
+        # Mimic the behaviour of right-hand panel table queries and prefer
+        # the table data that is linked further away.
+        names = get_names(conn, 'Screen.plateLinks.child', plate_id)
+        if len(names) > 0:
+            return names
         return get_names(conn, 'Plate', plate_id)
 
     return []
