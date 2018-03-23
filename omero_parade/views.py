@@ -17,16 +17,21 @@
 
 """Django views methods."""
 
+import numpy
 import omero
 import omero.clients
 
 from base64 import b64decode
+from distutils.version import LooseVersion
 
 from django.http import Http404, JsonResponse
 from omeroweb.webclient.decorators import login_required
 from omero.rtypes import rlong, unwrap
 from django.shortcuts import render
 from . import parade_settings
+
+
+NUMPY_1_11_0 = LooseVersion('1.11.0')
 
 
 def index(request):
@@ -160,7 +165,19 @@ def get_data(request, data_name, conn=None, **kwargs):
                 if data_name in dp:
                     data = module.data_providers.get_data(request, data_name,
                                                           conn)
-                    return JsonResponse({'data': data})
+                    values = numpy.array(data.values())
+                    bins = 10
+                    if LooseVersion(numpy.__version__) > NUMPY_1_11_0:
+                        # numpy.histogram() only supports bin calculation
+                        # from 1.11.0 onwards
+                        bins = 'auto'
+                    histogram, bin_edges = numpy.histogram(values, bins=bins)
+                    return JsonResponse({
+                        'data': data,
+                        'min': numpy.amin(values),
+                        'max': numpy.amax(values),
+                        'histogram': list(histogram)
+                    })
         except ImportError:
             pass
 

@@ -76,7 +76,7 @@ class PlateGrid extends React.Component {
                     // lookup this Well's data from heatmap
                     // var heatmapValues = heatmapData && heatmapData[well.wellId+""];
                     // tableData is mapped to Image IDs... (well.id is image ID!)
-                    var imgTableData = Object.keys(tableData).map(col => col + ": " + tableData[col][well.id])
+                    var imgTableData = Object.keys(tableData).map(col => col + ": " + tableData[col].data[well.id])
                     return (
                         <Well
                             key={well.wellId}
