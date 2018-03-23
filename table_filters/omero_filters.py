@@ -16,44 +16,38 @@
 #
 
 from django.http import JsonResponse
+import logging
 import json
-from omero.sys import ParametersI
-from omero.constants.namespaces import NSBULKANNOTATIONS
-from omero.model import OriginalFileI
+
+from .data_providers import get_table
+
+logger = logging.getLogger(__name__)
 
 
 def get_filters(request, conn):
-    if request.GET.get('plate', None) is not None:
-        # TODO: Could actually check if there is a table on this Plate
-        return ["Table"]
-    return []
+    return ["Table"]
 
 
 def get_script(request, script_name, conn):
     """Return a JS function to filter images by various params."""
+    project_id = request.GET.get('project')
     plate_id = request.GET.get('plate')
-    query_service = conn.getQueryService()
 
-    if plate_id is None:
-        return JsonResponse({'Error': 'Plate ID not specified'})
+    if project_id is None and plate_id is None:
+        return JsonResponse(
+            {'Error': 'Neither Project ID nor Plate ID specified'})
 
     if script_name == "Table":
+        table = None
 
-        params = ParametersI()
-        params.addId(plate_id)
-        query = """select oal from PlateAnnotationLink as oal
-            left outer join fetch oal.child as ch
-            left outer join oal.parent as pa
-            where pa.id=:id
-            and ch.ns='%s'""" % NSBULKANNOTATIONS
-        links = query_service.findAllByQuery(query, params, conn.SERVICE_OPTS)
-        shared_resources = conn.getSharedResources()
-        # Just use the first Table we find
-        # TODO: handle multiple tables!?
-        file_id = links[0].child.file.id.val
+        if project_id is not None:
+            table = get_table(conn, 'Project', project_id)
 
-        table = shared_resources.openTable(OriginalFileI(file_id),
-                                           conn.SERVICE_OPTS)
+        if plate_id is not None:
+            table = get_table(conn, 'Screen.plateLinks.child', plate_id)
+            if table is None:
+                table = get_table(conn, 'Plate', plate_id)
+
         if not table:
             return JsonResponse({'ERROR': 'Failed to open table'})
 
@@ -74,7 +68,11 @@ def get_script(request, script_name, conn):
         f = """(function filter(data, params) {
             if (isNaN(params.count) || params.count == '') return true;
             var table_data = %s;
-            var rowIndex = table_data.Well.indexOf(data.wellId);
+            if (data.wellId) {
+                var rowIndex = table_data.Well.indexOf(data.wellId);
+            } else {
+                var rowIndex = table_data.Image.indexOf(data.id);
+            }
             var value = table_data[params.column_name][rowIndex];
             if (params.operator === '=') return value == params.count;
             if (params.operator === '<') return value < params.count;

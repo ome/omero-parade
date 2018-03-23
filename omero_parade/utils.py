@@ -19,6 +19,22 @@ from omero.sys import ParametersI
 from omero.rtypes import rint
 
 
+def get_dataset_image_ids(conn, dataset_id):
+    """Get image IDs for images in Dataset"""
+
+    conn.SERVICE_OPTS.setOmeroGroup('-1')
+    query_service = conn.getQueryService()
+    params = ParametersI()
+    params.addId(dataset_id)
+    query = "select img.id "\
+            "from DatasetImageLink link "\
+            "join link.child as img "\
+            "where link.parent.id = :id"
+    p = query_service.projection(query, params, conn.SERVICE_OPTS)
+    img_ids = [i[0].val for i in p]
+    return img_ids
+
+
 def get_image_ids(conn, plate_id, field_id=0):
     """Get image IDs for images in Plate"""
 
