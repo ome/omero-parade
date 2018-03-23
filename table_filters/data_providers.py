@@ -27,9 +27,12 @@ logger = logging.getLogger(__name__)
 
 
 def get_table(conn, objtype, objid):
+    data = _annotations(None, objtype, objid, conn=conn).get('data', [])
+    if len(data) < 1:
+        return None
     # Just use the first Table we find
     # TODO: handle multiple tables!?
-    data = _annotations(None, objtype, objid, conn=conn)['data'][0]
+    data = data[0]
     logger.debug('Data: %r' % data)
 
     shared_resources = conn.getSharedResources()
@@ -39,6 +42,8 @@ def get_table(conn, objtype, objid):
 
 def get_names(conn, objtype, objid):
     table = get_table(conn, objtype, objid)
+    if table is None:
+        return []
     column_names = [col.name for col in table.getHeaders()]
     return ["Table_%s" % c for c in column_names]
 
@@ -86,6 +91,7 @@ def get_data(request, data_name, conn):
     if data_name.startswith("Table_"):
         column_name = data_name.replace("Table_", "")
 
+        table = None
         if project_id is not None:
             index_column_name = 'Image'
             table = get_table(conn, 'Project', project_id)
@@ -97,6 +103,9 @@ def get_data(request, data_name, conn):
         if plate_id is not None:
             index_column_name = 'Well'
             table = get_table(conn, 'Plate', plate_id)
+
+        if table is None:
+            return dict()
 
         headers = table.getHeaders()
         column_names = [column.name for column in headers]
