@@ -272,6 +272,19 @@ input[type=range].parade:focus::-ms-fill-upper {
   right: 5px;
 }
 
+.parade_dataTable {
+  width: 100%;
+}
+
+.parade_centrePanel th {
+  border-top: solid #ddd 1px;
+  border-bottom: solid #ddd 1px;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #999;
+}
+
 .parade_centrePanel td {
   text-align: center;
   font-size: 110%;

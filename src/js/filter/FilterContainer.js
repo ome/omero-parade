@@ -33,11 +33,8 @@ class FilterContainer extends React.Component {
     componentDidMount() {
         // list available filters (TODO: only for current data? e.g. plate)
         let url = window.PARADE_FILTERS_URL;
-        if (this.props.plateId) {
-            url += '?plate=' + this.props.plateId;
-        }
-        else if (this.props.datasetId) {
-            url += '?dataset=' + this.props.datasetId;
+        if (this.props.parentType && this.props.parentId) {
+            url += '?' + this.props.parentType + '=' + this.props.parentId;
         } else {
             url += '?' + this.props.images.map(i => 'image=' + i.id).join('&');
         }
@@ -86,8 +83,8 @@ class FilterContainer extends React.Component {
                             key={fname + idx}
                             filterIndex={idx}
                             name={fname}
-                            datasetId={this.props.datasetId}
-                            plateId={this.props.plateId}
+                            parentType={this.props.parentType}
+                            parentId={this.props.parentId}
                             fieldId={this.props.fieldId}
                             images={this.props.images}
                             handleFilterLoaded={this.props.handleFilterLoaded}

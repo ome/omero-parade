@@ -20,7 +20,7 @@ import React, { Component } from 'react';
 import Dataset from './dataset/Dataset';
 import PlateGrid from './plate/PlateGrid';
 import DataPlot from './plot/DataPlot';
-import DataTable from './table/DataTable';
+import Tables from './table/Tables';
 import Footer from '../Footer';
 
 class Layout extends React.Component {
@@ -33,9 +33,11 @@ class Layout extends React.Component {
             dataProviders: [],
             tableData: {},
             selectedWellIds: [],
+            showDatasets: true,
         }
         this.setIconSize = this.setIconSize.bind(this);
         this.setLayout = this.setLayout.bind(this);
+        this.setShowDatasets = this.setShowDatasets.bind(this);
         this.handleAddData = this.handleAddData.bind(this);
         this.handleImageWellClicked = this.handleImageWellClicked.bind(this);
         this.setImagesWellsSelected = this.setImagesWellsSelected.bind(this);
@@ -48,6 +50,11 @@ class Layout extends React.Component {
 
     setLayout(layout) {
         this.setState({layout: layout});
+    }
+
+    setShowDatasets(event) {
+        let show = event.target.checked;
+        this.setState({showDatasets: show});
     }
 
     componentDidMount() {
@@ -90,9 +97,20 @@ class Layout extends React.Component {
         var dataName = event.target.value;
         if (dataName !== "--") {
             var url = window.PARADE_INDEX_URL + 'data/' + dataName;
-            if (this.props.datasetId) url += '?dataset=' + this.props.datasetId;
-            if (this.props.plateId) url += '?plate=' + this.props.plateId;
-            if (this.props.fieldId !== undefined) url += '&field=' + this.props.fieldId;
+
+            if (this.props.parentType === "plate") {
+                url += '?plate=' + this.props.parentId;
+                if (this.props.fieldId !== undefined) {
+                    url += '&field=' + this.props.fieldId;
+                }
+            }
+            else if (this.props.parentType === "dataset") {
+                url += '?dataset=' + this.props.parentId;
+            } else if (this.props.parentType === "project") {
+                url += '?project=' + this.props.parentId;
+            } else {
+                url += '?' + this.props.images.map(i => 'image=' + i.id).join('&');
+            }
             $.getJSON(url, data => {
                 // Add data to table data
                 let td = Object.assign({}, this.state.tableData);
@@ -174,10 +192,11 @@ class Layout extends React.Component {
         let imageComponent;
         if (this.state.layout === "table") {
             imageComponent = (
-                <DataTable
+                <Tables
                     iconSize={this.state.iconSize}
                     imgJson={filteredImages}
                     selectedWellIds={this.state.selectedWellIds}
+                    showDatasets={this.state.showDatasets}
                     handleImageWellClicked = {this.handleImageWellClicked}
                     setImagesWellsSelected = {this.setImagesWellsSelected}
                     tableData={this.state.tableData}
@@ -208,6 +227,7 @@ class Layout extends React.Component {
                 <Dataset
                     iconSize={this.state.iconSize}
                     imgJson={filteredImages}
+                    showDatasets={this.state.showDatasets}
                     handleImageWellClicked = {this.handleImageWellClicked}
                     setImagesWellsSelected = {this.setImagesWellsSelected}
                     />)
@@ -232,6 +252,12 @@ class Layout extends React.Component {
                             })}
                         </select>
                         <div className="layoutButton">
+                            <label>
+                                Show Datasets
+                                <input  type="checkbox"
+                                        checked={this.state.showDatasets}
+                                        onChange={this.setShowDatasets} />
+                            </label>
                             <button onClick={() => {this.setLayout("icon")}}>
                                 grid
                             </button>

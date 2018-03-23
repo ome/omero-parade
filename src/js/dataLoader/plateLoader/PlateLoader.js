@@ -69,7 +69,8 @@ class PlateLoader extends React.Component {
 
         return(<FilterHub
                     images={images}
-                    plateId={this.props.plateId}
+                    parentType={"plate"}
+                    parentId={this.props.plateId}
                     fieldId={this.props.fieldId}
                     plateData={this.state.data}
                 />)

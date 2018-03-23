@@ -40,7 +40,6 @@ class ImageIcon extends React.Component {
     }
 
     handleIconClick(event) {
-        // this.setState ({selected: true});
         this.props.handleImageWellClicked(this.props.image, event);
     }
 

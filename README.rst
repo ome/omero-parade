@@ -38,34 +38,50 @@ Display parade in the centre of the webclient:
 
 ::
 
-    $ bin/omero config append omero.web.ui.center_plugins '["Parade",
-      "omero_parade/init.js.html", "omero_parade"]' 
+    $ bin/omero config append omero.web.ui.center_plugins \
+        '["Parade", "omero_parade/init.js.html", "omero_parade"]'
 
 Add a link to the app in its own window:
 
 ::
 
-    $ bin/omero config append omero.web.ui.top_links '["Parade",
-      "parade_index", {"title": "Search and filter in OMERO.parade"}]'
+    $ bin/omero config append omero.web.ui.top_links \
+        '["Parade", "parade_index",
+          {"title": "Search and filter in OMERO.parade"}]'
 
 Now restart OMERO.web as normal.
+
 
 Build
 =====
 
 In order to build you need:
 
-* npm version equal or greater to 3.0!
+* npm version equal or greater to 3.0! npm version equal or greater than
+  5.2 is recommended!
 
 ::
 
     $ npm install
 
+To build an uncompressed version and automatically rebuild when source
+files change, run:
+
+::
+
+    $ npm run watch
+
 To build an uncompressed version, run:
 
 ::
 
-    $ npm run dev
+    $ npm run build-dev
+
+To build a compressed, minified version for production, run:
+
+::
+
+    $ npm run build
 
 
 Custom Filtering

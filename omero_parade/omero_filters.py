@@ -18,7 +18,7 @@
 from django.http import JsonResponse
 import json
 from omero.sys import ParametersI
-from omero_parade.utils import get_image_ids
+from omero_parade.utils import get_image_ids, get_project_image_ids
 
 
 def get_filters(request, conn):
@@ -27,11 +27,14 @@ def get_filters(request, conn):
 
 def get_script(request, script_name, conn):
     """Return a JS function to filter images by various params."""
+    project_id = request.GET.get('project')
     dataset_id = request.GET.get('dataset')
     plate_id = request.GET.get('plate')
     field_id = request.GET.get('field')
     image_ids = request.GET.getlist('image')
-    if plate_id and field_id:
+    if project_id:
+        img_ids = get_project_image_ids(conn, project_id)
+    elif plate_id and field_id:
         img_ids = get_image_ids(conn, plate_id, field_id)
     elif dataset_id:
         objects = conn.getObjects('Image', opts={'dataset': dataset_id})
@@ -45,15 +48,21 @@ def get_script(request, script_name, conn):
 
         # Get ROI counts
         params = ParametersI()
-        params.addIds(img_ids)
+        # Include "-1" so that if we have no Image IDs that the query does
+        # not fail.  It will not match anything.
+        params.addIds([-1] + img_ids)
         query = "select roi.image.id, count(roi.id) from Roi roi "\
                 "where roi.image.id in (:ids) group by roi.image"
         p = query_service.projection(query, params, conn.SERVICE_OPTS)
         roi_counts = {}
         for i in p:
             roi_counts[i[0].val] = i[1].val
-        min_count = min(roi_counts.values())
-        max_count = max(roi_counts.values())
+        values = roi_counts.values()
+        min_count = 0
+        max_count = 0
+        if len(values) > 0:
+            min_count = min(values)
+            max_count = max(values)
 
         # Return a JS function that will be passed an object
         # e.g. {'type': 'Image', 'id': 1}

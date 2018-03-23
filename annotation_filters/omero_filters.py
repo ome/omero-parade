@@ -18,7 +18,7 @@
 from django.http import JsonResponse
 import json
 from omero.sys import ParametersI
-from omero_parade.utils import get_well_ids
+from omero_parade.utils import get_well_ids, get_project_image_ids
 
 
 def get_filters(request, conn):
@@ -27,12 +27,15 @@ def get_filters(request, conn):
 
 def get_script(request, script_name, conn):
     """Return a JS function to filter images by various params."""
+    project_id = request.GET.get('project')
     dataset_id = request.GET.get('dataset')
     plate_id = request.GET.get('plate')
     image_ids = request.GET.getlist('image')
     dtype = "Image"
     js_object_attr = "id"
-    if dataset_id:
+    if project_id:
+        obj_ids = get_project_image_ids(conn, project_id)
+    elif dataset_id:
         objects = conn.getObjects('Image', opts={'dataset': dataset_id})
         obj_ids = [i.id for i in objects]
     elif plate_id:
@@ -46,7 +49,9 @@ def get_script(request, script_name, conn):
     if script_name == "Rating":
 
         params = ParametersI()
-        params.addIds(obj_ids)
+        # Include "-1" so that if we have no object IDs that the query does
+        # not fail.  It will not match anything.
+        params.addIds([-1] + obj_ids)
         query = """select oal from %sAnnotationLink as oal
             join fetch oal.details.owner
             left outer join fetch oal.child as ch
@@ -82,7 +87,9 @@ def get_script(request, script_name, conn):
     if script_name == "Comment":
 
         params = ParametersI()
-        params.addIds(obj_ids)
+        # Include "-1" so that if we have no object IDs that the query does
+        # not fail.  It will not match anything.
+        params.addIds([-1] + obj_ids)
         query = """select oal from %sAnnotationLink as oal
             left outer join fetch oal.child as ch
             left outer join oal.parent as pa
@@ -120,7 +127,9 @@ def get_script(request, script_name, conn):
     if script_name == "Tag":
 
         params = ParametersI()
-        params.addIds(obj_ids)
+        # Include "-1" so that if we have no object IDs that the query does
+        # not fail.  It will not match anything.
+        params.addIds([-1] + obj_ids)
         query = """select oal from %sAnnotationLink as oal
             left outer join fetch oal.child as ch
             left outer join oal.parent as pa

@@ -17,6 +17,7 @@
 //
 
 import React, { Component } from 'react';
+import Images from './Images'
 import ImageIcon from './ImageIcon'
 
 class Dataset extends React.Component {
@@ -31,7 +32,6 @@ class Dataset extends React.Component {
                 $(".parade_centrePanel .ui-selected").each(function(){
                     ids.push(parseInt($(this).attr('data-id'), 10));
                 });
-                console.log('Dataset', ids);
                 this.props.setImagesWellsSelected('image', ids);
             },
         });
@@ -43,22 +43,52 @@ class Dataset extends React.Component {
     }
 
     render() {
-        let {imgJson, iconSize, setIconSize, 
-             layout, setLayout} = this.props;
+        let {imgJson, iconSize,
+             showDatasets, handleImageWellClicked} = this.props;
 
+        let components;
+        // If showDatasets AND images have dataset info...
+        if (showDatasets && imgJson.length > 0 && imgJson[0].datasetId) {
+            // imgJson may come from several Datasets
+            // Each image has datasetName and datasetId
+            // Create list of datases [ {name: 'name', id:1, images: [imgs]} ]
+            let datasets = imgJson.reduce((prev, img, idx, imgList) => {
+                // if the last dataset is different from current one,
+                // start new Dataset
+                if (idx === 0 || imgList[idx - 1].datasetId !== img.datasetId) {
+                    prev.push({name: img.datasetName,
+                            id: img.datasetId,
+                            images: []})
+                }
+                // Add image to the last Dataset
+                prev[prev.length-1].images.push(img);
+                return prev;
+            }, []);
+
+            components = datasets.map(dataset => (
+                <div key={dataset.id}>
+                    <h2>{dataset.name}</h2>
+                    <Images
+                        imgJson={dataset.images}
+                        iconSize={iconSize}
+                        handleImageWellClicked={handleImageWellClicked}
+                    />
+                    <div style={{clear: 'both'}}></div>
+                </div>
+            ))
+        } else {
+            components = (
+                <Images
+                    imgJson={imgJson}
+                    iconSize={iconSize}
+                    handleImageWellClicked={handleImageWellClicked}
+                />
+            );
+        }
         return (
-            <div className="parade_centrePanel">
-                <ul
-                    ref="dataIcons"
-                    className={layout + "Layout"}>
-                    {imgJson.map(image => (
-                        <ImageIcon
-                            image={image}
-                            key={image.id}
-                            iconSize={iconSize}
-                            handleImageWellClicked={this.props.handleImageWellClicked} />
-                    ))}
-                </ul>
+            <div className="parade_centrePanel"
+                ref="dataIcons">
+                {components}
             </div>
         );
     }
