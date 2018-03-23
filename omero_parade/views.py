@@ -156,4 +156,4 @@ def get_data(request, data_name, conn=None, **kwargs):
         except ImportError:
             pass
 
-    return JsonResponse({'Error': 'Data provier not found'})
+    return JsonResponse({'Error': 'Data provider not found'})
