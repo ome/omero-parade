@@ -107,7 +107,9 @@ def get_data(request, data_name, conn):
 
         if plate_id is not None:
             index_column_name = 'Well'
-            table = get_table(conn, 'Plate', plate_id)
+            table = get_table(conn, 'Screen.plateLinks.child', plate_id)
+            if table is None:
+                table = get_table(conn, 'Plate', plate_id)
 
         if table is None:
             return dict()
