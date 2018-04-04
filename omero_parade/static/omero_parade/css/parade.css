@@ -292,6 +292,10 @@ input[type=range].parade:focus::-ms-fill-upper {
   border-right: 1px solid #ccc;
 }
 
+.layoutControls .checked {
+  background-color: #ccc;
+}
+
 .layoutControls button:first-child {
   border-bottom-left-radius: 4px;
   border-top-left-radius: 4px;

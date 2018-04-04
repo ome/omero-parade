@@ -260,11 +260,11 @@ class Layout extends React.Component {
                             </label>
                             <div>
                                 <button onClick={() => {this.setLayout("icon")}}
-                                        className="iconLayoutButton" />
+                                        className={"iconLayoutButton " + (this.state.layout === "icon" ? "checked" : "")} />
                                 <button onClick={() => {this.setLayout("table")}}
-                                        className="tableLayoutButton" />
+                                        className={"tableLayoutButton " + (this.state.layout === "table" ? "checked" : "")} />
                                 <button onClick={() => {this.setLayout("plot")}}
-                                        className="plotLayoutButton" />
+                                        className={"plotLayoutButton " + (this.state.layout === "plot" ? "checked" : "")} />
                             </div>
                         </div>
                     </div>
