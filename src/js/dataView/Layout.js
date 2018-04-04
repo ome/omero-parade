@@ -251,7 +251,7 @@ class Layout extends React.Component {
                                 );
                             })}
                         </select>
-                        <div className="layoutButton">
+                        <div className="layoutControls">
                             <label>
                                 Show Datasets
                                 <input  type="checkbox"
