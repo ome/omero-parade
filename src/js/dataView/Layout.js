@@ -258,15 +258,14 @@ class Layout extends React.Component {
                                         checked={this.state.showDatasets}
                                         onChange={this.setShowDatasets} />
                             </label>
-                            <button onClick={() => {this.setLayout("icon")}}>
-                                grid
-                            </button>
-                            <button onClick={() => {this.setLayout("table")}}>
-                                list
-                            </button>
-                            <button onClick={() => {this.setLayout("plot")}}>
-                                plot
-                            </button>
+                            <div>
+                                <button onClick={() => {this.setLayout("icon")}}
+                                        className="iconLayoutButton" />
+                                <button onClick={() => {this.setLayout("table")}}
+                                        className="tableLayoutButton" />
+                                <button onClick={() => {this.setLayout("plot")}}
+                                        className="plotLayoutButton" />
+                            </div>
                         </div>
                     </div>
                     {imageComponent}
