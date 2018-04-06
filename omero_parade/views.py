@@ -31,7 +31,9 @@ from django.shortcuts import render
 from . import parade_settings
 
 
-NUMPY_1_11_0 = LooseVersion('1.11.0')
+NUMPY_GT_1_11_0 = False
+if LooseVersion(numpy.__version__) > LooseVersion('1.11.0'):
+    NUMPY_GT_1_11_0 = True
 
 
 def index(request):
@@ -167,7 +169,7 @@ def get_data(request, data_name, conn=None, **kwargs):
                                                           conn)
                     values = numpy.array(data.values())
                     bins = 10
-                    if LooseVersion(numpy.__version__) > NUMPY_1_11_0:
+                    if NUMPY_GT_1_11_0:
                         # numpy.histogram() only supports bin calculation
                         # from 1.11.0 onwards
                         bins = 'auto'
