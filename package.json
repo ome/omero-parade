@@ -17,7 +17,8 @@
     "axios": "^0.17.1",
     "clusterfck": "^0.6.0",
     "react": "^16.2.0",
-    "react-dom": "^16.2.0"
+    "react-dom": "^16.2.0",
+    "react-sparklines": "^1.7.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",

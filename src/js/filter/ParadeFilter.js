@@ -17,6 +17,7 @@
 //
 
 import React, { Component } from 'react';
+import { Sparklines, SparklinesBars } from 'react-sparklines';
 import FilterInput from './FilterInput';
 
 
@@ -67,11 +68,31 @@ class ParadeFilter extends React.Component {
     
     handleFilterInput(paramName, value) {
         this.props.handleFilterChange(this.props.filterIndex, paramName, value);
+        if (paramName !== "column_name") {
+            return;
+        }
+        let filterParam = this.state.filterParams[0];
+        if (filterParam.histograms) {
+            this.setState({
+                histogram: filterParam.histograms[value]
+            });
+        }
+        if (filterParam.minima) {
+            this.setState({
+                minimum: filterParam.minima[value]
+            });
+        }
+        if (filterParam.maxima) {
+            this.setState({
+                maximum: filterParam.maxima[value]
+            });
+        }
     }
 
     render() {
         return(
             <div className="parade_filter">
+                <div className="parade_filter_controls">
                 {this.props.name}
                 {this.state.filterParams.map(p => {
                     return <FilterInput
@@ -80,6 +101,14 @@ class ParadeFilter extends React.Component {
                                 onChange={this.handleFilterInput}
                             />
                 })}
+                </div>
+                <div className="sparkline">
+                    <span className="minimum">{this.state.minimum}</span>
+                    <Sparklines data={this.state.histogram}>
+                        <SparklinesBars />
+                    </Sparklines>
+                    <span className="maximum">{this.state.maximum}</span>
+                </div>
                 <button
                     className="parade_removeFilter"
                     onClick={() => {this.props.handleRemoveFilter(this.props.filterIndex)}}>
