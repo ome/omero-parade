@@ -82,6 +82,7 @@ class FilterContainer extends React.Component {
                         <ParadeFilter
                             key={fname + idx}
                             filterIndex={idx}
+                            filterValues={this.props.filterValues[idx]}
                             name={fname}
                             parentType={this.props.parentType}
                             parentId={this.props.parentId}

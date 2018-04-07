@@ -101,6 +101,7 @@ class ParadeFilter extends React.Component {
                                     max={this.state.maximum}
                                     key={p.name}
                                     onChange={this.handleFilterInput}
+                                    value={this.props.filterValues[p.name]}
                                 />
                     })}
                 </div>
