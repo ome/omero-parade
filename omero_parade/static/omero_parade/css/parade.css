@@ -94,6 +94,11 @@ ul {
   margin-left: 5px;
 }
 
+.filterContainer input[type='range'] {
+  position: relative;
+  top: 4px;
+}
+
 .plateGrid, .centrePanel {
   flex: 1;
   width: 100%;

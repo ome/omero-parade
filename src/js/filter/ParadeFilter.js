@@ -97,6 +97,8 @@ class ParadeFilter extends React.Component {
                     {this.state.filterParams.map(p => {
                         return <FilterInput
                                     param={p}
+                                    min={this.state.minimum}
+                                    max={this.state.maximum}
                                     key={p.name}
                                     onChange={this.handleFilterInput}
                                 />

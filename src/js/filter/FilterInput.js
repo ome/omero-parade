@@ -50,10 +50,16 @@ class FilterInput extends React.Component {
                 </select>
             )
         }
+        let type = param.type;
+        if (this.props.min != undefined && this.props.max != undefined) {
+            type = 'range';
+        }
         return (
             <input
                 name={param.name}
-                type={param.type}
+                type={type}
+                min={this.props.min}
+                max={this.props.max}
                 onChange={onChange}
                 title={param.title ? param.title : ''}
             />
