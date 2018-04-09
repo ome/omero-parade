@@ -93,14 +93,14 @@ class ParadeFilter extends React.Component {
         return(
             <div className="parade_filter">
                 <div className="parade_filter_controls">
-                {this.props.name}
-                {this.state.filterParams.map(p => {
-                    return <FilterInput
-                                param={p}
-                                key={p.name}
-                                onChange={this.handleFilterInput}
-                            />
-                })}
+                    {this.props.name}
+                    {this.state.filterParams.map(p => {
+                        return <FilterInput
+                                    param={p}
+                                    key={p.name}
+                                    onChange={this.handleFilterInput}
+                                />
+                    })}
                 </div>
                 <div className="sparkline">
                     <span className="minimum">{this.state.minimum}</span>
