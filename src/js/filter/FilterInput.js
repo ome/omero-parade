@@ -21,6 +21,17 @@ import { getHeatmapColor } from '../util'
 
 
 class FilterInput extends React.Component {
+
+    /** Returns a figure space padded version of the current value. */
+    getPaddedValue() {
+        let max = this.props.max;
+        let value = this.props.value;
+        if (max == undefined) {
+            return value;
+        }
+        let padding = max.toString().length - value.toString().length;
+        return "\u2007".repeat(padding) + value;
+    }
     
     render() {
         let param = this.props.param;
@@ -53,7 +64,7 @@ class FilterInput extends React.Component {
         if (this.props.min != undefined && this.props.max != undefined) {
             return (
                 <span>
-                    <span> {this.props.value}</span>
+                    <span>{this.getPaddedValue()}</span>
                     <input
                         name={param.name}
                         type='range'
