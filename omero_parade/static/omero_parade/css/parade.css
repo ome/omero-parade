@@ -96,7 +96,7 @@ ul {
 
 .filterContainer input[type='range'] {
   position: relative;
-  top: 4px;
+  top: 6px;
 }
 
 .plateGrid, .centrePanel {
@@ -399,7 +399,7 @@ input[type=range].parade:focus::-ms-fill-upper {
 
 .parade_filter .sparkline {
   padding-top: 2px;
-  margin: 0px 5px;
+  margin: 8px 5px 0px;
   font-size: 12px;
   float: left;
 }
