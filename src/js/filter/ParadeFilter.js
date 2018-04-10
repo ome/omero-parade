@@ -68,10 +68,15 @@ class ParadeFilter extends React.Component {
     
     handleFilterInput(paramName, value) {
         this.props.handleFilterChange(this.props.filterIndex, paramName, value);
-        if (paramName !== "column_name") {
-            return;
-        }
-        let filterParam = this.state.filterParams[0];
+        // Depending on how many filter parameters we have, their type, and
+        // the availability of additional metadata this method may be invoked
+        // by several other event handlers.  The defining characteristic that
+        // allows us to recognise which `FilterInput` called us is
+        // `paramName`.  The `paramName` *should* always match *one*
+        // filter parameter.
+        let filterParam = this.state.filterParams.filter(v => {
+            return v.name === paramName;
+        })[0];
         if (filterParam.histograms) {
             this.setState({
                 histogram: filterParam.histograms[value]
