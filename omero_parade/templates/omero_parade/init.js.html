@@ -17,13 +17,11 @@ $(function() {
   // Start listening for Node Loading events on the tree...
   // If a node loads and it's selected, update_thumbs...
   let treeChanged = function(event, data){
-      if (data.node.state.selected) {
-          // update_thumbnails_panel(event, data);
-          var datatree = $.jstree.reference('#dataTree');
-          if (!datatree) return;
-          var tree_selected = datatree.get_selected(true);
-          omero_parade.omero_parade(tree_selected, datatree);
-      }
+      // update_thumbnails_panel(event, data);
+      var datatree = $.jstree.reference('#dataTree');
+      if (!datatree) return;
+      var tree_selected = datatree.get_selected(true);
+      omero_parade.omero_parade(tree_selected, datatree);
   }
 
   $("#dataTree").on('load_node.jstree', treeChanged)
