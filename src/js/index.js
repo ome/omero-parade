@@ -75,16 +75,9 @@ function getParentNode(selected, jstree) {
 }
 
 // Export a function for rendering omero_parade as a centre panel plugin
-function omero_parade(selected, jstree) {
-    let parentNode = getParentNode(selected, jstree);
-    let key = App.createKey(parentNode, jstree);
-
+function omero_parade(jstree) {
     ReactDOM.render(
-        <App
-            key={key}
-            selected={selected}
-            parentNode={parentNode}
-            jstree={jstree} />,
+        <App jstree={jstree} />,
         document.getElementById('omero_parade')
     );
 }

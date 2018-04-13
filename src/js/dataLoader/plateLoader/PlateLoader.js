@@ -29,23 +29,38 @@ class PlateLoader extends React.Component {
         }
     }
 
-    componentDidMount() {
-        var plateId = this.props.plateId,
+    loadData() {
+        let plateId = this.props.plateId,
             fieldId = this.props.fieldId;
 
-        if (fieldId === undefined) return;
+        if (fieldId === undefined) {
+            return;
+        }
 
-        var url = "/webgateway/plate/" + plateId + "/" + fieldId + "/";
+        const url = "/webgateway/plate/" + plateId + "/" + fieldId + "/";
         $.ajax({
             url: url,
             dataType: 'json',
             cache: false,
-            success: data => {
+            success: v => {
                 this.setState({
-                    data: data,
+                    data: v,
                 });
             }
         });
+    }
+
+    componentDidMount() {
+        this.loadData();
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        // Pattern to update based on discussion on this RFC issue:
+        //  * https://github.com/reactjs/rfcs/issues/26
+        if (prevProps.plateId !== this.props.plateId
+                || prevProps.fieldId !== this.props.fieldId) {
+            this.loadData();
+        }
     }
 
     render() {
