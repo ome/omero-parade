@@ -169,7 +169,7 @@ class DataContainer extends React.Component {
             if (effectiveRootNode.type === "project") {
                 return effectiveRootNode.children.filter(
                     child => jstree.is_open(child)
-                );
+                ).map(v => jstree.get_node(v));
             }
             // When our root is a Dataset, it is what is open.
             if (effectiveRootNode.type === "dataset") {
@@ -259,7 +259,8 @@ class DataContainer extends React.Component {
             return (
                 <DatasetContainer
                     jstree={jstree}
-                    parentNode={effectiveRootNode}
+                    treeOpenNodes={this.state.treeOpenNodes}
+                    effectiveRootNode={this.state.effectiveRootNode}
                     setSelectedImages={this.setSelectedImages}/>
             )
         }
