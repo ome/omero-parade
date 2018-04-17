@@ -38,10 +38,18 @@ class DataContainer extends React.Component {
 
     constructor(props) {
         super(props);
+        const jstree = this.props.jstree;
+        const treeSelectedNodes = jstree.get_selected(true);
+        const treeRootNodes = this.getRootNodes(treeSelectedNodes);
+        const effectiveRootNode =
+            this.getEffectiveRootNode(treeRootNodes, treeSelectedNodes);
+        const treeOpenNodes =
+            this.getOpenNodes(treeSelectedNodes, effectiveRootNode);
         this.state = {
-            treeOpenNodes: [],
-            treeRootNodes: [],
-            treeSelectedNodes: []
+            treeSelectedNodes: treeSelectedNodes,
+            treeRootNodes: treeRootNodes,
+            effectiveRootNode: effectiveRootNode,
+            treeOpenNodes: treeOpenNodes
         }
         $("#dataTree")
             .on('select_node.jstree', null, this, this.onJsTreeSelectNode)
