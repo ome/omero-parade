@@ -29,7 +29,7 @@ class DatasetTable extends React.Component {
              handleImageWellClicked} = this.props;
         if (sortBy != undefined) {
             // let orderedImageIds;
-            let colDataToSort = tableData[sortBy];
+            let colDataToSort = tableData[sortBy].data;
             // Add a sortKey to imgJson
             imgJson = imgJson.map(i => Object.assign(i, {sortKey: colDataToSort[i.id]}));
             // sort...
@@ -44,9 +44,8 @@ class DatasetTable extends React.Component {
         let columnNames = Object.keys(tableData);
 
         let dataRanges = columnNames.reduce((prev, name) => {
-            let mn = Object.values(tableData[name]).reduce((p, v) => Math.min(p, v));
-            let mx = Object.values(tableData[name]).reduce((p, v) => Math.max(p, v));
-            prev[name] = [mn, mx]
+            let v = tableData[name];
+            prev[name] = [v.min, v.max];
             return prev;
         }, {});
         function heatMapColor(name, value) {
@@ -95,9 +94,9 @@ class DatasetTable extends React.Component {
                         </td>
                         {columnNames.map(name => (
                             <td key={name}
-                                style={{backgroundColor: showHeatmapColumns[name] ? heatMapColor(name, tableData[name][image.id]): 'transparent'}}
+                                style={{backgroundColor: showHeatmapColumns[name] ? heatMapColor(name, tableData[name].data[image.id]): 'transparent'}}
                                 >
-                                {tableData[name][image.id]}
+                                {tableData[name].data[image.id]}
                             </td>
                         ))}
                     </tr>

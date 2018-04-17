@@ -88,10 +88,16 @@ ul {
 
 .parade_filter {
   margin: 5px;
+  clear: both;
 }
 
 .filterContainer input, .filterContainer select {
   margin-left: 5px;
+}
+
+.filterContainer input[type='range'] {
+  position: relative;
+  top: 6px;
 }
 
 .plateGrid, .centrePanel {
@@ -400,4 +406,28 @@ input[type=range].parade:focus::-ms-fill-upper {
 
 .parade_openAll h1 {
   text-align: center;
+}
+
+.parade_filter .sparkline {
+  padding-top: 2px;
+  margin: 8px 5px 0px;
+  font-size: 12px;
+  float: left;
+}
+
+.parade_filter .sparkline .minimum {
+  margin-right: 2px;
+}
+
+.parade_filter .sparkline .maximum {
+  margin-left: 2px;
+}
+
+.parade_filter .sparkline svg {
+  height: 18px;
+  width: 36px;
+}
+
+.parade_filter_controls {
+  float: left;
 }

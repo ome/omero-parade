@@ -15,9 +15,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import numpy
+
 from django.http import JsonResponse
 import logging
 import json
+
+from omero.grid import DoubleColumn, LongColumn
+from omero_parade.views import NUMPY_GT_1_11_0
 
 from .data_providers import get_table
 
@@ -58,9 +63,26 @@ def get_script(request, script_name, conn):
         col_data = table.read(range(len(headers)), 0, rows).columns
 
         table_data = {}
+        minima = {}
+        maxima = {}
+        histograms = {}
         for name, col in zip(column_names, col_data):
+            values = numpy.array(col.values)
             # key is column Name, values are list of col_data
-            table_data[name] = col.values
+            table_data[name] = list(values)
+
+            if not isinstance(col, (DoubleColumn, LongColumn)):
+                continue
+
+            minima[name] = numpy.amin(values)
+            maxima[name] = numpy.amax(values)
+            bins = 10
+            if NUMPY_GT_1_11_0:
+                # numpy.histogram() only supports bin calculation
+                # from 1.11.0 onwards
+                bins = 'auto'
+            histogram, bin_edges = numpy.histogram(values, bins=bins)
+            histograms[name] = list(histogram)
 
         # Return a JS function that will be passed an object
         # e.g. {'type': 'Image', 'id': 1}
@@ -82,8 +104,11 @@ def get_script(request, script_name, conn):
 
         filter_params = [{'name': 'column_name',
                           'type': 'text',
-                          'values': column_names[1:],   # 1st column is Well
-                          'default': column_names[1]},
+                          'values': column_names,
+                          'default': column_names[0],
+                          'minima': minima,
+                          'maxima': maxima,
+                          'histograms': histograms},
                          {'name': 'operator',
                           'type': 'text',
                           'values': ['>', '=', '<'],
