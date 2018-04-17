@@ -55,12 +55,19 @@ class FilterHub extends React.Component {
     }
 
     handleFilterChange(filterIndex, paramName, paramValue) {
-        let newValues = Object.assign({}, this.state.filterValues[filterIndex]);
-        newValues[paramName] = paramValue;
-        let filterValues = [...this.state.filterValues];    // new list
-        filterValues[filterIndex] = newValues;
-        this.setState({
-            filterValues: filterValues
+        // A parameter has changed in one of the list of filters...
+        this.setState(prevState => {
+            // Copy the previous set of values for the filter at this index...
+            let newValues = Object.assign({}, prevState.filterValues[filterIndex]);
+            // Assign the new value...
+            newValues[paramName] = paramValue;
+            // Make a copy of the previous list of parameter values
+            let filterValues = [...prevState.filterValues];
+            // And add back the new object to the correct index
+            filterValues[filterIndex] = newValues;
+            return {
+                filterValues: filterValues
+            }
         });
     }
 

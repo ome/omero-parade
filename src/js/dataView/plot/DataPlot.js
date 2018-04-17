@@ -105,9 +105,8 @@ class DataPlot extends React.Component {
         }
         axisNames = Object.keys(tableData);
         let dataRanges = axisNames.reduce((prev, name) => {
-            let mn = Object.values(tableData[name]).reduce((p, v) => Math.min(p, v));
-            let mx = Object.values(tableData[name]).reduce((p, v) => Math.max(p, v));
-            prev[name] = [mn, mx]
+            let v = tableData[name];
+            prev[name] = [v.min, v.max];
             return prev;
         }, {});
         function getAxisPercent(name, value) {
@@ -141,8 +140,8 @@ class DataPlot extends React.Component {
                                 src={"/webgateway/render_thumbnail/" + image.id + "/"}
                                 title={image.name}
                                 onClick={event => {handleImageWellClicked(image, event)}}
-                                style={{left: getAxisPercent(xAxisName, tableData[xAxisName][image.id]) + '%',
-                                        top: (100 - getAxisPercent(yAxisName, tableData[yAxisName][image.id])) + '%'}}
+                                style={{left: getAxisPercent(xAxisName, tableData[xAxisName].data[image.id]) + '%',
+                                        top: (100 - getAxisPercent(yAxisName, tableData[yAxisName].data[image.id])) + '%'}}
                             />
                         ))}
                     </div>

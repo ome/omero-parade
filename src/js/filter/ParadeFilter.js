@@ -17,6 +17,7 @@
 //
 
 import React, { Component } from 'react';
+import { Sparklines, SparklinesBars } from 'react-sparklines';
 import FilterInput from './FilterInput';
 
 
@@ -67,19 +68,55 @@ class ParadeFilter extends React.Component {
     
     handleFilterInput(paramName, value) {
         this.props.handleFilterChange(this.props.filterIndex, paramName, value);
+        // Depending on how many filter parameters we have, their type, and
+        // the availability of additional metadata this method may be invoked
+        // by several other event handlers.  The defining characteristic that
+        // allows us to recognise which `FilterInput` called us is
+        // `paramName`.  The `paramName` *should* always match *one*
+        // filter parameter.
+        let filterParam = this.state.filterParams.filter(v => {
+            return v.name === paramName;
+        })[0];
+        if (filterParam.histograms) {
+            this.setState({
+                histogram: filterParam.histograms[value]
+            });
+        }
+        if (filterParam.minima) {
+            this.setState({
+                minimum: filterParam.minima[value]
+            });
+        }
+        if (filterParam.maxima) {
+            this.setState({
+                maximum: filterParam.maxima[value]
+            });
+        }
     }
 
     render() {
         return(
             <div className="parade_filter">
-                {this.props.name}
-                {this.state.filterParams.map(p => {
-                    return <FilterInput
-                                param={p}
-                                key={p.name}
-                                onChange={this.handleFilterInput}
-                            />
-                })}
+                <div className="parade_filter_controls">
+                    {this.props.name}
+                    {this.state.filterParams.map(p => {
+                        return <FilterInput
+                                    param={p}
+                                    min={this.state.minimum}
+                                    max={this.state.maximum}
+                                    key={p.name}
+                                    onChange={this.handleFilterInput}
+                                    value={this.props.filterValues[p.name]}
+                                />
+                    })}
+                </div>
+                <div className="sparkline">
+                    <span className="minimum">{this.state.minimum}</span>
+                    <Sparklines data={this.state.histogram}>
+                        <SparklinesBars />
+                    </Sparklines>
+                    <span className="maximum">{this.state.maximum}</span>
+                </div>
                 <button
                     className="parade_removeFilter"
                     onClick={() => {this.props.handleRemoveFilter(this.props.filterIndex)}}>

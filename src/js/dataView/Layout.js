@@ -114,7 +114,7 @@ class Layout extends React.Component {
             $.getJSON(url, data => {
                 // Add data to table data
                 let td = Object.assign({}, this.state.tableData);
-                td[dataName] = data.data;
+                td[dataName] = data;
                 this.setState({
                     tableData: td
                 });

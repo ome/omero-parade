@@ -21,23 +21,62 @@ import { getHeatmapColor } from '../util'
 
 
 class FilterInput extends React.Component {
+
+    constructor(props) {
+        super(props);
+
+        this.onParamSelectChanged = this.onParamSelectChanged.bind(this);
+        this.onRangeValueChanged = this.onRangeValueChanged.bind(this);
+        this.onInputValueChanged = this.onInputValueChanged.bind(this);
+    }
+
+    /** Returns a figure space padded version of the current value. */
+    getPaddedValue() {
+        let max = this.props.max;
+        let value = this.props.value;
+        if (max == undefined) {
+            return value;
+        }
+        let padding = max.toString().length - value.toString().length;
+        return "\u2007".repeat(padding) + value;
+    }
+
+    /**
+     * Triggered whenever the select element changes.  Dispatches the
+     * change action in a generic way, including the filter base parameter
+     * name by way of the provided singular change handler.
+     */
+    onParamSelectChanged(event) {
+        this.props.onChange(this.props.param.name, event.target.value);
+    }
+
+    /**
+     * Triggered whenever the value changes and it is a range input.
+     * Dispatches the change action in a generic way, including the
+     * filter base parameter name by way of the provided singular
+     * change handler.
+     */
+    onRangeValueChanged(event) {
+        this.props.onChange(this.props.param.name, event.target.value);
+    }
+
+    /**
+     * Triggered whenever the value changes and it is regular input.
+     * Dispatches the change action in a generic way, including the
+     * filter base parameter name by way of the provided singular
+     * change handler.
+     */
+    onInputValueChanged(event) {
+        this.props.onChange(this.props.param.name, event.target.value);
+    }
     
     render() {
         let param = this.props.param;
-        let filterChanged = this.props.onChange;
-        let onChange = function (event) {
-            let value = event.target.value;
-            if (param.type === 'number'){
-                value = parseInt(value, 10);
-            }
-            filterChanged(param.name, value);
-        }
-
         if (param.values) {
             return (
                 <select
                     name={param.name}
-                    onChange={onChange}
+                    onChange={this.onParamSelectChanged}
                     title={param.title ? param.title : ''}
                     >
                     {param.values.map(value => (
@@ -50,11 +89,28 @@ class FilterInput extends React.Component {
                 </select>
             )
         }
+        if (this.props.min != undefined && this.props.max != undefined) {
+            return (
+                <span>
+                    <span>{this.getPaddedValue()}</span>
+                    <input
+                        name={param.name}
+                        type='range'
+                        min={this.props.min}
+                        max={this.props.max}
+                        onChange={this.onRangeValueChanged}
+                        title={param.title ? param.title : ''}
+                    />
+                </span>
+            )
+        }
         return (
             <input
                 name={param.name}
                 type={param.type}
-                onChange={onChange}
+                min={this.props.min}
+                max={this.props.max}
+                onChange={this.onInputValueChanged}
                 title={param.title ? param.title : ''}
             />
         )
