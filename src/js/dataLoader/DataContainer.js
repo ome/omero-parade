@@ -267,6 +267,7 @@ class DataContainer extends React.Component {
             return (
                 <DatasetContainer
                     jstree={jstree}
+                    treeSelectedNodes={this.state.treeSelectedNodes}
                     treeOpenNodes={this.state.treeOpenNodes}
                     effectiveRootNode={this.state.effectiveRootNode}
                     setSelectedImages={this.setSelectedImages}/>

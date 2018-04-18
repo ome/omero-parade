@@ -18,12 +18,53 @@
 
 import React, { Component } from 'react';
 import FilterHub from '../../filter/FilterHub'
+import _ from 'lodash'
 
 
 class DatasetContainer extends React.Component{
 
     constructor(props) {
         super(props);
+        this.state = {
+            imagesJson: this.createImagesJson()
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        const treeOpenNodes = this.props.treeOpenNodes.map(v => v.id);
+        const prevTreeOpenNodes = prevProps.treeOpenNodes.map(v => v.id);
+        const treeSelectedNodes = this.props.treeSelectedNodes.map(v => v.id);
+        const prevTreeSelectedNodes =
+            prevProps.treeSelectedNodes.map(v => v.id);
+        if (!_.isEqual(treeOpenNodes, prevTreeOpenNodes)
+                || !_.isEqual(treeSelectedNodes, prevTreeSelectedNodes)) {
+            this.setState({
+                imagesJson: this.createImagesJson()
+            });
+        }
+    }
+
+    createImagesJson() {
+        const effectiveRootNode = this.props.effectiveRootNode;
+        const imageNodes = this.getImageNodes();
+
+        // Convert jsTree nodes into json for template
+        let imagesJson = imageNodes.map(node => this.marshalNode(node));
+        // Get selected filesets IDs
+        let selectedFilesetIds = imagesJson
+            .filter(i => i.selected)
+            .map(i => i.data.obj.filesetId);
+        // Go through all images, adding fs-selection flag if in selected
+        // fileset
+        if (selectedFilesetIds.length < 1) {
+            for (let imageJson of imagesJson) {
+                const filesetId = imageJson.data.obj.filesetId;
+                if (selectedFilesetIds.includes(filesetId)) {
+                    imageJson.fsSelected = true;
+                }
+            }
+        }
+        return imagesJson;
     }
 
     marshalNode(node) {
@@ -73,28 +114,13 @@ class DatasetContainer extends React.Component{
 
     render() {
         const effectiveRootNode = this.props.effectiveRootNode;
-        const imgNodes = this.getImageNodes();
-
-        // Convert jsTree nodes into json for template
-        let imgJson = imgNodes.map(node => this.marshalNode(node));
-
-        // Get selected filesets...
-        let selFileSets = imgJson.filter(i => i.selected).map(i => i.data.obj.filesetId);
-        // ...go through all images, adding fs-selection flag if in selected fileset
-        if (selFileSets.length > 0) {
-            imgJson.forEach(function(img){
-                if (selFileSets.indexOf(img.data.obj.filesetId) > -1) {
-                    img.fsSelected = true;
-                }
-            });
-        }
-
-        return (<FilterHub
+        return (
+            <FilterHub
                 parentType={effectiveRootNode.type}
                 parentId={effectiveRootNode.data.obj.id}
                 setSelectedImages = {this.props.setSelectedImages}
-                images={imgJson}
-            />)
+                images={this.state.imagesJson}/>
+        )
     }
 }
 
