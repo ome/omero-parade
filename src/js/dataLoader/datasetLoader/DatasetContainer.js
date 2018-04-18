@@ -56,7 +56,7 @@ class DatasetContainer extends React.Component{
             .map(i => i.data.obj.filesetId);
         // Go through all images, adding fs-selection flag if in selected
         // fileset
-        if (selectedFilesetIds.length < 1) {
+        if (selectedFilesetIds.length > 0) {
             for (let imageJson of imagesJson) {
                 const filesetId = imageJson.data.obj.filesetId;
                 if (selectedFilesetIds.includes(filesetId)) {
