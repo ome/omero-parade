@@ -51,8 +51,9 @@ class DataContainer extends React.Component {
             effectiveRootNode: effectiveRootNode,
             treeOpenNodes: treeOpenNodes
         }
+        $("body")
+            .on('selection_change.ome', null, this, this.onSelectionChangeOme);
         $("#dataTree")
-            .on('select_node.jstree', null, this, this.onJsTreeSelectNode)
             .on('open_node.jstree', null, this, this.onJsTreeOpenCloseNode)
             .on('close_node.jstree', null, this, this.onJsTreeOpenCloseNode);
 
@@ -60,12 +61,12 @@ class DataContainer extends React.Component {
     }
 
     /**
-     * Called whenever a 'select_node.jstree' event is fired by the jsTree
-     * instance on the page.  This is a jQuery event handler so has slightly
-     * different semantics than if it were a React one.
+     * Called whenever a 'selection_change.ome' event is triggered on the page
+     * body.  This is a jQuery event handler so has slightly different
+     * semantics than if it were a React one.
      * @see https://www.jstree.com/api/#/?q=.jstree%20Event
      */
-    onJsTreeSelectNode(event, node, selected, triggerEvent) {
+    onSelectionChangeOme(event) {
         // As this is a jQuery integration, "this" will be the jQuery context
         // for the event handler.  We have passed the "DataContainer" along
         // as event data.
@@ -93,7 +94,7 @@ class DataContainer extends React.Component {
      * one.
      * @see https://www.jstree.com/api/#/?q=.jstree%20Event
      */
-    onJsTreeOpenCloseNode(event, node) {
+    onJsTreeOpenCloseNode(event, data) {
         // As this is a jQuery integration, "this" will be the jQuery context
         // for the event handler.  We have passed the "DataContainer" along
         // as event data.
@@ -205,17 +206,22 @@ class DataContainer extends React.Component {
         let jstree = this.props.jstree;
         if (jstree) {
             jstree.deselect_all();
-            if (imageIds.length === 0) return;
+            if (imageIds.length < 1) {
+                jstree.select_node(this.state.effectiveRootNode.id);
+            }
             let containerNode = OME.getTreeImageContainerBestGuess(imageIds[0]);
             let nodes = imageIds.map(iid => {
                 let containerNode = OME.getTreeImageContainerBestGuess(iid);
                 return jstree.locate_node('image-' + iid, containerNode)[0]
             });
-            jstree.select_node(nodes);
+            jstree.select_node(nodes, true);
             // we also focus the node, so that hotkey events come from the node
             if (nodes.length > 0) {
                 $("#" + nodes[0].id).children('.jstree-anchor').focus();
             }
+            $("#dataTree").trigger(
+                "selection_change.ome", jstree.get_selected(true).length
+            );
         }
     }
 
