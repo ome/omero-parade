@@ -58,6 +58,34 @@ class DataContainer extends React.Component {
             .on('close_node.jstree', null, this, this.onJsTreeOpenCloseNode);
 
         this.setSelectedImages = this.setSelectedImages.bind(this);
+        this.onOpenAllClicked = this.onOpenAllClicked.bind(this);
+    }
+
+    /**
+     * Called whenever the "Open All" button is clicked.  Unbinds the
+     * 'open_node.jstree' event handler, initiates the opening of all nodes
+     * under the effective root node, and then rebinds the event handler.
+     */
+    onOpenAllClicked(event) {
+        // Ignore `open_node.jstree` events until `open_all()` is complete
+        $("#dataTree").off("open_node.jstree");
+        $("#dataTree").on("open_all.jstree", null, this, (event, data) => {
+            // We're finished paying attention to 'open_all.jstree' unbind it
+            $("#dataTree").off("open_all.jstree");
+            // As this is a jQuery integration, "this" will be the jQuery context
+            // for the event handler.  We have passed the "DataContainer" along
+            // as event data.
+            const _this = event.data;
+            // `open_all()` will have fired `open_node.jstree` for every node
+            // that we opened.  We're done ignoring those events so we need to
+            // listen for them again.
+            $("#dataTree").on(
+                "open_node.jstree", null, _this, _this.onJsTreeOpenCloseNode
+            );
+            // Call the event handler directly to update our state
+            _this.onJsTreeOpenCloseNode(event, data);
+        });
+        this.props.jstree.open_all(this.state.effectiveRootNode.id);
     }
 
     /**
@@ -88,10 +116,10 @@ class DataContainer extends React.Component {
     }
 
     /**
-     * Called whenever a 'open_node.jstree' or 'close_node.jstree' event is
-     * fired by the jsTree instance on the page.  This is a jQuery event
-     * handler so has slightly different semantics than if it were a React
-     * one.
+     * Called whenever a 'open_node.jstree', 'close_node.jstree' or
+     * 'open_all.jstree' event is fired by the jsTree instance on the page.
+     * This is a jQuery event handler so has slightly different semantics
+     * than if it were a React one.
      * @see https://www.jstree.com/api/#/?q=.jstree%20Event
      */
     onJsTreeOpenCloseNode(event, data) {
@@ -246,12 +274,7 @@ class DataContainer extends React.Component {
                 return (
                     <div className="parade_openAll">
                         <h1>No open Datasets</h1>
-                        <button
-                            onClick={() => {
-                                jstree.open_all(
-                                    effectiveRootNode.id
-                                )
-                            }}>
+                        <button onClick={this.onOpenAllClicked}>
                             Open All
                         </button>
                     </div>
