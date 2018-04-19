@@ -29,43 +29,61 @@ class Plate extends React.Component {
         }
     }
 
-    componentDidMount() {
-        var parentNode = this.props.parentNode,
-            plateId = this.props.plateId,
-            objId = parentNode.data.id;
-        var data;
-        if (parentNode.type === "acquisition") {
+    loadData() {
+        // Parent component enforces that there will only be one selected node
+        const selectedNode = this.props.treeSelectedNodes[0];
+
+        let data;
+        if (selectedNode.type === "plate") {
+            data = {'plate': selectedNode.data.id}
+        } else if (selectedNode.type === "acquisition") {
             // select 'run', load plate...
-            data = {'run': objId};
-        } else if (parentNode.type == "plate") {
-            // select 'plate', load if single 'run'
-            if (parentNode.children.length < 2) {
-                data = {'plate': objId};
-            }
+            data = {'run': selectedNode.data.id};
         } else {
             return;
         }
 
-        var url = "/omero_parade/api/fields/";
+        const url = "/omero_parade/api/fields/";
         $.ajax({
             url: url,
             data: data,
             dataType: 'json',
             cache: false,
-            success: data => {
+            success: v => {
                 this.setState({
-                    fields: data.data,
-                    selectedField: data.data[0]
+                    fields: v.data,
+                    selectedField: v.data[0]
                 });
             }
         });
     }
 
+    componentDidMount() {
+        this.loadData();
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        // Pattern to update based on discussion on this RFC issue:
+        //  * https://github.com/reactjs/rfcs/issues/26
+
+        // Parent component enforces that there will only be one selected node
+        const prevSelectedNode = prevProps.treeSelectedNodes[0];
+        const selectedNode = this.props.treeSelectedNodes[0];
+        if (prevSelectedNode.id !== selectedNode.id) {
+            this.loadData();
+        }
+    }
+
     render() {
+        if (this.props.treeOpenNodes.length < 1) {
+            return null;
+        }
+        // Parent component enforces that there will only be one open node and
+        // it will always be of "plate" type
+        const plateNode = this.props.treeOpenNodes[0];
         return (
             <PlateLoader
-                key={this.state.selectedField}
-                plateId={this.props.plateId}
+                plateId={plateNode.data.id}
                 fieldId={this.state.selectedField} />
         )
     }

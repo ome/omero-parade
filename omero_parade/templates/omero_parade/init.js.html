@@ -11,42 +11,16 @@ $(function() {
   window.PARADE_INDEX_URL = "{% url 'parade_index' %}";
   window.PARADE_DATAPROVIDERS_URL = "{% url 'parade_dataproviders' %}";
 
-
-  // TODO: this should be handled by omeroweb_center_plugin()
-  // to call load_plugin_content() when needed.
-  // Start listening for Node Loading events on the tree...
-  // If a node loads and it's selected, update_thumbs...
-  let treeChanged = function(event, data){
-      if (data.node.state.selected) {
-          // update_thumbnails_panel(event, data);
-          var datatree = $.jstree.reference('#dataTree');
-          if (!datatree) return;
-          var tree_selected = datatree.get_selected(true);
-          omero_parade.omero_parade(tree_selected, datatree);
-      }
-  }
-
-  $("#dataTree").on('load_node.jstree', treeChanged)
-                .on('open_node.jstree', treeChanged)
-                .on('close_node.jstree', treeChanged);
-
-
   $("#omero_parade").omeroweb_center_plugin({
     plugin_index: pluginIndex,        // From the Django template loop
     empty_on_sel_change: false,       // Do not completely erase content when changing selection
     load_plugin_content: function(selected, dtype, oid) {
-
       // this may have been called before datatree was initialised...
-      var datatree = $.jstree.reference('#dataTree');
-      if (!datatree) return;
-
-      // We use the tree to access selected objects, since we can traverse
-      // to check parents etc...
-      // Note: We do not use the parameters selected, dtype or oid as
-      // it is easier to use the tree directly as these do not refer to
-      // a jstree node
-      var tree_selected = datatree.get_selected(true);
-      omero_parade.omero_parade(tree_selected, datatree);
+      var dataTree = $.jstree.reference('#dataTree');
+      if (!dataTree) {
+        return;
+      }
+      omero_parade.omero_parade(dataTree);
     },
 
     // supported_obj_types: ['dataset', 'image', 'orphaned', 'tag']

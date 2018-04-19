@@ -26,10 +26,17 @@ class FilterHub extends React.Component {
         super(props);
         // We store various filter inputs & defaults in STATE
         // but the filter functions are stored here
-        this.filterFunctions = [];
+        const filterFunctions = [];
+        const filterNames = [];
+        const filterValues = [];
+        const filteredImages = this.filterImages(
+            filterFunctions, filterNames, filterValues
+        );
         this.state = {
-            filterNames: [],
-            filterValues: [],   // [{'inputName':'value'}]
+            filterFunctions: filterFunctions,
+            filterNames: filterNames,
+            filterValues: filterValues,   // [{'inputName':'value'}]
+            filteredImages: filteredImages,
             iconSize: 50,
         }
         this.addFilter = this.addFilter.bind(this);
@@ -39,18 +46,60 @@ class FilterHub extends React.Component {
         this.setIconSize = this.setIconSize.bind(this);
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (!Object.is(this.props.images, prevProps.images)) {
+            this.setState({
+                filteredImages: this.filterImages(
+                    this.state.filterFunctions, this.state.filterNames,
+                    this.state.filterValues
+                )
+            });
+        }
+    }
+
+    filterImages(filterFunctions, filterNames, filterValues) {
+        const images = this.props.images;
+        if (filterNames.length < 1) {
+            return images;
+        }
+        let filteredImages;
+        const startTime = performance.now();
+        filteredImages = filterNames.reduce((imgList, name, idx) => {
+            // get the filter function...
+            let f = filterFunctions[idx];
+            let paramValues = filterValues[idx];
+            if (f && paramValues) {
+                imgList = imgList.filter(image => f(image, paramValues));
+            }
+            return imgList;
+        }, images);
+        console.log("Filtering images took ms:", performance.now() - startTime);
+        return filteredImages;
+    }
+
     addFilter(filterName) {
+        const filterNames = [...this.state.filterNames, filterName];
+        const filteredImages = this.filterImages(
+            this.state.filterFunctions, filterNames, this.state.filterValues
+        );
         this.setState({
-            filterNames: [...this.state.filterNames, filterName],
+            filterNames: filterNames,
+            filteredImages: filteredImages,
         });
     }
 
     handleFilterLoaded(filterIndex, filterFunc, defaultValues) {
-        this.filterFunctions[filterIndex] = filterFunc;
+        let filterFunctions = [...this.state.filterFunctions];
+        filterFunctions[filterIndex] = filterFunc;
         let filterValues = [...this.state.filterValues];    // new list
         filterValues[filterIndex] = defaultValues;
+        const filteredImages = this.filterImages(
+            filterFunctions, this.state.filterNames, filterValues
+        );
         this.setState({
+            filterFunctions: filterFunctions,
             filterValues: filterValues,
+            filteredImages: filteredImages,
         });
     }
 
@@ -65,20 +114,29 @@ class FilterHub extends React.Component {
             let filterValues = [...prevState.filterValues];
             // And add back the new object to the correct index
             filterValues[filterIndex] = newValues;
+            const filteredImages = this.filterImages(
+                this.state.filterFunctions, this.state.filterNames,
+                filterValues
+            );
             return {
-                filterValues: filterValues
+                filterValues: filterValues,
+                filteredImages: filteredImages,
             }
         });
     }
 
     handleRemoveFilter(filterIndex) {
-        let fNames = [...this.state.filterNames];
-        let fValues = [...this.state.filterValues];
-        fNames.splice(filterIndex, 1);
-        fValues.splice(filterIndex, 1);
+        let filterNames = [...this.state.filterNames];
+        let filterValues = [...this.state.filterValues];
+        filterNames.splice(filterIndex, 1);
+        filterValues.splice(filterIndex, 1);
+        const filteredImages = this.filterImages(
+            this.state.filterFunctions, filterNames, filterValues
+        );
         this.setState({
-            filterNames: fNames,
-            filterValues: fValues
+            filterNames: filterNames,
+            filterValues: filterValues,
+            filteredImages: filteredImages,
         });
     }
 
@@ -87,28 +145,6 @@ class FilterHub extends React.Component {
     }
 
     render() {
-
-        // Images could be from parent PlateLoader OR DatasetLoader
-        let images = this.props.images;
-        let filteredImages;
-
-        if (this.state.filterNames) {
-            const startTime = performance.now();
-            filteredImages = this.state.filterNames.reduce((imgList, name, idx) => {
-                // get the filter function...
-                let f = this.filterFunctions[idx];
-                let paramValues = this.state.filterValues[idx];
-                if (f && paramValues) {
-                    imgList = imgList.filter(image => f(image, paramValues));
-                }
-                return imgList;
-            }, images);
-            console.log("Filtering images took ms:", performance.now() - startTime);
-        } else {
-            filteredImages = images;
-        }
-        let imageComponent;
-
         return(<div className="reactContainer">
                     <FilterContainer
                         parentType={this.props.parentType}
@@ -128,7 +164,7 @@ class FilterHub extends React.Component {
                         fieldId={this.props.fieldId}
                         setSelectedImages={this.props.setSelectedImages}
                         plateData={this.props.plateData}
-                        filteredImages={filteredImages}
+                        filteredImages={this.state.filteredImages}
                         />
                 </div>)
     }

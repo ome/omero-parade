@@ -258,6 +258,7 @@ input[type=range].parade:focus::-ms-fill-upper {
 .parade_centrePanel {
   flex-grow: 1;
   overflow: auto;
+  margin: 10px;
 }
 
 .parade_centrePanel .datasetThumb {
@@ -396,6 +397,15 @@ input[type=range].parade:focus::-ms-fill-upper {
 
 .parade_filter:hover .parade_removeFilter {
   visibility: visible;
+}
+
+.parade_openAll {
+  width: 100%;
+  text-align: center;
+}
+
+.parade_openAll h1 {
+  text-align: center;
 }
 
 .parade_filter .sparkline {

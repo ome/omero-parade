@@ -18,26 +18,65 @@
 
 import React, { Component } from 'react';
 import FilterHub from '../../filter/FilterHub'
+import _ from 'lodash'
 
 
 class DatasetContainer extends React.Component{
 
     constructor(props) {
         super(props);
-        this.marshalNode = this.marshalNode.bind(this);
-        this.getImageNodes = this.getImageNodes.bind(this);
+        this.state = {
+            imagesJson: this.createImagesJson()
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        const treeOpenNodes = this.props.treeOpenNodes.map(v => v.id);
+        const prevTreeOpenNodes = prevProps.treeOpenNodes.map(v => v.id);
+        const treeSelectedNodes = this.props.treeSelectedNodes.map(v => v.id);
+        const prevTreeSelectedNodes =
+            prevProps.treeSelectedNodes.map(v => v.id);
+        if (!_.isEqual(treeOpenNodes, prevTreeOpenNodes)
+                || !_.isEqual(treeSelectedNodes, prevTreeSelectedNodes)) {
+            this.setState({
+                imagesJson: this.createImagesJson()
+            });
+        }
+    }
+
+    createImagesJson() {
+        const effectiveRootNode = this.props.effectiveRootNode;
+        const imageNodes = this.getImageNodes();
+
+        // Convert jsTree nodes into json for template
+        let imagesJson = imageNodes.map(node => this.marshalNode(node));
+        // Get selected filesets IDs
+        let selectedFilesetIds = imagesJson
+            .filter(i => i.selected)
+            .map(i => i.data.obj.filesetId);
+        // Go through all images, adding fs-selection flag if in selected
+        // fileset
+        if (selectedFilesetIds.length > 0) {
+            for (let imageJson of imagesJson) {
+                const filesetId = imageJson.data.obj.filesetId;
+                if (selectedFilesetIds.includes(filesetId)) {
+                    imageJson.fsSelected = true;
+                }
+            }
+        }
+        return imagesJson;
     }
 
     marshalNode(node) {
-        var parentNode = this.props.parentNode;
-        var dateFormatOptions = {
+        const effectiveRootNode = this.props.effectiveRootNode;
+        const dateFormatOptions = {
             weekday: "short", year: "numeric", month: "short",
             day: "numeric", hour: "2-digit", minute: "2-digit"
         };
-        var d = node.data.obj.date || node.data.obj.acqDate;
-        var date = new Date(d);
+        const d = node.data.obj.date || node.data.obj.acqDate;
+        let date = new Date(d);
         date = date.toLocaleTimeString(undefined, dateFormatOptions);
-        var iData = {'id': node.data.obj.id,
+        let iData = {'id': node.data.obj.id,
             'name': node.text,
             'data': JSON.parse(JSON.stringify(node.data)),
             'selected': node.state.selected,
@@ -47,7 +86,7 @@ class DatasetContainer extends React.Component{
             'datasetId': node.datasetId,
         };
         // If image is in share and share is not owned by user...
-        if (node.data.obj.shareId && !parentNode.data.obj.isOwned) {
+        if (node.data.obj.shareId && !effectiveRootNode.data.obj.isOwned) {
             // share ID will be needed to open image viewer
             iData.shareId = node.data.obj.shareId;
         }
@@ -55,60 +94,33 @@ class DatasetContainer extends React.Component{
     }
 
     getImageNodes() {
-        // If we have a Dataset parent, simply get child images.
-        // If we have a Project, iterate through each Dataset to get images.
-        let jstree = this.props.jstree;
-        let dtype = this.props.parentNode.type;
-        let imgNodes = [];
-        if (dtype === "dataset") {
-            imgNodes = this.props.parentNode.children.map(ch => jstree.get_node(ch));
-        } else if (dtype === "project") {
-            imgNodes = this.props.parentNode.children.reduce((prev, dataset) => {
-                let ds_node = jstree.get_node(dataset);
-                let ds_name = ds_node.text;
-                let ds_id = ds_node.data.id;
-                // console.log(ds_id, ds_node);
-                // will get empty array if Dataset node is not loaded
-                // Only include images if Dataset expanded
-                if (ds_node.state.opened) {
-                    let images = ds_node.children.map(ch => jstree.get_node(ch));
-                    // add datasetName to each image
-                    images = images.map(i => Object.assign({}, i,
-                        {datasetName: ds_name, datasetId: ds_id}))
-                    prev = prev.concat(images);
+        const jstree = this.props.jstree;
+        let imageNodes = [];
+        for (let openNode of this.props.treeOpenNodes) {
+            for (let childNode of openNode.children) {
+                childNode = jstree.get_node(childNode);
+                if (childNode.type !== "image") {
+                    continue;
                 }
-                return prev;
-            }, []);
+                if (openNode.type === "dataset") {
+                    childNode.datasetName = openNode.text;
+                    childNode.datasetId = openNode.data.id;
+                }
+                imageNodes.push(childNode);
+            }
         }
-
-        // Ignore non-images under tags or 'deleted' under shares
-        imgNodes = imgNodes.filter(node => node.type === "image");
-        return imgNodes;
+        return imageNodes;
     }
 
     render() {
-        var imgNodes = this.getImageNodes();
-
-        // Convert jsTree nodes into json for template
-        let imgJson = imgNodes.map(this.marshalNode);
-
-        // Get selected filesets...
-        let selFileSets = imgJson.filter(i => i.selected).map(i => i.data.obj.filesetId);
-        // ...go through all images, adding fs-selection flag if in selected fileset
-        if (selFileSets.length > 0) {
-            imgJson.forEach(function(img){
-                if (selFileSets.indexOf(img.data.obj.filesetId) > -1) {
-                    img.fsSelected = true;
-                }
-            });
-        }
-
-        return (<FilterHub
-                parentType={this.props.parentNode.type}
-                parentId={this.props.parentNode.data.obj.id}
+        const effectiveRootNode = this.props.effectiveRootNode;
+        return (
+            <FilterHub
+                parentType={effectiveRootNode.type}
+                parentId={effectiveRootNode.data.obj.id}
                 setSelectedImages = {this.props.setSelectedImages}
-                images={imgJson}
-            />)
+                images={this.state.imagesJson}/>
+        )
     }
 }
 

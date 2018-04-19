@@ -51,6 +51,9 @@ class ParadeFilter extends React.Component {
             url += '?' + this.props.images.map(i => 'image=' + i.id).join('&');
         }
         $.getJSON(url, function(data){
+            if (!data.f) {
+                return;
+            }
             // Response has filter function - Needs eval()
             var f = eval(data.f);
             // Get current values - set state to parent
