@@ -55,6 +55,9 @@ def get_script(request, script_name, conn):
                 "where roi.image.id in (:ids) group by roi.image"
         p = query_service.projection(query, params, conn.SERVICE_OPTS)
         roi_counts = {}
+        for i in img_ids:
+            # Add placeholder 0 for all images
+            roi_counts[i] = 0
         for i in p:
             roi_counts[i[0].val] = i[1].val
         values = roi_counts.values()
