@@ -107,8 +107,6 @@ def filter_list(request, conn=None, **kwargs):
 
     filter_modules = parade_settings.PARADE_FILTERS
 
-    print "filter_modules", filter_modules
-
     filters = []
     for m in filter_modules:
         module = __import__('%s.omero_filters' % m)
