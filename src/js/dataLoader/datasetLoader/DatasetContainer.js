@@ -25,8 +25,21 @@ class DatasetContainer extends React.Component{
 
     constructor(props) {
         super(props);
+        let transientState = false;
+        for (let openNode of props.treeOpenNodes) {
+            if (props.jstree.is_loading(openNode)) {
+                // State is transient, mounting may have been triggered
+                // by a selection event on a jsTree node that has not yet
+                // been loaded.  We will be notified of steady state by a
+                // later event, at which time componentDidUpdate() will be
+                // called.
+                transientState = true;
+                break;
+            }
+        }
         this.state = {
-            imagesJson: this.createImagesJson()
+            imagesJson: this.createImagesJson(),
+            transientState: transientState
         }
     }
 
@@ -36,10 +49,12 @@ class DatasetContainer extends React.Component{
         const treeSelectedNodes = this.props.treeSelectedNodes.map(v => v.id);
         const prevTreeSelectedNodes =
             prevProps.treeSelectedNodes.map(v => v.id);
-        if (!_.isEqual(treeOpenNodes, prevTreeOpenNodes)
+        if (this.state.transientState
+                || !_.isEqual(treeOpenNodes, prevTreeOpenNodes)
                 || !_.isEqual(treeSelectedNodes, prevTreeSelectedNodes)) {
             this.setState({
-                imagesJson: this.createImagesJson()
+                imagesJson: this.createImagesJson(),
+                transientState: false
             });
         }
     }
