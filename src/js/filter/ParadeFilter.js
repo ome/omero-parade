@@ -87,12 +87,12 @@ class ParadeFilter extends React.Component {
         }
         if (filterParam.minima) {
             this.setState({
-                minimum: filterParam.minima[value]
+                minimum: parseInt(filterParam.minima[value])
             });
         }
         if (filterParam.maxima) {
             this.setState({
-                maximum: filterParam.maxima[value]
+                maximum: parseInt(filterParam.maxima[value])
             });
         }
     }

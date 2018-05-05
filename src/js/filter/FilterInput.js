@@ -33,7 +33,10 @@ class FilterInput extends React.Component {
     /** Returns a figure space padded version of the current value. */
     getPaddedValue() {
         let max = this.props.max;
-        let value = this.props.value;
+        let value = parseInt(this.props.value);
+        if (isNaN(value)) {
+            value = this.props.value;
+        }
         if (max == undefined) {
             return value;
         }
