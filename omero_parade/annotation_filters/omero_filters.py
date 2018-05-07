@@ -45,13 +45,12 @@ def get_script(request, script_name, conn):
     else:
         obj_ids = [long(i) for i in image_ids]
     query_service = conn.getQueryService()
+    params = ParametersI()
+    # Include "-1" so that if we have no object IDs that the query does
+    # not fail.  It will not match anything.
+    params.addIds([-1] + obj_ids)
 
     if script_name == "Rating":
-
-        params = ParametersI()
-        # Include "-1" so that if we have no object IDs that the query does
-        # not fail.  It will not match anything.
-        params.addIds([-1] + obj_ids)
         query = """select oal from %sAnnotationLink as oal
             join fetch oal.details.owner
             left outer join fetch oal.child as ch
@@ -85,11 +84,6 @@ def get_script(request, script_name, conn):
             })
 
     if script_name == "Comment":
-
-        params = ParametersI()
-        # Include "-1" so that if we have no object IDs that the query does
-        # not fail.  It will not match anything.
-        params.addIds([-1] + obj_ids)
         query = """select oal from %sAnnotationLink as oal
             left outer join fetch oal.child as ch
             left outer join oal.parent as pa
@@ -125,11 +119,6 @@ def get_script(request, script_name, conn):
             })
 
     if script_name == "Tag":
-
-        params = ParametersI()
-        # Include "-1" so that if we have no object IDs that the query does
-        # not fail.  It will not match anything.
-        params.addIds([-1] + obj_ids)
         query = """select oal from %sAnnotationLink as oal
             left outer join fetch oal.child as ch
             left outer join oal.parent as pa
