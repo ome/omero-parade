@@ -18,7 +18,6 @@
 
 import React, { Component } from 'react';
 import Images from './Images'
-import ImageIcon from './ImageIcon'
 
 class Dataset extends React.Component {
 

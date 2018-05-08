@@ -17,9 +17,40 @@
 //
 
 import React, { Component } from 'react';
+import axios from 'axios';
+import qs from 'qs';
+
 import ImageIcon from './ImageIcon'
 
 class Images extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            thumbnails: {}
+        }
+    }
+
+    componentDidMount() {
+        // https://github.com/axios/axios/issues/709
+        axios.get('/webgateway/get_thumbnails/', {
+            params: {
+                'id': this.props.imgJson.map(v => v.id)
+            },
+            paramsSerializer: params => (
+                qs.stringify(params, { indices: false })
+            )
+        })
+        .then(response => {
+            this.setState(prevState => {
+                let thumbnails = prevState.thumbnails;
+                for (const imageId in response.data) {
+                    thumbnails[imageId] = response.data[imageId];
+                }
+                return {thumbnails: thumbnails};
+            });
+        });
+    }
 
     render() {
         let {imgJson,
@@ -31,6 +62,7 @@ class Images extends React.Component {
                 {imgJson.map(image => (
                     <ImageIcon
                         image={image}
+                        src={this.state.thumbnails[image.id]}
                         // If images in Datasets, use parent to make unique
                         key={image.id + (image.parent ? image.parent : "")}
                         iconSize={iconSize}

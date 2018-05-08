@@ -273,6 +273,14 @@ input[type=range].parade:focus::-ms-fill-upper {
     float: left;
 }
 
+.parade_centrePanel .waiting {
+  background:url(../../webgateway/img/spinner.gif);
+  background-color: #eee;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.5;
+}
+
 .layoutControls {
   position: absolute;
   top: 3px;

@@ -37,7 +37,6 @@ class ImageIcon extends React.Component {
     constructor(props) {
         super(props);
         this.handleIconClick = this.handleIconClick.bind(this);
-        this.getIconSizes = this.getIconSizes.bind(this);
     }
 
     handleIconClick(event) {
@@ -71,6 +70,12 @@ class ImageIcon extends React.Component {
             iconStyle = Object.assign({}, iconStyle, styles.selected)
         };
 
+        let className = "";
+        let src = this.props.src;
+        if (!src) {
+            className = "waiting";
+            src = "/static/webgateway/img/spacer.gif";
+        }
         return (
             <li className={"datasetThumb " + cls.join(" ")}
                 id={"image_icon-" + image.id}
@@ -82,9 +87,10 @@ class ImageIcon extends React.Component {
                 onClick={this.handleIconClick}
             >
                     <img alt="image"
+                        className={className}
                         width={iconSizes.width + "px"}
                         height={iconSizes.height + "px"}
-                        src={config.webgatewayBaseUrl + "render_thumbnail/" + image.id + "/"}
+                        src={src}
                         title={image.name} />
             </li>
         )
