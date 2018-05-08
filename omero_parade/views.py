@@ -121,9 +121,12 @@ def filter_script(request, filter_name, conn=None, **kwargs):
     filter_modules = parade_settings.PARADE_FILTERS
 
     for m in filter_modules:
-        module = __import__('%s.omero_filters' % m, fromlist=[''])
-        if filter_name in module.get_filters(request, conn):
-            return module.get_script(request, filter_name, conn)
+        try:
+            module = __import__('%s.omero_filters' % m, fromlist=[''])
+            if filter_name in module.get_filters(request, conn):
+                return module.get_script(request, filter_name, conn)
+        except ImportError:
+            pass
 
     return JsonResponse({'Error': 'Filter script not found'})
 
