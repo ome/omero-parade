@@ -166,8 +166,7 @@ def get_data(request, data_name, conn=None, **kwargs):
             if hasattr(module, 'get_dataproviders'):
                 dp = module.get_dataproviders(request, conn)
                 if data_name in dp:
-                    data = module.data_providers.get_data(request, data_name,
-                                                          conn)
+                    data = module.get_data(request, data_name, conn)
                     values = numpy.array(data.values())
                     bins = 10
                     if NUMPY_GT_1_11_0:
