@@ -17,12 +17,13 @@
 
 from django.http import JsonResponse
 import json
+from collections import defaultdict
 from omero.sys import ParametersI
 from omero_parade.utils import get_well_ids, get_project_image_ids
 
 
 def get_filters(request, conn):
-    return ["Rating", "Comment", "Tag"]
+    return ["Rating", "Comment", "Tag", "Key_Value"]
 
 
 def get_script(request, script_name, conn):
@@ -154,6 +155,51 @@ def get_script(request, script_name, conn):
                           'type': 'text',
                           'default': "Choose_Tag",
                           'values': all_tags,
+                          }]
+        return JsonResponse(
+            {
+                'f': f,
+                'params': filter_params,
+            })
+
+    if script_name == "Key_Value":
+        query = """select oal from %sAnnotationLink as oal
+            left outer join fetch oal.child as ch
+            left outer join oal.parent as pa
+            where pa.id in (:ids) and ch.class=MapAnnotation""" % dtype
+        links = query_service.findAllByQuery(query, params, conn.SERVICE_OPTS)
+        # Dict of {'key': {iid: 'value', iid: 'value'}}
+        map_values = defaultdict(dict)
+        for l in links:
+            iid = l.parent.id.val
+            for kv in l.child.getMapValue():
+                map_values[kv.name][iid] = kv.value
+
+        # Return a JS function that will be passed a data object
+        # e.g. {'type': 'Image', 'id': 1}
+        # and a params object of {'paramName': value}
+        # and should return true or false
+        f = """
+(function filter(data, params) {
+    var map_values = %s;
+    if (map_values[params.key] && map_values[params.key][data.%s]) {
+        var match = map_values[params.key][data.%s].indexOf(params.query) > -1;
+        return (params.query === '' || match);
+    }
+    return false;
+})
+        """ % (json.dumps(map_values), js_object_attr, js_object_attr)
+
+        keys = map_values.keys()
+        keys.sort()
+
+        filter_params = [{'name': 'key',
+                          'type': 'text',
+                          'values': keys,
+                          'default': keys[0]},
+                          {'name': 'query',
+                          'type': 'text',
+                          'default': '',
                           }]
         return JsonResponse(
             {
