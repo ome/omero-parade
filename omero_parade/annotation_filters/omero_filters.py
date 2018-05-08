@@ -197,10 +197,9 @@ def get_script(request, script_name, conn):
                           'type': 'text',
                           'values': keys,
                           'default': keys[0]},
-                          {'name': 'query',
+                         {'name': 'query',
                           'type': 'text',
-                          'default': '',
-                          }]
+                          'default': ''}]
         return JsonResponse(
             {
                 'f': f,
