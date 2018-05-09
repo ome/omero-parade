@@ -179,20 +179,20 @@ def get_data(request, data_name, conn=None, **kwargs):
                         bins = 'auto'
                     histogram, bin_edges = numpy.histogram(values, bins=bins)
                     try:
-                        json.dumps(data);
-                    except:
+                        json.dumps(data)
+                    except TypeError:
                         logger.error("Error data: %s" % data)
                         logger.error(traceback.format_exc())
                     try:
                         json.dumps(numpy.amin(values))
                         json.dumps(numpy.amax(values))
-                    except:
+                    except TypeError:
                         logger.error("Error: min: %s" % numpy.amin(values))
                         logger.error("Error: max: %s" % numpy.amax(values))
                         logger.error(traceback.format_exc())
                     try:
                         json.dumps(list(histogram))
-                    except:
+                    except TypeError:
                         logger.error("Error: histogram: %s" % list(histogram))
                         logger.error(traceback.format_exc())
                     return JsonResponse({
