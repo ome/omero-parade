@@ -38,7 +38,7 @@ class PlateLoader extends React.Component {
             return;
         }
 
-        const elements = ["plate", plateId, fieldId];
+        const elements = ["plate", plateId, fieldId, ""];
         const url = config.webgatewayBaseUrl + elements.join("/");
         $.ajax({
             url: url,
