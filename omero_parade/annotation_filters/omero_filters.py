@@ -196,7 +196,7 @@ def get_script(request, script_name, conn):
         filter_params = [{'name': 'key',
                           'type': 'text',
                           'values': keys,
-                          'default': keys[0]},
+                          'default': keys[0] if len(keys) > 0 else ""},
                          {'name': 'query',
                           'type': 'text',
                           'default': ''}]
