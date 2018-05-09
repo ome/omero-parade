@@ -100,7 +100,7 @@ be on the PYTHONPATH when the app is installed.
 
 ::
 
-    '["omero_parade", "annotation_filters", "table_filters"]'
+    '["omero_parade", "omero_parade.annotation_filters", "omero_parade.table_filters"]'
 
 Each of these modules contains an ``omero_filters.py`` which is expected to
 implement 2 methods: ``get_filters`` and ``get_script``.

@@ -107,12 +107,10 @@ def filter_list(request, conn=None, **kwargs):
 
     filter_modules = parade_settings.PARADE_FILTERS
 
-    print "filter_modules", filter_modules
-
     filters = []
     for m in filter_modules:
-        module = __import__('%s.omero_filters' % m)
-        filters.extend(module.omero_filters.get_filters(request, conn))
+        module = __import__('%s.omero_filters' % m, fromlist=[''])
+        filters.extend(module.get_filters(request, conn))
 
     return JsonResponse({'data': filters})
 
@@ -123,9 +121,12 @@ def filter_script(request, filter_name, conn=None, **kwargs):
     filter_modules = parade_settings.PARADE_FILTERS
 
     for m in filter_modules:
-        module = __import__('%s.omero_filters' % m)
-        if filter_name in module.omero_filters.get_filters(request, conn):
-            return module.omero_filters.get_script(request, filter_name, conn)
+        try:
+            module = __import__('%s.omero_filters' % m, fromlist=[''])
+            if filter_name in module.get_filters(request, conn):
+                return module.get_script(request, filter_name, conn)
+        except ImportError:
+            pass
 
     return JsonResponse({'Error': 'Filter script not found'})
 
@@ -138,9 +139,9 @@ def dataprovider_list(request, conn=None, **kwargs):
     dps = []
     for m in modules:
         try:
-            module = __import__('%s.data_providers' % m)
-            if hasattr(module.data_providers, 'get_dataproviders'):
-                data = module.data_providers.get_dataproviders(request, conn)
+            module = __import__('%s.data_providers' % m, fromlist=[''])
+            if hasattr(module, 'get_dataproviders'):
+                data = module.get_dataproviders(request, conn)
                 dps.extend(data)
         except ImportError:
             pass
@@ -161,12 +162,11 @@ def get_data(request, data_name, conn=None, **kwargs):
 
     for m in modules:
         try:
-            module = __import__('%s.data_providers' % m)
-            if hasattr(module.data_providers, 'get_dataproviders'):
-                dp = module.data_providers.get_dataproviders(request, conn)
+            module = __import__('%s.data_providers' % m, fromlist=[''])
+            if hasattr(module, 'get_dataproviders'):
+                dp = module.get_dataproviders(request, conn)
                 if data_name in dp:
-                    data = module.data_providers.get_data(request, data_name,
-                                                          conn)
+                    data = module.get_data(request, data_name, conn)
                     values = numpy.array(data.values())
                     bins = 10
                     if NUMPY_GT_1_11_0:
