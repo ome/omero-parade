@@ -18,7 +18,7 @@
 
 import React, { Component } from 'react';
 import DataContainer from './dataLoader/DataContainer'
-import ThumbnailLoader from './dataLoader/Thumbnail'
+import ThumbnailLoader from './dataLoader/ThumbnailLoader'
 
 
 class App extends Component {
