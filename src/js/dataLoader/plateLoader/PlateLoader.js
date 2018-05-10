@@ -18,6 +18,7 @@
 
 import React, { Component } from 'react';
 import FilterHub from '../../filter/FilterHub';
+import config from '../../config';
 
 class PlateLoader extends React.Component {
 
@@ -37,7 +38,8 @@ class PlateLoader extends React.Component {
             return;
         }
 
-        const url = "/webgateway/plate/" + plateId + "/" + fieldId + "/";
+        const elements = ["plate", plateId, fieldId, ""];
+        const url = config.webgatewayBaseUrl + elements.join("/");
         $.ajax({
             url: url,
             dataType: 'json',

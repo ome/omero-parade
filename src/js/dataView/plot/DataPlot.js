@@ -18,6 +18,7 @@
 
 import React, { Component } from 'react';
 import { getHeatmapColor } from '../../util';
+import config from '../../config';
 
 const styles = {
     xAxisSelect: {
@@ -137,7 +138,7 @@ class DataPlot extends React.Component {
                                 className={(image.selected || selectedWellIds.indexOf(image.wellId)) > -1 ? 'ui-selected' : ''}
                                 data-id={image.id}
                                 data-wellid={image.wellId}
-                                src={"/webgateway/render_thumbnail/" + image.id + "/"}
+                                src={config.webgatewayBaseUrl + "render_thumbnail/" + image.id + "/"}
                                 title={image.name}
                                 onClick={event => {handleImageWellClicked(image, event)}}
                                 style={{left: getAxisPercent(xAxisName, tableData[xAxisName].data[image.id]) + '%',

@@ -17,6 +17,7 @@
 //
 
 import React, { Component } from 'react';
+import config from '../../config';
 
 const styles = {
     selected: {
@@ -83,6 +84,7 @@ class ImageIcon extends React.Component {
                     <img alt="image"
                         style={imgStyle}
                         src={"/webgateway/render_thumbnail/" + image.id + "/"}
+                        src={config.webgatewayBaseUrl + "render_thumbnail/" + image.id + "/"}
                         title={image.name} />
             </li>
         )

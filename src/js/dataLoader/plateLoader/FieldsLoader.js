@@ -18,6 +18,7 @@
 
 import React, { Component } from 'react';
 import PlateLoader from './PlateLoader';
+import config from '../../config';
 
 class Plate extends React.Component {
 
@@ -43,7 +44,7 @@ class Plate extends React.Component {
             return;
         }
 
-        const url = "/omero_parade/api/fields/";
+        const url = config.indexUrl + "api/fields/";
         $.ajax({
             url: url,
             data: data,
