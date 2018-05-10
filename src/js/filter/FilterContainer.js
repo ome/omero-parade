@@ -18,6 +18,7 @@
 
 import React, { Component } from 'react';
 import ParadeFilter from './ParadeFilter';
+import config from '../config';
 
 
 class FilterContainer extends React.Component {
@@ -32,7 +33,7 @@ class FilterContainer extends React.Component {
 
     componentDidMount() {
         // list available filters (TODO: only for current data? e.g. plate)
-        let url = window.PARADE_FILTERS_URL;
+        let url = config.filtersUrl;
         if (this.props.parentType && this.props.parentId) {
             url += '?' + this.props.parentType + '=' + this.props.parentId;
         } else {

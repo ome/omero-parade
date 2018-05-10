@@ -20,9 +20,11 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import SearchApp from './search/SearchApp';
+import _config from './config'
 
 // Export a function for rendering omero_parade as a centre panel plugin
-function omero_parade(jstree) {
+function omero_parade(jstree, config) {
+    Object.assign(_config, config);
     ReactDOM.render(
         <App jstree={jstree} />,
         document.getElementById('omero_parade')
@@ -30,7 +32,8 @@ function omero_parade(jstree) {
 }
 
 // Full page app
-function full_page_app(element_id) {
+function full_page_app(element_id, config) {
+    Object.assign(_config, config);
     ReactDOM.render(
         <SearchApp />,
         document.getElementById(element_id)

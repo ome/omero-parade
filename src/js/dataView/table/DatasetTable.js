@@ -18,6 +18,7 @@
 
 import React, { Component } from 'react';
 import { getHeatmapColor } from '../../util';
+import config from '../../config';
 
 class DatasetTable extends React.Component {
 
@@ -83,7 +84,7 @@ class DatasetTable extends React.Component {
                                 className={(image.selected || selectedWellIds.indexOf(image.wellId)) > -1 ? 'ui-selected' : ''}
                                 width={iconSize + "px"}
                                 height={iconSize + "px"}
-                                src={"/webgateway/render_thumbnail/" + image.id + "/"}
+                                src={config.webgatewayBaseUrl + "render_thumbnail/" + image.id + "/"}
                                 title={image.name}
                                 data-id={image.id}
                                 data-wellid={image.wellId}
