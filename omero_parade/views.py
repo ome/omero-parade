@@ -178,6 +178,8 @@ def get_data(request, data_name, conn=None, **kwargs):
                         # from 1.11.0 onwards
                         bins = 'auto'
                     histogram, bin_edges = numpy.histogram(values, bins=bins)
+                    # Cast to long to ensure this is serializable
+                    histogram = [long(h) for h in histogram]
                     try:
                         json.dumps(data)
                     except TypeError:
