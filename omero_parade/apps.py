@@ -19,6 +19,7 @@
 
 from django.apps import AppConfig
 
+
 class ParadeAppConfig(AppConfig):
     name = "omero_parade"
     label = "parade"
