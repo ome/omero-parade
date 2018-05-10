@@ -1,3 +1,5 @@
+{% load common_filters %}
+{% load static %}
 
 <link rel="stylesheet" href="{% static 'omero_parade/css/parade.css' %}"></link>
 <script src="{% static 'omero_parade/js/bundle.js' %}"></script>
@@ -20,6 +22,8 @@ $(function() {
         dataprovidersUrl: "{% url 'parade_dataproviders' %}",
         filtersUrl: "{% url 'parade_filters' %}",
         indexUrl: "{% url 'parade_index' %}",
+        staticPrefix: "{% get_static_prefix %}",
+        thumbnailsBatch: "{{ thumbnails_batch|default:50|json_dumps|safe }}",
         webgatewayBaseUrl: "{% url 'webgateway' %}",
       });
     },

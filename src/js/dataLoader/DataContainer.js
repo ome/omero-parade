@@ -288,7 +288,8 @@ class DataContainer extends React.Component {
                 <FieldsLoader
                     treeSelectedNodes={this.state.treeSelectedNodes}
                     treeOpenNodes={this.state.treeOpenNodes}
-                    effectiveRootNode={this.state.effectiveRootNode}/>
+                    effectiveRootNode={this.state.effectiveRootNode}
+                    thumbnailLoader={this.props.thumbnailLoader}/>
             )
         }
         if (effectiveRootNode.type === "project"
@@ -299,7 +300,8 @@ class DataContainer extends React.Component {
                     treeSelectedNodes={this.state.treeSelectedNodes}
                     treeOpenNodes={this.state.treeOpenNodes}
                     effectiveRootNode={this.state.effectiveRootNode}
-                    setSelectedImages={this.setSelectedImages}/>
+                    setSelectedImages={this.setSelectedImages}
+                    thumbnailLoader={this.props.thumbnailLoader}/>
             )
         }
         return (<div>Oops {effectiveRootNode.type}</div>);

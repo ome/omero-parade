@@ -32,16 +32,10 @@ class Images extends React.Component {
     }
 
     componentDidMount() {
-        // https://github.com/axios/axios/issues/709
-        axios.get('/webgateway/get_thumbnails/', {
-            params: {
-                'id': this.props.imgJson.map(v => v.id)
-            },
-            paramsSerializer: params => (
-                qs.stringify(params, { indices: false })
-            )
-        })
-        .then(response => {
+        let imageIds = this.props.imgJson.map(v => v.id);
+        const CancelToken = axios.CancelToken;
+        this.source = CancelToken.source();
+        this.props.thumbnailLoader.getThumbnails(imageIds, (response) => {
             this.setState(prevState => {
                 let thumbnails = prevState.thumbnails;
                 for (const imageId in response.data) {
@@ -49,7 +43,17 @@ class Images extends React.Component {
                 }
                 return {thumbnails: thumbnails};
             });
-        });
+        }, (thrown) => {
+            if (axios.isCancel(thrown)) {
+                return;
+            }
+            // TODO: Put this error somewhere "correct"
+            console.log("Error loading thumbnails!", thrown);
+        }, this.source.token);
+    }
+
+    componentWillUnmount() {
+        this.source.cancel();
     }
 
     render() {

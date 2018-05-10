@@ -18,18 +18,21 @@
 
 import React, { Component } from 'react';
 import DataContainer from './dataLoader/DataContainer'
+import ThumbnailLoader from './dataLoader/Thumbnail'
 
 
 class App extends Component {
 
     constructor(props) {
         super(props);
+        this.thumbnailLoader = new ThumbnailLoader();
     }
 
     render() {
         return (
             <DataContainer
-                jstree={this.props.jstree} />
+                jstree={this.props.jstree}
+                thumbnailLoader={this.thumbnailLoader} />
         )
     }
 }

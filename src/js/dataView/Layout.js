@@ -220,8 +220,9 @@ class Layout extends React.Component {
                     filteredImages={filteredImages}
                     tableData={this.state.tableData}
                     selectedWellIds={this.state.selectedWellIds}
-                    handleImageWellClicked = {this.handleImageWellClicked}
-                    setImagesWellsSelected = {this.setImagesWellsSelected}
+                    handleImageWellClicked={this.handleImageWellClicked}
+                    setImagesWellsSelected={this.setImagesWellsSelected}
+                    thumbnailLoader={this.props.thumbnailLoader}
                     />)
         } else {
             imageComponent = (
@@ -229,8 +230,9 @@ class Layout extends React.Component {
                     iconSize={this.state.iconSize}
                     imgJson={filteredImages}
                     showDatasets={this.state.showDatasets}
-                    handleImageWellClicked = {this.handleImageWellClicked}
-                    setImagesWellsSelected = {this.setImagesWellsSelected}
+                    handleImageWellClicked={this.handleImageWellClicked}
+                    setImagesWellsSelected={this.setImagesWellsSelected}
+                    thumbnailLoader={this.props.thumbnailLoader}
                     />)
         }
 

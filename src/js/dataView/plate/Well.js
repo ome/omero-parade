@@ -18,6 +18,8 @@
 
 import React, { Component } from 'react';
 
+import config from '../../config';
+
 class Well extends React.Component {
 
     // shouldComponentUpdate(nextProps, nextState) {
@@ -64,6 +66,12 @@ class Well extends React.Component {
             cls += " ui-selected";
         }
 
+        let className = "";
+        let src = this.props.thumb_url;
+        if (!src) {
+            className = "waiting";
+            src = config.staticPrefix + "webgateway/img/spacer.gif";
+        }
         return (
             <td className={"well " + cls}
                 data-wellid={id}
@@ -74,7 +82,8 @@ class Well extends React.Component {
                     title={title}
                     >
                     <img
-                        src={thumb_url}
+                        className={className}
+                        src={src}
                         style={imgStyle} />
                 </div>
             </td>

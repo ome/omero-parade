@@ -71,6 +71,7 @@ class Dataset extends React.Component {
                         imgJson={dataset.images}
                         iconSize={iconSize}
                         handleImageWellClicked={handleImageWellClicked}
+                        thumbnailLoader={this.props.thumbnailLoader}
                     />
                     <div style={{clear: 'both'}}></div>
                 </div>
@@ -81,6 +82,7 @@ class Dataset extends React.Component {
                     imgJson={imgJson}
                     iconSize={iconSize}
                     handleImageWellClicked={handleImageWellClicked}
+                    thumbnailLoader={this.props.thumbnailLoader}
                 />
             );
         }

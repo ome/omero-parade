@@ -74,7 +74,7 @@ class ImageIcon extends React.Component {
         let src = this.props.src;
         if (!src) {
             className = "waiting";
-            src = "/static/webgateway/img/spacer.gif";
+            src = config.staticPrefix + "webgateway/img/spacer.gif";
         }
         return (
             <li className={"datasetThumb " + cls.join(" ")}

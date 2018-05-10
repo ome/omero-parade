@@ -165,6 +165,7 @@ class FilterHub extends React.Component {
                         setSelectedImages={this.props.setSelectedImages}
                         plateData={this.props.plateData}
                         filteredImages={this.state.filteredImages}
+                        thumbnailLoader={this.props.thumbnailLoader}
                         />
                 </div>)
     }

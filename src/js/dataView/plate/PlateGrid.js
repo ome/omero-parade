@@ -17,6 +17,8 @@
 //
 
 import React, { Component } from 'react';
+import axios from 'axios';
+
 import Well from './Well';
 
 
@@ -24,7 +26,33 @@ class PlateGrid extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+            thumbnails: {}
+        }
+    }
+
+    loadThumbnails() {
+        let imageIds = [].concat
+            .apply([], this.props.plateData.grid)
+            .filter(well => well && well.id)
+            .map(well => well.id);
+        const CancelToken = axios.CancelToken;
+        this.source = CancelToken.source();
+        this.props.thumbnailLoader.getThumbnails(imageIds, (response) => {
+            this.setState(prevState => {
+                let thumbnails = prevState.thumbnails;
+                for (const imageId in response.data) {
+                    thumbnails[imageId] = response.data[imageId];
+                }
+                return {thumbnails: thumbnails};
+            });
+        }, (thrown) => {
+            if (axios.isCancel(thrown)) {
+                return;
+            }
+            // TODO: Put this error somewhere "correct"
+            console.log("Error loading thumbnails!", thrown);
+        }, this.source.token);
     }
 
     componentDidMount() {
@@ -40,11 +68,19 @@ class PlateGrid extends React.Component {
                 this.props.setImagesWellsSelected('well', ids);
             },
         });
+        this.loadThumbnails();
     }
 
     componentWillUnmount() {
+        this.source.cancel();
         // cleanup plugin
         $(this.refs.dataIcons).selectable( "destroy" );
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevProps.plateData.plateId != this.props.plateData.plateId) {
+            this.loadThumbnails();
+        }
     }
 
     render() {
@@ -82,7 +118,7 @@ class PlateGrid extends React.Component {
                             key={well.wellId}
                             id={well.wellId}
                             iid={well.id}
-                            thumb_url={well.thumb_url}
+                            thumb_url={this.state.thumbnails[well.id]}
                             selected={selected}
                             hidden={hidden}
                             iconSize={iconSize}
