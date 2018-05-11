@@ -17,6 +17,7 @@
 //
 
 import React, { Component } from 'react';
+import _ from 'lodash'
 import axios from 'axios';
 import qs from 'qs';
 
@@ -31,7 +32,7 @@ class Images extends React.Component {
         }
     }
 
-    componentDidMount() {
+    loadThumbnails() {
         let imageIds = this.props.imgJson.map(v => v.id);
         const CancelToken = axios.CancelToken;
         this.source = CancelToken.source();
@@ -52,8 +53,20 @@ class Images extends React.Component {
         }, this.source.token);
     }
 
+    componentDidMount() {
+        this.loadThumbnails();
+    }
+
     componentWillUnmount() {
         this.source.cancel();
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        const imageIds = this.props.imgJson.map(v => v.id);
+        const prevImageIds = prevProps.imgJson.map(v => v.id);
+        if (!_.isEqual(imageIds, prevImageIds)) {
+            this.loadThumbnails();
+        }
     }
 
     render() {
