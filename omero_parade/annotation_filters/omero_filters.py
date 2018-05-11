@@ -175,6 +175,7 @@ def get_script(request, script_name, conn):
             for kv in l.child.getMapValue():
                 map_values[kv.name][iid] = kv.value
 
+        key_placeholder = "Pick key..."
         # Return a JS function that will be passed a data object
         # e.g. {'type': 'Image', 'id': 1}
         # and a params object of {'paramName': value}
@@ -182,21 +183,24 @@ def get_script(request, script_name, conn):
         f = """
 (function filter(data, params) {
     var map_values = %s;
+    var key_placeholder = "%s";
+    if (params.key === key_placeholder) return true;
     if (map_values[params.key] && map_values[params.key][data.%s]) {
         var match = map_values[params.key][data.%s].indexOf(params.query) > -1;
         return (params.query === '' || match);
     }
     return false;
 })
-        """ % (json.dumps(map_values), js_object_attr, js_object_attr)
+        """ % (json.dumps(map_values), key_placeholder, js_object_attr,
+               js_object_attr)
 
         keys = map_values.keys()
         keys.sort(key=lambda x: x.lower())
 
         filter_params = [{'name': 'key',
                           'type': 'text',
-                          'values': keys,
-                          'default': keys[0] if len(keys) > 0 else ""},
+                          'values': [key_placeholder] + keys,
+                          'default': key_placeholder},
                          {'name': 'query',
                           'type': 'text',
                           'default': ''}]
