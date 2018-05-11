@@ -17,9 +17,6 @@
 //
 
 import React, { Component } from 'react';
-import _ from 'lodash'
-import axios from 'axios';
-import qs from 'qs';
 
 import ImageIcon from './ImageIcon'
 
@@ -27,51 +24,6 @@ class Images extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            thumbnails: {}
-        }
-    }
-
-    loadThumbnails() {
-        const imageIds = this.props.imgJson.map(v => v.id);
-        if (imageIds.length < 1) {
-            return;
-        }
-        const CancelToken = axios.CancelToken;
-        this.source = CancelToken.source();
-        this.props.thumbnailLoader.getThumbnails(imageIds, (response) => {
-            this.setState(prevState => {
-                let thumbnails = prevState.thumbnails;
-                for (const imageId in response.data) {
-                    thumbnails[imageId] = response.data[imageId];
-                }
-                return {thumbnails: thumbnails};
-            });
-        }, (thrown) => {
-            if (axios.isCancel(thrown)) {
-                return;
-            }
-            // TODO: Put this error somewhere "correct"
-            console.log("Error loading thumbnails!", thrown);
-        }, this.source.token);
-    }
-
-    componentDidMount() {
-        this.loadThumbnails();
-    }
-
-    componentWillUnmount() {
-        if (this.source) {
-            this.source.cancel();
-        }
-    }
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        const imageIds = this.props.imgJson.map(v => v.id);
-        const prevImageIds = prevProps.imgJson.map(v => v.id);
-        if (!_.isEqual(imageIds, prevImageIds)) {
-            this.loadThumbnails();
-        }
     }
 
     render() {
@@ -84,7 +36,7 @@ class Images extends React.Component {
                 {imgJson.map(image => (
                     <ImageIcon
                         image={image}
-                        src={this.state.thumbnails[image.id]}
+                        src={this.props.thumbnails[image.id]}
                         // If images in Datasets, use parent to make unique
                         key={image.id + (image.parent ? image.parent : "")}
                         iconSize={iconSize}

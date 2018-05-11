@@ -45,7 +45,6 @@ class PlateLoader extends React.Component {
             dataType: 'json',
             cache: false,
             success: v => {
-                v.plateId = plateId;
                 this.setState({
                     data: v,
                 });

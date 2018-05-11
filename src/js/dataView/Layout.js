@@ -17,6 +17,9 @@
 //
 
 import React, { Component } from 'react';
+import _ from 'lodash'
+import axios from 'axios';
+
 import Dataset from './dataset/Dataset';
 import PlateGrid from './plate/PlateGrid';
 import DataPlot from './plot/DataPlot';
@@ -35,6 +38,7 @@ class Layout extends React.Component {
             tableData: {},
             selectedWellIds: [],
             showDatasets: true,
+            thumbnails: {},
         }
         this.setIconSize = this.setIconSize.bind(this);
         this.setLayout = this.setLayout.bind(this);
@@ -56,6 +60,31 @@ class Layout extends React.Component {
     setShowDatasets(event) {
         let show = event.target.checked;
         this.setState({showDatasets: show});
+    }
+
+    loadThumbnails() {
+        const imageIds = this.props.filteredImages.map(v => v.id);
+        console.log("imageIds", imageIds);
+        if (imageIds.length < 1) {
+            return;
+        }
+        const CancelToken = axios.CancelToken;
+        this.source = CancelToken.source();
+        this.props.thumbnailLoader.getThumbnails(imageIds, (response) => {
+            this.setState(prevState => {
+                let thumbnails = prevState.thumbnails;
+                for (const imageId in response.data) {
+                    thumbnails[imageId] = response.data[imageId];
+                }
+                return {thumbnails: thumbnails};
+            });
+        }, (thrown) => {
+            if (axios.isCancel(thrown)) {
+                return;
+            }
+            // TODO: Put this error somewhere "correct"
+            console.log("Error loading thumbnails!", thrown);
+        }, this.source.token);
     }
 
     componentDidMount() {
@@ -91,6 +120,21 @@ class Layout extends React.Component {
                 });
             }
         });
+        this.loadThumbnails();
+    }
+
+    componentWillUnmount() {
+        if (this.source) {
+            this.source.cancel();
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        const imageIds = this.props.filteredImages.map(v => v.id);
+        const prevImageIds = prevProps.filteredImages.map(v => v.id);
+        if (!_.isEqual(imageIds, prevImageIds)) {
+            this.loadThumbnails();
+        }
     }
 
     handleAddData(event) {
@@ -201,6 +245,7 @@ class Layout extends React.Component {
                     handleImageWellClicked = {this.handleImageWellClicked}
                     setImagesWellsSelected = {this.setImagesWellsSelected}
                     tableData={this.state.tableData}
+                    thumbnails={this.state.thumbnails}
                     />)
         } else if (this.state.layout === "plot") {
             imageComponent = (
@@ -211,6 +256,7 @@ class Layout extends React.Component {
                     selectedWellIds={this.state.selectedWellIds}
                     handleImageWellClicked = {this.handleImageWellClicked}
                     setImagesWellsSelected = {this.setImagesWellsSelected}
+                    thumbnails={this.state.thumbnails}
                     />)
         } else if (this.props.plateData) {
             imageComponent = (
@@ -222,7 +268,7 @@ class Layout extends React.Component {
                     selectedWellIds={this.state.selectedWellIds}
                     handleImageWellClicked={this.handleImageWellClicked}
                     setImagesWellsSelected={this.setImagesWellsSelected}
-                    thumbnailLoader={this.props.thumbnailLoader}
+                    thumbnails={this.state.thumbnails}
                     />)
         } else {
             imageComponent = (
@@ -232,7 +278,7 @@ class Layout extends React.Component {
                     showDatasets={this.state.showDatasets}
                     handleImageWellClicked={this.handleImageWellClicked}
                     setImagesWellsSelected={this.setImagesWellsSelected}
-                    thumbnailLoader={this.props.thumbnailLoader}
+                    thumbnails={this.state.thumbnails}
                     />)
         }
 
