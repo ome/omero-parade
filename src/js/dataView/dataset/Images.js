@@ -33,7 +33,10 @@ class Images extends React.Component {
     }
 
     loadThumbnails() {
-        let imageIds = this.props.imgJson.map(v => v.id);
+        const imageIds = this.props.imgJson.map(v => v.id);
+        if (imageIds.length < 1) {
+            return;
+        }
         const CancelToken = axios.CancelToken;
         this.source = CancelToken.source();
         this.props.thumbnailLoader.getThumbnails(imageIds, (response) => {
@@ -58,7 +61,9 @@ class Images extends React.Component {
     }
 
     componentWillUnmount() {
-        this.source.cancel();
+        if (this.source) {
+            this.source.cancel();
+        }
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {

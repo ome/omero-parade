@@ -32,10 +32,13 @@ class PlateGrid extends React.Component {
     }
 
     loadThumbnails() {
-        let imageIds = [].concat
+        const imageIds = [].concat
             .apply([], this.props.plateData.grid)
             .filter(well => well && well.id)
             .map(well => well.id);
+        if (imageIds.length < 1) {
+            return;
+        }
         const CancelToken = axios.CancelToken;
         this.source = CancelToken.source();
         this.props.thumbnailLoader.getThumbnails(imageIds, (response) => {
@@ -72,7 +75,9 @@ class PlateGrid extends React.Component {
     }
 
     componentWillUnmount() {
-        this.source.cancel();
+        if (this.source) {
+            this.source.cancel();
+        }
         // cleanup plugin
         $(this.refs.dataIcons).selectable( "destroy" );
     }
