@@ -43,9 +43,9 @@ class ImageIcon extends React.Component {
         this.props.handleImageWellClicked(this.props.image, event);
     }
 
-    getIconSizes() {
+    getImgStyle() {
         var width = this.props.iconSize;
-        return {'width': width, 'max-height': width}
+        return {width: width, maxHeight: width}
     }
 
     // After rendering, scroll selectd icon into view
@@ -59,7 +59,7 @@ class ImageIcon extends React.Component {
     render() {
 
         var image = this.props.image,
-            iconSizes = this.getIconSizes(),
+            imgStyle = this.getImgStyle(),
             cls = [];
 
         let iconStyle = {width: this.props.iconSize, height: this.props.iconSize};
@@ -88,8 +88,7 @@ class ImageIcon extends React.Component {
             >
                     <img alt="image"
                         className={className}
-                        width={iconSizes.width + "px"}
-                        height={iconSizes.height + "px"}
+                        style={imgStyle}
                         src={src}
                         title={image.name} />
             </li>
