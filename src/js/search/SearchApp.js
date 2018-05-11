@@ -2,11 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import SearchForm from './SearchForm';
 import FilterHub from '../filter/FilterHub';
+import ThumbnailLoader from '../dataLoader/ThumbnailLoader'
 
 class SearchApp extends React.Component {
 
     constructor(props) {
         super(props);
+        this.thumbnailLoader = new ThumbnailLoader();
         this.state = {
             searchResults: []
         }
@@ -35,6 +37,7 @@ class SearchApp extends React.Component {
                     <FilterHub
                         setSelectedImages = {this.setSelectedImages}
                         images={this.state.searchResults}
+                        thumbnailLoader={this.thumbnailLoader}
                     />
                 </div>
 
