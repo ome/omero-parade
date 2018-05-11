@@ -30,36 +30,29 @@ class ThumbnailLoader {
     }
 
     getThumbnails(imageIds, successCallback, failureCallback, cancelToken) {
+        const thumbnailsBatch = config.thumbnailsBatch;
         this.last = this.last.then(() => {
-            return this.loadThumbnails(
-                imageIds, successCallback, failureCallback, cancelToken
-            );
+            const promises = [];
+            for (let i = 0, j = imageIds.length; i < j; i += thumbnailsBatch) {
+                promises.push(this.loadThumbnails(
+                    imageIds.slice(i, i + thumbnailsBatch),
+                    successCallback, failureCallback, cancelToken
+                ));
+            }
+            return Promise.all(promises);
         });
         return this.last;
     }
 
     loadThumbnails(imageIds, successCallback, failureCallback, cancelToken) {
-        let thumbnailsBatch = config.thumbnailsBatch;
-        let batch = imageIds.slice(0, thumbnailsBatch);
         return axios.get(config.webgatewayBaseUrl + 'get_thumbnails/', {
             cancelToken: cancelToken,
-            params: {'id': batch},
+            params: {'id': imageIds},
             paramsSerializer: params => (
                 qs.stringify(params, { indices: false })
             )
         })
-            .then(successCallback, failureCallback)
-            .then((response) => {
-                let nextImageIds = imageIds.slice(
-                    thumbnailsBatch, imageIds.length
-                );
-                if (nextImageIds.length > 0) {
-                    return this.loadThumbnails(
-                        imageIds.slice(thumbnailsBatch, imageIds.length),
-                        successCallback, failureCallback, cancelToken
-                    );
-                }
-            });
+            .then(successCallback, failureCallback);
     }
 
 }
