@@ -19,6 +19,7 @@
 import React, { Component } from 'react';
 import { Sparklines, SparklinesBars } from 'react-sparklines';
 import FilterInput from './FilterInput';
+import config from '../config';
 
 
 class ParadeFilter extends React.Component {
@@ -36,7 +37,7 @@ class ParadeFilter extends React.Component {
         // which adds itself to the PARADE_FILTERS list,
         // like OPEN_WITH list.
 
-        var url = window.PARADE_INDEX_URL + 'filters/script/' + this.props.name;
+        var url = config.indexUrl + 'filters/script/' + this.props.name;
         if (this.props.parentType === "plate") {
             url += '?plate=' + this.props.parentId;
             if (this.props.fieldId !== undefined) {

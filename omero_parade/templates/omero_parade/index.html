@@ -5,11 +5,6 @@
         {% include "webgateway/base/includes/jquery-ui.html" %}
         <link rel="stylesheet" href="{% static 'omero_parade/css/parade.css' %}"></link>
         <script src="{% static 'omero_parade/js/bundle.js' %}"></script>
-        <script>
-            window.PARADE_INDEX_URL = "{% url 'parade_index' %}";
-            window.PARADE_FILTERS_URL = "{% url 'parade_filters' %}";
-            window.PARADE_DATAPROVIDERS_URL = "{% url 'parade_dataproviders' %}";
-        </script>
     </head>
 
     <body>
@@ -17,6 +12,11 @@
     </body>
 
     <script>
-        omero_parade.full_page_app("full_page_app");
+        omero_parade.full_page_app("full_page_app", {
+            dataprovidersUrl: "{% url 'parade_dataproviders' %}",
+            filtersUrl: "{% url 'parade_filters' %}",
+            indexUrl: "{% url 'parade_index' %}",
+            webgatewayBaseUrl: "{% url 'webgateway' %}",
+        });
     </script>
 </html>

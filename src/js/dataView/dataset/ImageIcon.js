@@ -17,6 +17,7 @@
 //
 
 import React, { Component } from 'react';
+import config from '../../config';
 
 const styles = {
     selected: {
@@ -36,16 +37,16 @@ class ImageIcon extends React.Component {
     constructor(props) {
         super(props);
         this.handleIconClick = this.handleIconClick.bind(this);
-        this.getIconSizes = this.getIconSizes.bind(this);
+        this.getImgStyle = this.getImgStyle.bind(this);
     }
 
     handleIconClick(event) {
         this.props.handleImageWellClicked(this.props.image, event);
     }
 
-    getIconSizes() {
+    getImgStyle() {
         var width = this.props.iconSize;
-        return {'width': width, 'max-height': width}
+        return {width: width, maxHeight: width}
     }
 
     // After rendering, scroll selectd icon into view
@@ -59,7 +60,7 @@ class ImageIcon extends React.Component {
     render() {
 
         var image = this.props.image,
-            iconSizes = this.getIconSizes(),
+            imgStyle = this.getImgStyle(),
             cls = [];
 
         let iconStyle = {width: this.props.iconSize, height: this.props.iconSize};
@@ -81,9 +82,9 @@ class ImageIcon extends React.Component {
                 onClick={this.handleIconClick}
             >
                     <img alt="image"
-                        width={iconSizes.width + "px"}
-                        height={iconSizes.height + "px"}
+                        style={imgStyle}
                         src={"/webgateway/render_thumbnail/" + image.id + "/"}
+                        src={config.webgatewayBaseUrl + "render_thumbnail/" + image.id + "/"}
                         title={image.name} />
             </li>
         )
