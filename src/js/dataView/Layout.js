@@ -63,7 +63,8 @@ class Layout extends React.Component {
     }
 
     loadThumbnails() {
-        const imageIds = this.props.filteredImages.map(v => v.id);
+        const imageIds = this.props.filteredImages.map(v => v.id)
+            .filter(v => !this.state.thumbnails[v]);
         console.log("imageIds", imageIds);
         if (imageIds.length < 1) {
             return;
