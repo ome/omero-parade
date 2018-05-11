@@ -23,7 +23,7 @@ $(function() {
         filtersUrl: "{% url 'parade_filters' %}",
         indexUrl: "{% url 'parade_index' %}",
         staticPrefix: "{% get_static_prefix %}",
-        thumbnailsBatch: "{{ thumbnails_batch|default:50|json_dumps|safe }}",
+        thumbnailsBatch: {{ thumbnails_batch|default:50|json_dumps|safe }},
         webgatewayBaseUrl: "{% url 'webgateway' %}",
       });
     },
