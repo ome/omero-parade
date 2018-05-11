@@ -29,7 +29,11 @@ from omeroweb.webclient.decorators import login_required
 from omero.rtypes import rlong, unwrap
 from django.shortcuts import render
 from . import parade_settings
+import json
+import logging
+import traceback
 
+logger = logging.getLogger(__name__)
 
 NUMPY_GT_1_11_0 = False
 if LooseVersion(numpy.__version__) > LooseVersion('1.11.0'):
@@ -174,11 +178,30 @@ def get_data(request, data_name, conn=None, **kwargs):
                         # from 1.11.0 onwards
                         bins = 'auto'
                     histogram, bin_edges = numpy.histogram(values, bins=bins)
+                    # Cast to long to ensure this is serializable
+                    histogram = [long(h) for h in histogram]
+                    try:
+                        json.dumps(data)
+                    except TypeError:
+                        logger.error("Error data: %s" % data)
+                        logger.error(traceback.format_exc())
+                    try:
+                        json.dumps(min(values))
+                        json.dumps(max(values))
+                    except TypeError:
+                        logger.error("Error: min: %s" % min(values))
+                        logger.error("Error: max: %s" % max(values))
+                        logger.error(traceback.format_exc())
+                    try:
+                        json.dumps(list(histogram))
+                    except TypeError:
+                        logger.error("Error: histogram: %s" % list(histogram))
+                        logger.error(traceback.format_exc())
                     return JsonResponse({
                         'data': data,
-                        'min': numpy.amin(values),
-                        'max': numpy.amax(values),
-                        'histogram': list(histogram)
+                        'min': min(values),
+                        'max': max(values),
+                        'histogram': histogram
                     })
         except ImportError:
             pass
