@@ -22,6 +22,7 @@ import PlateGrid from './plate/PlateGrid';
 import DataPlot from './plot/DataPlot';
 import Tables from './table/Tables';
 import Footer from '../Footer';
+import config from '../config';
 
 class Layout extends React.Component {
 
@@ -59,7 +60,7 @@ class Layout extends React.Component {
 
     componentDidMount() {
         // list available data providers (TODO: only for current data? e.g. plate)
-        let url = window.PARADE_DATAPROVIDERS_URL;
+        let url = config.dataprovidersUrl;
         if (this.props.parentType === "project") {
             url += '?project=' + this.props.parentId;
         } else if (this.props.datasetId
@@ -96,7 +97,7 @@ class Layout extends React.Component {
         // When user chooses to ADD data by Name, load it...
         var dataName = event.target.value;
         if (dataName !== "--") {
-            var url = window.PARADE_INDEX_URL + 'data/' + btoa(dataName);
+            var url = config.indexUrl + 'data/' + btoa(dataName);
 
             if (this.props.parentType === "plate") {
                 url += '?plate=' + this.props.parentId;
