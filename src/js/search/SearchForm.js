@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import config from '../config';
+
 class SearchForm extends React.Component {
 
     constructor(props) {
@@ -21,7 +23,7 @@ class SearchForm extends React.Component {
         if (!this.state.text.length) {
             return;
         }
-        let url= PARADE_INDEX_URL + "search/?query=" + this.state.text;
+        let url= config.indexUrl + "search/?query=" + this.state.text;
         $.getJSON(url,
             data => {
                 this.props.setSearchResults(data.data);
