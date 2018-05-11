@@ -186,11 +186,11 @@ def get_data(request, data_name, conn=None, **kwargs):
                         logger.error("Error data: %s" % data)
                         logger.error(traceback.format_exc())
                     try:
-                        json.dumps(numpy.amin(values))
-                        json.dumps(numpy.amax(values))
+                        json.dumps(min(values))
+                        json.dumps(max(values))
                     except TypeError:
-                        logger.error("Error: min: %s" % numpy.amin(values))
-                        logger.error("Error: max: %s" % numpy.amax(values))
+                        logger.error("Error: min: %s" % min(values))
+                        logger.error("Error: max: %s" % max(values))
                         logger.error(traceback.format_exc())
                     try:
                         json.dumps(list(histogram))
@@ -199,9 +199,9 @@ def get_data(request, data_name, conn=None, **kwargs):
                         logger.error(traceback.format_exc())
                     return JsonResponse({
                         'data': data,
-                        'min': numpy.amin(values),
-                        'max': numpy.amax(values),
-                        'histogram': list(histogram)
+                        'min': min(values),
+                        'max': max(values),
+                        'histogram': histogram
                     })
         except ImportError:
             pass
