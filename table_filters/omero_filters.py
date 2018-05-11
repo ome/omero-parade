@@ -67,22 +67,22 @@ def get_script(request, script_name, conn):
         maxima = {}
         histograms = {}
         for name, col in zip(column_names, col_data):
-            values = numpy.array(col.values)
+            values = col.values
             # key is column Name, values are list of col_data
-            table_data[name] = list(values)
+            table_data[name] = values
 
             if not isinstance(col, (DoubleColumn, LongColumn)):
                 continue
 
-            minima[name] = numpy.amin(values)
-            maxima[name] = numpy.amax(values)
+            minima[name] = min(values)
+            maxima[name] = max(values)
             bins = 10
             if NUMPY_GT_1_11_0:
                 # numpy.histogram() only supports bin calculation
                 # from 1.11.0 onwards
                 bins = 'auto'
             histogram, bin_edges = numpy.histogram(values, bins=bins)
-            histograms[name] = list(histogram)
+            histograms[name] = [long(b) for b in histogram]
 
         # Return a JS function that will be passed an object
         # e.g. {'type': 'Image', 'id': 1}
