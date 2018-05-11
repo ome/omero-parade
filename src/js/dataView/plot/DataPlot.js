@@ -78,6 +78,15 @@ class DataPlot extends React.Component {
         $(this.refs.dataIcons).selectable( "destroy" );
     }
 
+    getAxisPercent(dataRanges, name, value) {
+        if (!value) {
+            return 0;
+        }
+        let minMax = dataRanges[name];
+        let fraction = (value - minMax[0])/(minMax[1] - minMax[0]);
+        return fraction * 100;
+    }
+
     render() {
         let {imgJson, iconSize, tableData,
              handleImageWellClicked, selectedWellIds} = this.props;
@@ -110,13 +119,35 @@ class DataPlot extends React.Component {
             prev[name] = [v.min, v.max];
             return prev;
         }, {});
-        function getAxisPercent(name, value) {
-            if (!value) return 0;
-            let minMax = dataRanges[name];
-            let fraction = (value - minMax[0])/(minMax[1] - minMax[0]);
-            return fraction * 100;
-        }
 
+        const images = imgJson.map(image => {
+            const classNames = [];
+            let src = this.props.thumbnails[image.id];
+            if (!src) {
+                classNames.push("waiting");
+                src = config.staticPrefix + "webgateway/img/spacer.gif";
+            }
+            if (image.selected || selectedWellIds.includes(image.wellId)) {
+                classNames.push("ui-selected");
+            }
+            const x = tableData[xAxisName].data[image.id];
+            const y = tableData[yAxisName].data[image.id];
+            return (
+                <img alt="image"
+                    key={image.id + (image.parent ? image.parent : "")}
+                    className={classNames.join(" ")}
+                    data-id={image.id}
+                    data-wellid={image.wellId}
+                    src={src}
+                    title={image.name}
+                    onClick={event => {handleImageWellClicked(image, event)}}
+                    style={{
+                        left: this.getAxisPercent(dataRanges, xAxisName, x) + '%',
+                        top: (100 - this.getAxisPercent(dataRanges, yAxisName, y)) + '%'
+                    }}
+                />
+            )
+        });
         return (
             <div className="parade_centrePanel">
                 <div className="thumbnail_plot">
@@ -132,19 +163,7 @@ class DataPlot extends React.Component {
                     </select>
 
                     <div className="thumbnail_plot_canvas" ref="thumb_plot_canvas">
-                        {imgJson.map(image => (
-                            <img alt="image"
-                                key={image.id + (image.parent ? image.parent : "")}
-                                className={(image.selected || selectedWellIds.indexOf(image.wellId)) > -1 ? 'ui-selected' : ''}
-                                data-id={image.id}
-                                data-wellid={image.wellId}
-                                src={config.webgatewayBaseUrl + "render_thumbnail/" + image.id + "/"}
-                                title={image.name}
-                                onClick={event => {handleImageWellClicked(image, event)}}
-                                style={{left: getAxisPercent(xAxisName, tableData[xAxisName].data[image.id]) + '%',
-                                        top: (100 - getAxisPercent(yAxisName, tableData[yAxisName].data[image.id])) + '%'}}
-                            />
-                        ))}
+                        {images}
                     </div>
                 </div>
             </div>
