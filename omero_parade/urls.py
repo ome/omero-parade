@@ -30,8 +30,9 @@ urlpatterns = patterns(
     # GET search results. Use ?query=foo
     url(r'^search/$', views.search, name='parade_search'),
 
-    # list fields in Plate ?plate=123 or Acquisition ?run=456
-    url(r'^api/fields/$', views.api_field_list, name='parade_fields'),
+    # list fields in Plate
+    url(r'^api/fields/(?P<plate_id>[0-9]+)/$', views.api_field_list,
+        name='parade_fields'),
 
     # list functions for filtering data
     # url(r'^api/filters/$', views.api_filter_list, name='parade_filters'),

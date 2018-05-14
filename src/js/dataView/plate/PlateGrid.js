@@ -47,9 +47,8 @@ class PlateGrid extends React.Component {
         $(this.refs.dataIcons).selectable( "destroy" );
     }
 
-    render() {
-        var data = this.props.plateData,
-            iconSize = this.props.iconSize,
+    renderPlateGrid(plateId, plateData) {
+        const iconSize = this.props.iconSize,
             placeholderStyle = {
                 width: iconSize + 'px',
                 height: iconSize + 'px',
@@ -58,25 +57,19 @@ class PlateGrid extends React.Component {
             handleImageWellClicked = this.props.handleImageWellClicked,
             tableData = this.props.tableData,
             filteredIds = this.props.filteredImages.map(i => i.id);
-        if (!data) {
-            return (
-                <table />
-            )
-        }
-        var columnNames = data.collabels.map(function(l){
-            return (<th key={l}>{l}</th>);
-        });
-        var grid = data.grid;
-        var rows = data.rowlabels.map((r, rowIndex) => {
-            var wells = data.collabels.map((c, colIndex) => {
-                var well = grid[rowIndex][colIndex];
+        const columnNames = plateData.collabels.map(l => (<th key={l}>{l}</th>));
+        const grid = plateData.grid;
+        const rows = plateData.rowlabels.map((r, rowIndex) => {
+            const wells = plateData.collabels.map((c, colIndex) => {
+                const well = grid[rowIndex][colIndex];
                 if (well) {
-                    var hidden = (filteredIds !== undefined && filteredIds.indexOf(well.id) === -1);
-                    var selected = selectedWellIds.indexOf(well.wellId) > -1;
+                    const hidden = (filteredIds !== undefined && filteredIds.indexOf(well.id) === -1);
+                    const selected = selectedWellIds.indexOf(well.wellId) > -1;
                     // lookup this Well's data from heatmap
                     // var heatmapValues = heatmapData && heatmapData[well.wellId+""];
                     // tableData is mapped to Image IDs... (well.id is image ID!)
-                    var imgTableData = Object.keys(tableData).map(col => col + ": " + tableData[col].data[well.id])
+                    const imgTableData = Object.keys(tableData)
+                        .map(col => col + ": " + tableData[col].data[well.id]);
                     return (
                         <Well
                             key={well.wellId}
@@ -91,12 +84,12 @@ class PlateGrid extends React.Component {
                             col={c}
                             imgTableData={imgTableData} />
                     )
-                } else {
-                    return (
-                        <td className="placeholder" key={r + "_" + c}>
-                            <div style={placeholderStyle} />
-                        </td>);
                 }
+                return (
+                    <td className="placeholder" key={r + "_" + c}>
+                        <div style={placeholderStyle} />
+                    </td>
+                );
             });
             return (
                 <tr key={r}>
@@ -107,18 +100,35 @@ class PlateGrid extends React.Component {
         });
 
         return (
-            <div className="plateGrid" ref="plateGrid">
-                <table>
-                    <tbody>
-                        <tr>
-                            <th> </th>
-                            {columnNames}
-                        </tr>
-                        {rows}
-                    </tbody>
-                </table>
-            </div>
+            <table key={plateId}>
+                <tbody>
+                    <tr>
+                        <th> </th>
+                        {columnNames}
+                    </tr>
+                    {rows}
+                </tbody>
+            </table>
         );
+    }
+
+    render() {
+        const data = this.props.plateData;
+        if (data.length < 1) {
+            return (
+                <table />
+            )
+        }
+
+        const plateGrids = Object.entries(data).map(
+            (entry) => {
+                const [plateId, plateData] = entry;
+                return this.renderPlateGrid(plateId, plateData)
+            }
+        );
+        return <div className="plateGrid" ref="plateGrid">
+            {plateGrids}
+        </div>;
     }
 }
 

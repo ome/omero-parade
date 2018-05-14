@@ -17,6 +17,7 @@
 //
 
 import React, { Component } from 'react';
+import _ from 'lodash';
 import axios from 'axios';
 
 import FilterHub from '../../filter/FilterHub';
@@ -26,10 +27,10 @@ class PlateLoader extends React.Component {
 
     constructor(props) {
         super(props);
+        console.log("props", this.props);
         this.state = {
-            fields: [],
-            selectedField: undefined,
-            data: undefined,
+            fields: {},
+            plateData: {},
             selectedWellIds: [],
         }
         this.failureCallback = this.failureCallback.bind(this);
@@ -38,27 +39,19 @@ class PlateLoader extends React.Component {
     }
 
     loadFieldData() {
-        // Parent component enforces that there will only be one selected node
-        const selectedNode = this.props.treeSelectedNodes[0];
-        let data;
-        if (selectedNode.type === "plate") {
-            data = {'plate': selectedNode.data.id}
-        } else if (selectedNode.type === "acquisition") {
-            // select 'run', load plate...
-            data = {'run': selectedNode.data.id};
-        } else {
-            return;
-        }
-        return axios.get(config.indexUrl + "api/fields/", {
-            cancelToken: this.source.token,
-            params: data
-        }).then(this.fieldDataSuccessCallback, this.failureCallback);
+        return Promise.all(this.props.treeOpenNodes.map((treeOpenNode) => {
+            const elements = ["api/fields", treeOpenNode.data.id, ""];
+            return axios.get(config.indexUrl + elements.join("/"), {
+                cancelToken: this.source.token
+            }).then(this.fieldDataSuccessCallback, this.failureCallback);
+        }));
     }
 
     fieldDataSuccessCallback(response) {
-        this.setState({
-            fields: response.data.data,
-            selectedField: response.data.data[0]
+        this.setState(prevState => {
+            const fields = prevState.fields;
+            fields[response.data.plateId] = response.data.data;
+            return {fields: fields};
         });
     }
 
@@ -71,20 +64,49 @@ class PlateLoader extends React.Component {
     }
 
     loadPlateData() {
-        // Parent component enforces that there will only be one open node and
-        // it will always be of "plate" type
-        const plateNode = this.props.treeOpenNodes[0];
-        const elements = [
-            "plate", plateNode.data.id, this.state.selectedField, ""
-        ];
-        return axios.get(config.webgatewayBaseUrl + elements.join("/"), {
-            cancelToken: this.source.token,
-        }).then(this.plateDataSuccessCallback, this.failureCallback);
+        // Parent component enforces that there will only be one selected node
+        const selectedNode = this.props.treeSelectedNodes[0];
+
+        let nodes = this.props.treeOpenNodes;
+        let fieldId = 0;
+        console.log("selectedNode", selectedNode);
+        if (selectedNode.type === "plate") {
+            nodes = [selectedNode];
+        }
+        if (selectedNode.type === "acquisition") {
+            const plateNode = this.props.jstree.get_node(selectedNode.parent);
+            nodes = [plateNode];
+            fieldId = Math.min(
+                this.state.fields[plateNode.data.id]
+                    .filter(v => v[1] === selectedNode.data.id)
+                    .map(v => v[0])
+            );
+        }
+        const plateIds = nodes.map(v => v.data.id);
+        console.log("plateIds", plateIds);
+        return Promise.all(nodes.map((node) => {
+            const plateId = node.data.id;
+            const elements = ["plate", plateId, fieldId, ""];
+            return axios.get(config.webgatewayBaseUrl + elements.join("/"), {
+                cancelToken: this.source.token,
+                plateIds: plateIds,
+                plateId: plateId
+            }).then(this.plateDataSuccessCallback, this.failureCallback);
+        }));
     }
 
     plateDataSuccessCallback(response) {
-        this.setState({
-            data: response.data,
+        this.setState(prevState => {
+            const plateData = prevState.plateData;
+            const prevPlateIds = Object.keys(plateData);
+            const plateIds = response.config.plateIds;
+            prevPlateIds.forEach(prevPlateId => {
+                if (!plateIds.includes(parseInt(prevPlateId))) {
+                    delete plateData[prevPlateId];
+                }
+            });
+            plateData[response.config.plateId] = response.data;
+            return {plateData: plateData};
         });
     }
 
@@ -105,13 +127,13 @@ class PlateLoader extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        // Parent component enforces that there will only be one open node and
-        // it will always be of "plate" type
-        const plateNode = this.props.treeOpenNodes[0];
-        const plateId = plateNode? plateNode.data.id : -1;
-        const prevPlateNode = prevProps.treeOpenNodes[0];
-        const prevPlateId = prevPlateNode? prevPlateNode.data.id : -1;
-        if (plateId !== prevPlateId) {
+        const prevTreeOpenNodes = prevProps.treeOpenNodes.map(v => v.id);
+        const treeOpenNodes = this.props.treeOpenNodes.map(v => v.id);
+        const treeSelectedNodes = this.props.treeSelectedNodes.map(v => v.id);
+        const prevTreeSelectedNodes =
+            prevProps.treeSelectedNodes.map(v => v.id);
+        if (!_.isEqual(treeOpenNodes, prevTreeOpenNodes)
+                || !_.isEqual(treeSelectedNodes, prevTreeSelectedNodes)) {
             this.loadData();
         }
     }
@@ -123,35 +145,22 @@ class PlateLoader extends React.Component {
     }
 
     render() {
-        // Parent component enforces that there will only be one open node and
-        // it will always be of "plate" type
-        const plateNode = this.props.treeOpenNodes[0];
-
-        if (plateNode === undefined
-                || this.state.selectedField === undefined) {
+        if (this.props.treeOpenNodes.length < 1) {
             return(<div></div>)
         }
 
-        let filteredImageIds;
-
-        // Use filter state to filter data.
-        // Pass filteredImageIds down to PlateGrid
-        let images = [];
-        if (this.state.data) {
-            this.state.data.grid.forEach(row => {
-                row.forEach(col => {
-                    // TODO: 
-                    if (col) images.push(col);
-                });
-            });
-        }
-
+        // Generate a list of all images for each plate from a flattened grid.
+        const images = Object.values(this.state.plateData)
+                .map(v => v.grid)
+                .reduce((a, b) => a.concat(b), [])  // Flatten each grid
+                .map(row => row.filter(column => column !== null))
+                .reduce((a, b) => a.concat(b), []);  // Flatten each row
+        console.log("images", images);
         return(<FilterHub
                     images={images}
-                    parentType={"plate"}
-                    parentId={plateNode.data.id}
-                    fieldId={this.state.selectedField}
-                    plateData={this.state.data}
+                    parentType={this.props.effectiveRootNode.type}
+                    parentId={this.props.effectiveRootNode.data.id}
+                    plateData={this.state.plateData}
                     thumbnailLoader={this.props.thumbnailLoader}
                 />)
     }

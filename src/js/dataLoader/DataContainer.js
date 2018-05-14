@@ -212,19 +212,14 @@ class DataContainer extends React.Component {
             if (effectiveRootNode.type === "dataset") {
                 return [effectiveRootNode];
             }
-            // When our root is a Screen or a Plate the effective root will
-            // only be defined if a single Screen, Plate or PlateAcquisition
-            // is selected.
-            if (["screen", "plate"].includes(effectiveRootNode.type)) {
-                let selectedNode = treeSelectedNodes[0];
-                if (selectedNode.type === "plate") {
-                    return [selectedNode];
-                }
-                if (selectedNode.type === "acquisition") {
-                    return [jstree.get_node(
-                        jstree.get_parent(selectedNode.id)
-                    )];
-                }
+            // When our root is a Screen, the open nodes are all its
+            // children (Plates).
+            if (effectiveRootNode.type === "screen") {
+                return effectiveRootNode.children.map(v => jstree.get_node(v));
+            }
+            // When our root is a Plate, it is what is open.
+            if (effectiveRootNode.type === "plate") {
+                return [effectiveRootNode];
             }
         }
         return [];
@@ -286,6 +281,7 @@ class DataContainer extends React.Component {
                 || effectiveRootNode.type === "plate") {
             return (
                 <PlateLoader
+                    jstree={jstree}
                     treeSelectedNodes={this.state.treeSelectedNodes}
                     treeOpenNodes={this.state.treeOpenNodes}
                     effectiveRootNode={this.state.effectiveRootNode}
