@@ -21,6 +21,7 @@ import axios from 'axios';
 import qs from 'qs';
 
 import ParadeFilter from './ParadeFilter';
+import Progress from './Progress';
 import config from '../config';
 
 
@@ -88,22 +89,10 @@ class FilterContainer extends React.Component {
         }
     }
 
-    renderProgress() {
-        if (!this.state.loading) {
-            return null;
-        }
-        return (
-            <img className={"waiting"}
-                 src={config.staticPrefix + "webgateway/img/spacer.gif"}
-                 style={{width: "24px", height: "24px"}}
-            />
-        )
-    }
-
     render() {
         return(
             <div className="filterContainer">
-                {this.renderProgress()}
+                <Progress loading={this.state.loading}/>
                 <select value={"--"} onChange={this.handleAddFilter}>
                     <option
                         value="--" >
@@ -129,7 +118,7 @@ class FilterContainer extends React.Component {
                             name={fname}
                             parentType={this.props.parentType}
                             parentId={this.props.parentId}
-                            fieldId={this.props.fieldId}
+                            plateData={this.props.plateData}
                             images={this.props.images}
                             handleFilterLoaded={this.props.handleFilterLoaded}
                             handleFilterChange={this.props.handleFilterChange}

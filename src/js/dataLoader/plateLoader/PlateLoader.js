@@ -89,6 +89,7 @@ class PlateLoader extends React.Component {
             const elements = ["plate", plateId, fieldId, ""];
             return axios.get(config.webgatewayBaseUrl + elements.join("/"), {
                 cancelToken: this.source.token,
+                fieldId: fieldId,
                 plateIds: plateIds,
                 plateId: plateId
             }).then(this.plateDataSuccessCallback, this.failureCallback);
@@ -105,7 +106,12 @@ class PlateLoader extends React.Component {
                     delete plateData[prevPlateId];
                 }
             });
-            plateData[response.config.plateId] = response.data;
+            plateData[response.config.plateId] = Object.assign(
+                response.data, {
+                    fieldId: response.config.fieldId,
+                    plateId: response.config.plateId
+                }
+            );
             return {plateData: plateData};
         });
     }

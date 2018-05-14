@@ -149,7 +149,7 @@ class FilterHub extends React.Component {
                     <FilterContainer
                         parentType={this.props.parentType}
                         parentId={this.props.parentId}
-                        fieldId={0}  // XXX: HAX
+                        plateData={this.props.plateData}
                         images={this.props.images}
                         addFilter={this.addFilter}
                         handleFilterLoaded={this.handleFilterLoaded}
