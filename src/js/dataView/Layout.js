@@ -154,7 +154,7 @@ class Layout extends React.Component {
             } else if (this.props.parentType === "project") {
                 url += '?project=' + this.props.parentId;
             } else {
-                url += '?' + this.props.images.map(i => 'image=' + i.id).join('&');
+                url += '?' + this.props.filteredImages.map(i => 'image=' + i.id).join('&');
             }
             $.getJSON(url, data => {
                 // Add data to table data
