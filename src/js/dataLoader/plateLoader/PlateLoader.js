@@ -17,6 +17,8 @@
 //
 
 import React, { Component } from 'react';
+import axios from 'axios';
+
 import FilterHub from '../../filter/FilterHub';
 import config from '../../config';
 
@@ -38,18 +40,23 @@ class PlateLoader extends React.Component {
             return;
         }
 
+        const CancelToken = axios.CancelToken;
+        this.source = CancelToken.source();
         const elements = ["plate", plateId, fieldId, ""];
-        const url = config.webgatewayBaseUrl + elements.join("/");
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            cache: false,
-            success: v => {
+        axios.get(config.webgatewayBaseUrl + elements.join("/"), {
+            cancelToken: this.source.token,
+        })
+            .then((response) => {
                 this.setState({
-                    data: v,
+                    data: response.data,
                 });
-            }
-        });
+            }, (thrown) => {
+                if (axios.isCancel(thrown)) {
+                    return;
+                }
+                // TODO: Put this error somewhere "correct"
+                console.log("Error loading plate data!", thrown);
+            });
     }
 
     componentDidMount() {
@@ -62,6 +69,12 @@ class PlateLoader extends React.Component {
         if (prevProps.plateId !== this.props.plateId
                 || prevProps.fieldId !== this.props.fieldId) {
             this.loadData();
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.source) {
+            this.source.cancel();
         }
     }
 
