@@ -17,9 +17,14 @@
 //
 
 import React, { Component } from 'react';
+
 import ImageIcon from './ImageIcon'
 
 class Images extends React.Component {
+
+    constructor(props) {
+        super(props);
+    }
 
     render() {
         let {imgJson,
@@ -31,6 +36,7 @@ class Images extends React.Component {
                 {imgJson.map(image => (
                     <ImageIcon
                         image={image}
+                        src={this.props.thumbnails[image.id]}
                         // If images in Datasets, use parent to make unique
                         key={image.id + (image.parent ? image.parent : "")}
                         iconSize={iconSize}

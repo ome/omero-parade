@@ -85,7 +85,8 @@ class Plate extends React.Component {
         return (
             <PlateLoader
                 plateId={plateNode.data.id}
-                fieldId={this.state.selectedField} />
+                fieldId={this.state.selectedField}
+                thumbnailLoader={this.props.thumbnailLoader} />
         )
     }
 }

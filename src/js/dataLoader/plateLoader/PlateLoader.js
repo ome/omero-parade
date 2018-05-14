@@ -90,6 +90,7 @@ class PlateLoader extends React.Component {
                     parentId={this.props.plateId}
                     fieldId={this.props.fieldId}
                     plateData={this.state.data}
+                    thumbnailLoader={this.props.thumbnailLoader}
                 />)
     }
 }

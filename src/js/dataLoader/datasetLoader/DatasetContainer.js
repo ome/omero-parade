@@ -133,7 +133,8 @@ class DatasetContainer extends React.Component{
             <FilterHub
                 parentType={effectiveRootNode.type}
                 parentId={effectiveRootNode.data.obj.id}
-                setSelectedImages = {this.props.setSelectedImages}
+                setSelectedImages={this.props.setSelectedImages}
+                thumbnailLoader={this.props.thumbnailLoader}
                 images={this.state.imagesJson}/>
         )
     }

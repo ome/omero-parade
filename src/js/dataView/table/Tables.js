@@ -111,6 +111,7 @@ class Tables extends React.Component {
                     handleSortTable={this.handleSortTable}
                     handleShowHeatmap={this.handleShowHeatmap}
                     handleImageWellClicked={handleImageWellClicked}
+                    thumbnails={this.props.thumbnails}
                 />
             ))
         } else {
@@ -126,6 +127,7 @@ class Tables extends React.Component {
                     handleSortTable={this.handleSortTable}
                     handleShowHeatmap={this.handleShowHeatmap}
                     handleImageWellClicked={handleImageWellClicked}
+                    thumbnails={this.props.thumbnails}
                 />
             );
         }

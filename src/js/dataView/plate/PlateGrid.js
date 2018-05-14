@@ -17,6 +17,7 @@
 //
 
 import React, { Component } from 'react';
+
 import Well from './Well';
 
 
@@ -24,7 +25,6 @@ class PlateGrid extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {}
     }
 
     componentDidMount() {
@@ -82,7 +82,7 @@ class PlateGrid extends React.Component {
                             key={well.wellId}
                             id={well.wellId}
                             iid={well.id}
-                            thumb_url={well.thumb_url}
+                            thumb_url={this.props.thumbnails[well.id]}
                             selected={selected}
                             hidden={hidden}
                             iconSize={iconSize}

@@ -18,7 +18,6 @@
 
 import React, { Component } from 'react';
 import Images from './Images'
-import ImageIcon from './ImageIcon'
 
 class Dataset extends React.Component {
 
@@ -72,6 +71,7 @@ class Dataset extends React.Component {
                         imgJson={dataset.images}
                         iconSize={iconSize}
                         handleImageWellClicked={handleImageWellClicked}
+                        thumbnails={this.props.thumbnails}
                     />
                     <div style={{clear: 'both'}}></div>
                 </div>
@@ -82,6 +82,7 @@ class Dataset extends React.Component {
                     imgJson={imgJson}
                     iconSize={iconSize}
                     handleImageWellClicked={handleImageWellClicked}
+                    thumbnails={this.props.thumbnails}
                 />
             );
         }

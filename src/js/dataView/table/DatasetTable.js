@@ -22,19 +22,90 @@ import config from '../../config';
 
 class DatasetTable extends React.Component {
 
+    heatMapColor(dataRanges, name, value) {
+        let minMax = dataRanges[name];
+        let fraction = (value - minMax[0])/(minMax[1] - minMax[0]);
+        return getHeatmapColor(fraction);
+    }
+
+    renderImages(imgJson, columnNames) {
+        const tableData = this.props.tableData;
+        if (imgJson.length < 1) {
+            return null;
+        }
+        return imgJson.map(image => {
+            const iconSize = this.props.iconSize;
+            const selectedWellIds = this.props.selectedWellIds;
+            const classNames = [];
+            let src = this.props.thumbnails[image.id];
+            if (!src) {
+                classNames.push("waiting");
+                src = config.staticPrefix + "webgateway/img/spacer.gif";
+            }
+            if (image.selected
+                    || this.props.selectedWellIds.includes(image.wellId)) {
+                classNames.push("ui-selected");
+            }
+            let dataRanges = columnNames.reduce((prev, name) => {
+                let v = tableData[name];
+                prev[name] = [v.min, v.max];
+                return prev;
+            }, {});
+            const columnNameCells = columnNames.map(name => {
+                let backgroundColor = 'transparent';
+                if (this.props.showHeatmapColumns[name]) {
+                    backgroundColor = this.heatMapColor(
+                        dataRanges, name, tableData[name].data[image.id]
+                    );
+                }
+                return (
+                    <td key={name} style={{backgroundColor: backgroundColor}}>
+                        {tableData[name].data[image.id]}
+                    </td>
+                )
+            });
+            return (
+                <tr key={image.id + (image.parent ? image.parent : "")}>
+                    <td><img alt="image"
+                            className={classNames.join(" ")}
+                            width={iconSize + "px"}
+                            height={iconSize + "px"}
+                            src={src}
+                            title={image.name}
+                            data-id={image.id}
+                            data-wellid={image.wellId}
+                            onClick={event => {
+                                this.props.handleImageWellClicked(image, event)
+                            }}
+                        /></td>
+                    <td>{image.name}</td>
+                    {columnNameCells}
+                </tr>
+            )
+        });
+    }
+
+    renderTableTitle(columnNames) {
+        const tableTitle = this.props.tableTitle;
+        if (!tableTitle) {
+            return null;
+        }
+        return (
+            <tr>
+                <th colSpan={columnNames.length + 2}>{tableTitle}</th>
+            </tr>
+        )
+    }
 
     render() {
-        let {tableTitle, imgJson, iconSize, tableData, selectedWellIds,
-             sortBy, sortReverse, showHeatmapColumns,
-             handleSortTable, handleShowHeatmap,
-             handleImageWellClicked} = this.props;
-        if (sortBy != undefined) {
+        let imgJson = this.props.imgJson;
+        if (this.props.sortBy != undefined) {
             // let orderedImageIds;
-            let colDataToSort = tableData[sortBy].data;
+            let colDataToSort = this.props.tableData[this.props.sortBy].data;
             // Add a sortKey to imgJson
             imgJson = imgJson.map(i => Object.assign(i, {sortKey: colDataToSort[i.id]}));
             // sort...
-            let reverse = sortReverse ? -1 : 1;
+            let reverse = this.props.sortReverse ? -1 : 1;
             imgJson.sort((a, b) => {
                 if (a.sortKey === undefined) return -reverse;
                 if (b.sortKey === undefined) return reverse;
@@ -42,66 +113,30 @@ class DatasetTable extends React.Component {
             });
         }
 
-        let columnNames = Object.keys(tableData);
-
-        let dataRanges = columnNames.reduce((prev, name) => {
-            let v = tableData[name];
-            prev[name] = [v.min, v.max];
-            return prev;
-        }, {});
-        function heatMapColor(name, value) {
-            let minMax = dataRanges[name];
-            let fraction = (value - minMax[0])/(minMax[1] - minMax[0]);
-            return getHeatmapColor(fraction);
-        }
-
+        const columnNames = Object.keys(this.props.tableData);
         return (
             <tbody>
-                {tableTitle ? <tr><th colSpan={columnNames.length + 2}>
-                                    {tableTitle}
-                              </th></tr> : ""}
+                {this.renderTableTitle(columnNames)}
                 <tr>
-                    <td>
-                    </td>
+                    <td></td>
                     <td>Name</td>
                     {columnNames.map(name => (
                         <td key={name}>
-                            <a onClick={(event) => {handleSortTable(event, name)}}>
+                            <a onClick={(event) => {
+                                this.props.handleSortTable(event, name)
+                            }}>
                                 {name}
                             </a>
                             <input
-                                onClick={(event) => {handleShowHeatmap(event, name)}}
+                                onClick={(event) => {
+                                    this.props.handleShowHeatmap(event, name)
+                                }}
                                 type="checkbox"
                                 title="Show Heatmap"/>
                         </td>
                     ))}
                 </tr>
-                {imgJson.map(image => (
-                    <tr
-                        key={image.id + (image.parent ? image.parent : "")}>
-                        <td>
-                            <img alt="image"
-                                className={(image.selected || selectedWellIds.indexOf(image.wellId)) > -1 ? 'ui-selected' : ''}
-                                width={iconSize + "px"}
-                                height={iconSize + "px"}
-                                src={config.webgatewayBaseUrl + "render_thumbnail/" + image.id + "/"}
-                                title={image.name}
-                                data-id={image.id}
-                                data-wellid={image.wellId}
-                                onClick={event => {this.props.handleImageWellClicked(image, event)}} />
-                        </td>
-                        <td>
-                            {image.name}
-                        </td>
-                        {columnNames.map(name => (
-                            <td key={name}
-                                style={{backgroundColor: showHeatmapColumns[name] ? heatMapColor(name, tableData[name].data[image.id]): 'transparent'}}
-                                >
-                                {tableData[name].data[image.id]}
-                            </td>
-                        ))}
-                    </tr>
-                ))}
+                {this.renderImages(imgJson, columnNames)}
             </tbody>
         );
     }
