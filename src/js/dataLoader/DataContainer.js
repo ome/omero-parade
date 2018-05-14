@@ -17,7 +17,7 @@
 //
 
 import React, { Component } from 'react';
-import FieldsLoader from './plateLoader/FieldsLoader'
+import PlateLoader from './plateLoader/PlateLoader'
 import DatasetContainer from './datasetLoader/DatasetContainer';
 
 
@@ -285,7 +285,7 @@ class DataContainer extends React.Component {
         if (effectiveRootNode.type === "screen"
                 || effectiveRootNode.type === "plate") {
             return (
-                <FieldsLoader
+                <PlateLoader
                     treeSelectedNodes={this.state.treeSelectedNodes}
                     treeOpenNodes={this.state.treeOpenNodes}
                     effectiveRootNode={this.state.effectiveRootNode}

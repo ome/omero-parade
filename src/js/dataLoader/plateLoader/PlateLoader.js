@@ -27,36 +27,77 @@ class PlateLoader extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            fields: [],
+            selectedField: undefined,
             data: undefined,
             selectedWellIds: [],
         }
+        this.failureCallback = this.failureCallback.bind(this);
+        this.fieldDataSuccessCallback = this.fieldDataSuccessCallback.bind(this);
+        this.plateDataSuccessCallback = this.plateDataSuccessCallback.bind(this);
+    }
+
+    loadFieldData() {
+        // Parent component enforces that there will only be one selected node
+        const selectedNode = this.props.treeSelectedNodes[0];
+        let data;
+        if (selectedNode.type === "plate") {
+            data = {'plate': selectedNode.data.id}
+        } else if (selectedNode.type === "acquisition") {
+            // select 'run', load plate...
+            data = {'run': selectedNode.data.id};
+        } else {
+            return;
+        }
+        return axios.get(config.indexUrl + "api/fields/", {
+            cancelToken: this.source.token,
+            params: data
+        }).then(this.fieldDataSuccessCallback, this.failureCallback);
+    }
+
+    fieldDataSuccessCallback(response) {
+        this.setState({
+            fields: response.data.data,
+            selectedField: response.data.data[0]
+        });
+    }
+
+    failureCallback(thrown) {
+        if (axios.isCancel(thrown)) {
+            return;
+        }
+        // TODO: Put this error somewhere "correct"
+        console.log("Error loading data!", thrown);
+    }
+
+    loadPlateData() {
+        // Parent component enforces that there will only be one open node and
+        // it will always be of "plate" type
+        const plateNode = this.props.treeOpenNodes[0];
+        const elements = [
+            "plate", plateNode.data.id, this.state.selectedField, ""
+        ];
+        return axios.get(config.webgatewayBaseUrl + elements.join("/"), {
+            cancelToken: this.source.token,
+        }).then(this.plateDataSuccessCallback, this.failureCallback);
+    }
+
+    plateDataSuccessCallback(response) {
+        this.setState({
+            data: response.data,
+        });
     }
 
     loadData() {
-        let plateId = this.props.plateId,
-            fieldId = this.props.fieldId;
-
-        if (fieldId === undefined) {
+        if (this.props.treeOpenNodes.length < 1) {
             return;
         }
 
         const CancelToken = axios.CancelToken;
         this.source = CancelToken.source();
-        const elements = ["plate", plateId, fieldId, ""];
-        axios.get(config.webgatewayBaseUrl + elements.join("/"), {
-            cancelToken: this.source.token,
-        })
-            .then((response) => {
-                this.setState({
-                    data: response.data,
-                });
-            }, (thrown) => {
-                if (axios.isCancel(thrown)) {
-                    return;
-                }
-                // TODO: Put this error somewhere "correct"
-                console.log("Error loading plate data!", thrown);
-            });
+        this.loadFieldData().then(() => {
+            this.loadPlateData();
+        });
     }
 
     componentDidMount() {
@@ -64,10 +105,13 @@ class PlateLoader extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        // Pattern to update based on discussion on this RFC issue:
-        //  * https://github.com/reactjs/rfcs/issues/26
-        if (prevProps.plateId !== this.props.plateId
-                || prevProps.fieldId !== this.props.fieldId) {
+        // Parent component enforces that there will only be one open node and
+        // it will always be of "plate" type
+        const plateNode = this.props.treeOpenNodes[0];
+        const plateId = plateNode? plateNode.data.id : -1;
+        const prevPlateNode = prevProps.treeOpenNodes[0];
+        const prevPlateId = prevPlateNode? prevPlateNode.data.id : -1;
+        if (plateId !== prevPlateId) {
             this.loadData();
         }
     }
@@ -79,7 +123,12 @@ class PlateLoader extends React.Component {
     }
 
     render() {
-        if (this.props.fieldId === undefined) {
+        // Parent component enforces that there will only be one open node and
+        // it will always be of "plate" type
+        const plateNode = this.props.treeOpenNodes[0];
+
+        if (plateNode === undefined
+                || this.state.selectedField === undefined) {
             return(<div></div>)
         }
 
@@ -100,8 +149,8 @@ class PlateLoader extends React.Component {
         return(<FilterHub
                     images={images}
                     parentType={"plate"}
-                    parentId={this.props.plateId}
-                    fieldId={this.props.fieldId}
+                    parentId={plateNode.data.id}
+                    fieldId={this.state.selectedField}
                     plateData={this.state.data}
                     thumbnailLoader={this.props.thumbnailLoader}
                 />)
