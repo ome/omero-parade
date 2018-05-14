@@ -36,7 +36,8 @@ if LooseVersion(numpy.__version__) > LooseVersion('1.11.0'):
     NUMPY_GT_1_11_0 = True
 
 
-def index(request):
+@login_required()
+def index(request, **kwargs):
     return render(request, "omero_parade/index.html", {})
 
 
