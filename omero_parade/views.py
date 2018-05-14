@@ -176,9 +176,9 @@ def get_data(request, data_name, conn=None, **kwargs):
                     histogram, bin_edges = numpy.histogram(values, bins=bins)
                     return JsonResponse({
                         'data': data,
-                        'min': numpy.amin(values),
-                        'max': numpy.amax(values),
-                        'histogram': list(histogram)
+                        'min': numpy.amin(values).item(),
+                        'max': numpy.amax(values).item(),
+                        'histogram': histogram.tolist()
                     })
         except ImportError:
             pass
