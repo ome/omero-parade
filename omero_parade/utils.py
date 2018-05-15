@@ -35,6 +35,26 @@ def get_dataset_image_ids(conn, dataset_id):
     return img_ids
 
 
+def get_screen_image_ids(conn, screen_id):
+    """Get image IDs for images in Screen"""
+
+    conn.SERVICE_OPTS.setOmeroGroup('-1')
+    query_service = conn.getQueryService()
+    params = ParametersI()
+    params.addId(screen_id)
+    query = "select img.id "\
+            "from Well well "\
+            "join well.plate plate "\
+            "join plate.screenLinks s_link "\
+            "join s_link.parent screen "\
+            "join well.wellSamples ws "\
+            "join ws.image img "\
+            "where screen.id = :id "
+    p = query_service.projection(query, params, conn.SERVICE_OPTS)
+    img_ids = [i[0].val for i in p]
+    return img_ids
+
+
 def get_image_ids(conn, plate_id, field_id=0):
     """Get image IDs for images in Plate"""
 
