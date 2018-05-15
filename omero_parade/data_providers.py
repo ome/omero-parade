@@ -16,7 +16,10 @@
 #
 
 from omero.sys import ParametersI
-from omero_parade.utils import get_image_ids, get_project_image_ids
+from omero_parade.utils import \
+    get_screen_image_ids, \
+    get_image_ids, \
+    get_project_image_ids
 
 
 def get_dataproviders(request, conn):
@@ -33,6 +36,7 @@ def get_data(request, data_name, conn):
     """Return data for images in a Project, Dataset or Plate."""
     project_id = request.GET.get('project')
     dataset_id = request.GET.get('dataset')
+    screen_id = request.GET.get('screen')
     plate_id = request.GET.get('plate')
     field_id = request.GET.get('field')
     if project_id:
@@ -40,6 +44,8 @@ def get_data(request, data_name, conn):
     elif dataset_id:
         objects = conn.getObjects('Image', opts={'dataset': dataset_id})
         img_ids = [i.id for i in objects]
+    elif screen_id:
+        img_ids = get_screen_image_ids(conn, screen_id)
     elif plate_id and field_id:
         img_ids = get_image_ids(conn, plate_id, field_id)
     else:

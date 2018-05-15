@@ -150,6 +150,9 @@ class Layout extends React.Component {
         }
 
         let params = {image: this.props.filteredImages.map(v => v.id)};
+        if (this.props.parentType === "screen") {
+            params = {screen: this.props.parentId};
+        }
         if (this.props.parentType === "plate") {
             const plateId = this.props.parentId;
             params = {
