@@ -42,13 +42,10 @@ class Layout extends React.Component {
             showDatasets: true,
             thumbnails: {},
         }
-        this.setIconSize = this.setIconSize.bind(this);
-        this.setLayout = this.setLayout.bind(this);
         this.setShowDatasets = this.setShowDatasets.bind(this);
         this.handleAddData = this.handleAddData.bind(this);
         this.handleImageWellClicked = this.handleImageWellClicked.bind(this);
         this.setImagesWellsSelected = this.setImagesWellsSelected.bind(this);
-        this.setSelectedWells = this.setSelectedWells.bind(this);
     }
 
     setIconSize(size) {
@@ -207,11 +204,11 @@ class Layout extends React.Component {
 
     handleImageWellClicked(obj, event) {
         // Might be a Dataset image OR a Well that is selected.
-        let imageId = obj.id;
-        let wellId = obj.wellId;
+        const imageId = obj.id;
+        const wellId = obj.wellId;
         if (wellId) {
             // TODO - handle Shift/Ctrl-click
-            this.setSelectedWells([wellId]);
+            this.setSelectedWells([obj]);
             return;
         }
         let selIds = this.props.filteredImages.filter(i => i.selected).map(i => i.id);
@@ -242,21 +239,22 @@ class Layout extends React.Component {
         this.props.setSelectedImages(toSelect);
     }
 
-    setImagesWellsSelected(dtype, ids) {
+    setImagesWellsSelected(dtype, images) {
         // Selected state of IMAGES is handled in jstree
         // Selected state of WELLS is handled by this.state 
         if (dtype === 'well') {
-            this.setSelectedWells(ids);
+            this.setSelectedWells(images);
         } else {
-            this.props.setSelectedImages(ids);
+            this.props.setSelectedImages(images.map(v => v.id));
         }
     }
 
-    setSelectedWells(wellIds) {
-        this.setState({selectedWellIds: wellIds});
+    setSelectedWells(images) {
+        this.setState({selectedWellIds: images.map(v => v.wellId)});
         // Trigger loading Wells in right panel...
-        var well_index = this.props.fieldId;
-        var selected_objs = wellIds.map(wId => ({id: 'well-' + wId, index: this.props.fieldId}))
+        const selected_objs = images.map(
+            v => ({id: 'well-' + v.wellId, index: v.field})
+        );
         $("body")
             .data("selected_objects.ome", selected_objs)
             .trigger("selection_change.ome");

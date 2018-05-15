@@ -57,18 +57,29 @@ class DataPlot extends React.Component {
     }
 
     componentDidMount() {
-        let dtype = this.props.imgJson[0].wellId ? 'well' : 'image';
-        let idAttr = (dtype === 'well' ? 'data-wellid': 'data-id')
         $(this.refs.thumb_plot_canvas).selectable({
             filter: 'img',
             distance: 2,
             stop: () => {
                 // Make the same selection in the jstree etc
-                let ids = [];
-                $(".thumbnail_plot_canvas .ui-selected").each(function(){
-                    ids.push(parseInt($(this).attr(idAttr), 10));
+                let images = [];
+                let dtype = "image";
+                $(".thumbnail_plot_canvas .ui-selected").each((index, element) => {
+                    const wellId = parseInt(
+                        element.getAttribute('data-wellid'), 10
+                    );
+                    if (wellId) {
+                        dtype = "well";
+                    }
+
+                    const imageId = parseInt(
+                        element.getAttribute('data-id'), 10
+                    );
+                    images.push(
+                        this.props.imgJson.find(v => v.id === imageId)
+                    );
                 });
-                this.props.setImagesWellsSelected(dtype, ids);
+                this.props.setImagesWellsSelected(dtype, images);
             },
         });
     }

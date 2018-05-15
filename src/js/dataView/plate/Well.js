@@ -29,6 +29,7 @@ class Well extends React.Component {
 
     render() {
         let {id,
+               iid,
                iconSize,
                selected,
                hidden,
@@ -40,7 +41,6 @@ class Well extends React.Component {
                selectedHeatmap,
                heatmapRange,
                heatmapValues} = this.props;
-
 
         let heatmapColor = "rgba(255,255,255,0)";   // transparent by default
         let title = "" + row + col; // E.g. A1
@@ -75,6 +75,7 @@ class Well extends React.Component {
         return (
             <td className={"well " + cls}
                 data-wellid={id}
+                data-imageid={iid}
                 title={""+row+col}>
                 <div
                     style={divStyle}
