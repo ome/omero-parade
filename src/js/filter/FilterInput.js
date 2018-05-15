@@ -46,6 +46,8 @@ class FilterInput extends React.Component {
             return value;
         }
         let padding = parseInt(max).toString().length - parseInt(value).toString().length;
+        // In case we just switched Table column and old value > new max
+        padding = Math.max(0, padding);
         return "\u2007".repeat(padding) + value;
     }
 
