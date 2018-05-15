@@ -27,7 +27,6 @@ class PlateLoader extends React.Component {
 
     constructor(props) {
         super(props);
-        console.log("props", this.props);
         this.state = {
             fields: {},
             plateData: {},
@@ -69,7 +68,6 @@ class PlateLoader extends React.Component {
 
         let nodes = this.props.treeOpenNodes;
         let fieldId = 0;
-        console.log("selectedNode", selectedNode);
         if (selectedNode.type === "plate") {
             nodes = [selectedNode];
         }
@@ -83,7 +81,6 @@ class PlateLoader extends React.Component {
             );
         }
         const plateIds = nodes.map(v => v.data.id);
-        console.log("plateIds", plateIds);
         return Promise.all(nodes.map((node) => {
             const plateId = node.data.id;
             const elements = ["plate", plateId, fieldId, ""];
@@ -161,7 +158,6 @@ class PlateLoader extends React.Component {
                 .reduce((a, b) => a.concat(b), [])  // Flatten each grid
                 .map(row => row.filter(column => column !== null))
                 .reduce((a, b) => a.concat(b), []);  // Flatten each row
-        console.log("images", images);
         return(<FilterHub
                     images={images}
                     parentType={this.props.effectiveRootNode.type}
