@@ -102,6 +102,9 @@ class PlateGrid extends React.Component {
         return (
             <table key={plateId}>
                 <tbody>
+                    <tr><th colSpan={columnNames.length + 1}>
+                        <h2>{plateData.plateName}</h2>
+                    </th></tr>
                     <tr>
                         <th> </th>
                         {columnNames}
