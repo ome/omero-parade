@@ -118,12 +118,12 @@ class Layout extends React.Component {
                 });
             },
             (thrown) => {
-                this.setState({
-                    loading: false
-                });
                 if (axios.isCancel(thrown)) {
                     return;
                 }
+                this.setState({
+                    loading: false
+                });
                 // TODO: Put this error somewhere "correct"
                 console.log("Error loading filters!", thrown);
             }
@@ -193,12 +193,12 @@ class Layout extends React.Component {
                 });
             },
             (thrown) => {
-                this.setState({
-                    loading: false
-                });
                 if (axios.isCancel(thrown)) {
                     return;
                 }
+                this.setState({
+                    loading: false
+                });
                 // TODO: Put this error somewhere "correct"
                 console.log("Error loading filters!", thrown);
             }
