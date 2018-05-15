@@ -19,11 +19,13 @@
 import React, { Component } from 'react';
 import _ from 'lodash'
 import axios from 'axios';
+import qs from 'qs';
 
 import Dataset from './dataset/Dataset';
 import PlateGrid from './plate/PlateGrid';
 import DataPlot from './plot/DataPlot';
 import Tables from './table/Tables';
+import Progress from '../filter/Progress';
 import Footer from '../Footer';
 import config from '../config';
 
@@ -68,8 +70,6 @@ class Layout extends React.Component {
         if (imageIds.length < 1) {
             return;
         }
-        const CancelToken = axios.CancelToken;
-        this.source = CancelToken.source();
         this.props.thumbnailLoader.getThumbnails(imageIds, (response) => {
             this.setState(prevState => {
                 let thumbnails = prevState.thumbnails;
@@ -88,38 +88,43 @@ class Layout extends React.Component {
     }
 
     componentDidMount() {
-        // list available data providers (TODO: only for current data? e.g. plate)
-        let url = config.dataprovidersUrl;
+        const CancelToken = axios.CancelToken;
+        this.source = CancelToken.source();
+
+        let params = {};
         if (this.props.parentType === "project") {
-            url += '?project=' + this.props.parentId;
-        } else if (this.props.datasetId
-                   || this.props.parentType === "dataset") {
-            // FIXME: Be compatible with older implementations that
-            // did not use a generic `parentId`.
-            let datasetId = this.props.datasetId;
-            if (!datasetId) {
-                datasetId = this.props.parentId;
-            }
-            url += '?dataset=' + datasetId;
-        } else if (this.props.plateId || this.props.parentType == "plate") {
-            // FIXME: Be compatible with older implementations that
-            // did not use a generic `parentId`.
-            let plateId = this.props.plateId;
-            if (!plateId) {
-                plateId = this.props.parentId;
-            }
-            url += '?plate=' + plateId;
+            params = {project: this.props.parentId};
         }
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            cache: false,
-            success: data => {
-                this.setState({
-                    dataProviders: data.data,
-                });
-            }
+        if (this.props.parentType === "dataset") {
+            params = {dataset: this.props.parentId};
+        }
+        if (this.props.parentType === "plate") {
+            params = {plate: this.props.parentId};
+        }
+        this.setState({
+            loading: true
         });
+        axios.get(config.dataprovidersUrl, {
+            cancelToken: this.source.token,
+            params: params
+        }).then(
+            (response) => {
+                this.setState({
+                    dataProviders: response.data.data,
+                    loading: false
+                });
+            },
+            (thrown) => {
+                this.setState({
+                    loading: false
+                });
+                if (axios.isCancel(thrown)) {
+                    return;
+                }
+                // TODO: Put this error somewhere "correct"
+                console.log("Error loading filters!", thrown);
+            }
+        );
         this.loadThumbnails();
     }
 
@@ -139,32 +144,59 @@ class Layout extends React.Component {
 
     handleAddData(event) {
         // When user chooses to ADD data by Name, load it...
-        var dataName = event.target.value;
-        if (dataName !== "--") {
-            var url = config.indexUrl + 'data/' + btoa(dataName);
+        const dataName = event.target.value;
+        if (dataName === "--") {
+            return;
+        }
 
-            if (this.props.parentType === "plate") {
-                url += '?plate=' + this.props.parentId;
-                if (this.props.fieldId !== undefined) {
-                    url += '&field=' + this.props.fieldId;
-                }
+        let params = {image: this.props.filteredImages.map(v => v.id)};
+        if (this.props.parentType === "plate") {
+            const plateId = this.props.parentId;
+            params = {
+                plate: plateId,
+                field: this.props.plateData[plateId].fieldId
             }
-            else if (this.props.parentType === "dataset") {
-                url += '?dataset=' + this.props.parentId;
-            } else if (this.props.parentType === "project") {
-                url += '?project=' + this.props.parentId;
-            } else {
-                url += '?' + this.props.filteredImages.map(i => 'image=' + i.id).join('&');
+        }
+        if (this.props.parentType === "dataset") {
+            params = {
+                dataset: this.props.parentId
             }
-            $.getJSON(url, data => {
+        }
+        if (this.props.parentType === "project") {
+            params = {
+                project: this.props.parentId
+            }
+        }
+        this.setState({
+            loading: true
+        });
+        axios.get(config.indexUrl + 'data/' + btoa(dataName), {
+            cancelToken: this.source.token,
+            params: params,
+            paramsSerializer: params => (
+                qs.stringify(params, { indices: false })
+            )
+        }).then(
+            (response) => {
                 // Add data to table data
                 let td = Object.assign({}, this.state.tableData);
-                td[dataName] = data;
+                td[dataName] = response.data;
                 this.setState({
+                    loading: false,
                     tableData: td
                 });
-            });
-        }
+            },
+            (thrown) => {
+                this.setState({
+                    loading: false
+                });
+                if (axios.isCancel(thrown)) {
+                    return;
+                }
+                // TODO: Put this error somewhere "correct"
+                console.log("Error loading filters!", thrown);
+            }
+        );
     }
 
     handleImageWellClicked(obj, event) {
@@ -285,6 +317,7 @@ class Layout extends React.Component {
         return(
                 <div className="parade_layout_container">
                     <div className="layoutHeader">
+                        <Progress loading={this.state.loading}/>
                         <select value={"--"} onChange={this.handleAddData}>
                             <option
                                 value="--" >

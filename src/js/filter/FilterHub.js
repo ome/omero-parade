@@ -161,9 +161,8 @@ class FilterHub extends React.Component {
                     <Layout
                         parentType={this.props.parentType}
                         parentId={this.props.parentId}
-                        fieldId={0}  // XXX: HAX
-                        setSelectedImages={this.props.setSelectedImages}
                         plateData={this.props.plateData}
+                        setSelectedImages={this.props.setSelectedImages}
                         filteredImages={this.state.filteredImages}
                         thumbnailLoader={this.props.thumbnailLoader}
                         />

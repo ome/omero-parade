@@ -144,8 +144,8 @@ class ParadeFilter extends React.Component {
     render() {
         return(
             <div className="parade_filter">
-                <Progress loading={this.state.loading}/>
                 <div className="parade_filter_controls">
+                    <Progress loading={this.state.loading}/>
                     {this.props.name}
                     {this.state.filterParams.map(p => {
                         return <FilterInput
