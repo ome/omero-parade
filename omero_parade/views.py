@@ -24,7 +24,7 @@ import omero.clients
 from base64 import b64decode
 from distutils.version import LooseVersion
 
-from django.http import Http404, JsonResponse
+from django.http import JsonResponse
 from omeroweb.webclient.decorators import login_required
 from omero.rtypes import rlong, unwrap
 from django.shortcuts import render
