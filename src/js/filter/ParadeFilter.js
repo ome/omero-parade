@@ -76,6 +76,9 @@ class ParadeFilter extends React.Component {
         }).then(
             (response) => {
                 if (!response.data.f) {
+                    this.setState({
+                        loading: false
+                    });
                     return;
                 }
                 // Response has filter function - Needs eval()
