@@ -33,14 +33,19 @@ class FilterInput extends React.Component {
     /** Returns a figure space padded version of the current value. */
     getPaddedValue() {
         let max = this.props.max;
-        let value = parseInt(this.props.value);
+        let value = parseFloat(this.props.value);
         if (isNaN(value)) {
             value = this.props.value;
+        } else if (parseInt(max) === max) {
+            // If max is Integer, we format value as integer
+            value = parseInt(value)
+        } else {
+            value = value.toFixed(2)
         }
         if (max == undefined) {
             return value;
         }
-        let padding = max.toString().length - value.toString().length;
+        let padding = parseInt(max).toString().length - parseInt(value).toString().length;
         return "\u2007".repeat(padding) + value;
     }
 

@@ -87,13 +87,26 @@ class ParadeFilter extends React.Component {
         }
         if (filterParam.minima) {
             this.setState({
-                minimum: parseInt(filterParam.minima[value])
+                minimum: filterParam.minima[value]
             });
         }
         if (filterParam.maxima) {
             this.setState({
-                maximum: parseInt(filterParam.maxima[value])
+                maximum: filterParam.maxima[value]
             });
+        }
+    }
+
+    // Formats float to 2 places. Otherwise returns value.
+    formatNumber(value) {
+        let num = parseFloat(value);
+        if (isNaN(num)) {
+            return value
+        }
+        if (parseInt(num) === num) {
+           return value
+        } else {
+            return num.toFixed(2)
         }
     }
 
@@ -114,11 +127,15 @@ class ParadeFilter extends React.Component {
                     })}
                 </div>
                 <div className="sparkline">
-                    <span className="minimum">{this.state.minimum}</span>
+                    <span className="minimum">
+                        {this.formatNumber(this.state.minimum)}
+                    </span>
                     <Sparklines data={this.state.histogram}>
                         <SparklinesBars />
                     </Sparklines>
-                    <span className="maximum">{this.state.maximum}</span>
+                    <span className="maximum">
+                        {this.formatNumber(this.state.maximum)}
+                    </span>
                 </div>
                 <button
                     className="parade_removeFilter"
