@@ -98,6 +98,9 @@ class Layout extends React.Component {
         if (this.props.parentType === "dataset") {
             params = {dataset: this.props.parentId};
         }
+        if (this.props.parentType === "screen") {
+            params = {screen: this.props.parentId};
+        }
         if (this.props.parentType === "plate") {
             params = {plate: this.props.parentId};
         }
