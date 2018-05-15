@@ -57,7 +57,7 @@ class PlateLoader extends React.Component {
 
     failureCallback(thrown) {
         if (axios.isCancel(thrown)) {
-            return;
+            throw thrown;
         }
         // TODO: Put this error somewhere "correct"
         console.log("Error loading data!", thrown);
@@ -123,7 +123,10 @@ class PlateLoader extends React.Component {
             () => {
                 this.setState({loading: false});
             },
-            () => {
+            (thrown) => {
+                if (axios.isCancel(thrown)) {
+                    return;
+                }
                 this.setState({loading: false});
             }
         );
