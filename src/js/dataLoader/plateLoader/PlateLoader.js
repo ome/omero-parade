@@ -21,6 +21,7 @@ import _ from 'lodash';
 import axios from 'axios';
 
 import FilterHub from '../../filter/FilterHub';
+import Progress from '../../filter/Progress';
 import config from '../../config';
 
 class PlateLoader extends React.Component {
@@ -96,13 +97,6 @@ class PlateLoader extends React.Component {
     plateDataSuccessCallback(response) {
         this.setState(prevState => {
             const plateData = prevState.plateData;
-            const prevPlateIds = Object.keys(plateData);
-            const plateIds = response.config.plateIds;
-            prevPlateIds.forEach(prevPlateId => {
-                if (!plateIds.includes(parseInt(prevPlateId))) {
-                    delete plateData[prevPlateId];
-                }
-            });
             plateData[response.config.plateId] = Object.assign(
                 response.data, {
                     fieldId: response.config.fieldId,
@@ -117,15 +111,27 @@ class PlateLoader extends React.Component {
         if (this.props.treeOpenNodes.length < 1) {
             return;
         }
-
-        const CancelToken = axios.CancelToken;
-        this.source = CancelToken.source();
+        this.setState({
+            fields: {},
+            plateData: {},
+            selectedWellIds: [],
+            loading: true
+        });
         this.loadFieldData().then(() => {
             this.loadPlateData();
-        });
+        }).then(
+            () => {
+                this.setState({loading: false});
+            },
+            () => {
+                this.setState({loading: false});
+            }
+        );
     }
 
     componentDidMount() {
+        const CancelToken = axios.CancelToken;
+        this.source = CancelToken.source();
         this.loadData();
     }
 
@@ -158,7 +164,12 @@ class PlateLoader extends React.Component {
                 .reduce((a, b) => a.concat(b), [])  // Flatten each grid
                 .map(row => row.filter(column => column !== null))
                 .reduce((a, b) => a.concat(b), []);  // Flatten each row
-        return(<FilterHub
+        if (this.state.loading) {
+            return <div>
+                <Progress loading={this.state.loading}/><span>Loading...</span>
+            </div>
+        }
+        return (<FilterHub
                     images={images}
                     parentType={this.props.effectiveRootNode.type}
                     parentId={this.props.effectiveRootNode.data.id}
