@@ -42,6 +42,8 @@ def get_data(request, data_name, conn):
         img_ids = [i.id for i in objects]
     elif plate_id and field_id:
         img_ids = get_image_ids(conn, plate_id, field_id)
+    else:
+        img_ids = request.GET.getlist('image')
     query_service = conn.getQueryService()
 
     if data_name == "ROI_stats_max_size":
