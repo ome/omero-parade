@@ -75,7 +75,7 @@ class PlateLoader extends React.Component {
         if (selectedNode.type === "acquisition") {
             const plateNode = this.props.jstree.get_node(selectedNode.parent);
             nodes = [plateNode];
-            fieldId = Math.min(
+            fieldId = _.min(
                 this.state.fields[plateNode.data.id]
                     .filter(v => v[1] === selectedNode.data.id)
                     .map(v => v[0])
