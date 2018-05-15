@@ -54,6 +54,22 @@ def get_image_ids(conn, plate_id, field_id=0):
     return img_ids
 
 
+def get_screen_well_ids(conn, screen_id):
+    """Get well IDs for Screen"""
+    conn.SERVICE_OPTS.setOmeroGroup('-1')
+    query_service = conn.getQueryService()
+    params = ParametersI()
+    params.addId(screen_id)
+    query = "select well.id "\
+            "from Well well "\
+            "join well.plate plate "\
+            "join plate.screenLinks s_link "\
+            "join s_link.parent screen "\
+            "where screen.id = :id"
+    p = query_service.projection(query, params, conn.SERVICE_OPTS)
+    return [i[0].val for i in p]
+
+
 def get_well_ids(conn, plate_id):
     """Get well IDs for Plate"""
     conn.SERVICE_OPTS.setOmeroGroup('-1')

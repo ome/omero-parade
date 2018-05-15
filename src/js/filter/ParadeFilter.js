@@ -43,14 +43,20 @@ class ParadeFilter extends React.Component {
         const CancelToken = axios.CancelToken;
         this.source = CancelToken.source();
 
-        let params;
+        let params = params = {
+            image: this.props.images.map(v => v.id)
+        };
+        if (this.props.parentType === "screen") {
+            params = {
+                screen: this.props.parentId
+            }
+        }
         if (this.props.parentType === "plate") {
             const plateId = this.props.parentId;
             params = {
                 plate: plateId,
                 field: this.props.plateData[plateId].fieldId
             }
-
         } else if (this.props.parentType === "dataset") {
             params = {
                 dataset: this.props.parentId
@@ -58,10 +64,6 @@ class ParadeFilter extends React.Component {
         } else if (this.props.parentType === "project") {
             params = {
                 project: this.props.parentId
-            }
-        } else {
-            params = {
-                image: this.props.images.map(v => v.id)
             }
         }
         this.setState({
