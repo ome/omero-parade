@@ -40,6 +40,8 @@ class ThumbnailLoader {
                 ));
             }
             return Promise.all(promises);
+        }, (thrown) => {
+            throw thrown;
         });
         return this.last;
     }

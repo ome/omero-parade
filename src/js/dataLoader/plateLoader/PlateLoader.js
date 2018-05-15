@@ -117,9 +117,17 @@ class PlateLoader extends React.Component {
             selectedWellIds: [],
             loading: true
         });
-        this.loadFieldData().then(() => {
-            this.loadPlateData();
-        }).then(
+        this.loadFieldData().then(
+            () => {
+                this.loadPlateData();
+            },
+            (thrown) => {
+                if (axios.isCancel(thrown)) {
+                    throw thrown;
+                }
+                this.setState({loading: false});
+            }
+        ).then(
             () => {
                 this.setState({loading: false});
             },
