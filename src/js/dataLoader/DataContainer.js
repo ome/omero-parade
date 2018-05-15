@@ -261,7 +261,12 @@ class DataContainer extends React.Component {
         // If plate has > 1 run, show nothing
         if (effectiveRootNode.type === "plate"
                 && effectiveRootNode.children.length > 1) {
-            return (<h2 className="iconTable">Select Run</h2>);
+            // Parent component enforces that there will only be one selected
+            // node
+            const selectedNode = this.state.treeSelectedNodes[0];
+            if (!selectedNode || selectedNode.type !== "acquisition") {
+                return (<h2 className="iconTable">Select Run</h2>);
+            }
         }
         // If Project has no open Datasets, offer to open them all
         if (effectiveRootNode.type === "project") {
