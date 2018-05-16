@@ -362,10 +362,10 @@ input[type=range].parade:focus::-ms-fill-upper {
 }
 
 .thumbnail_plot {
-  margin: 25px 50px;
+  margin: 25px 75px;
   margin-bottom: 0px;
   padding: 10px;
-  height: 352px;
+  height: 450px;
   box-sizing: border-box;
   border: solid black 1px;
   position: relative;

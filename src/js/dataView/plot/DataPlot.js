@@ -81,8 +81,12 @@ class DataPlot extends React.Component {
         return fraction * 100;
     }
 
-    getAxisTicks(dataRanges, name, numberOfTicks) {
+    getAxisTicks(dataRanges, name, axisScales) {
         let minMax = dataRanges[name];
+        let tickValues = axisScales.map( (scale, index) => {
+            return (minMax[0] + ((minMax[1] - minMax[0]) * scale / 100.0)).toFixed(2);
+        });
+        return tickValues;
         let step = (minMax[1] - minMax[0]) / (numberOfTicks - 1);
         let ticks = Array.from(
             {length: numberOfTicks},
@@ -155,19 +159,137 @@ class DataPlot extends React.Component {
                 />
             )
         });
+        const lineStyle = {
+            stroke: 'black',
+            strokeWidth: 1
+        }
+        const plotHeight = 450;
+        const xAxisLabelScale = [0, 25, 50, 75, 100];
+        const xAxisLabelValues = this.getAxisTicks(
+            dataRanges, xAxisName, xAxisLabelScale);
+        const xAxisTicks = xAxisLabelScale.map( (label, index) => {
+            let transform = ""
+            if (label == 0) {
+                transform = "translateX(1px)";
+            } else {
+                transform = "translateX(0px)";
+            }
+            if (label == 0 || label == 100) {
+                return (
+                    <g>
+                        <line style={{
+                                stroke: "black", strokeWidth: 1,
+                                shapeRendering: "crispEdges",
+                                transform: transform}}
+                              x1={label + "%"}
+                              x2={label + "%"}
+                              y2="10">
+                        </line>
+                        <text x={label + "%"} y="25" style={{transform: "translateX(-10px)"}}>
+                            {xAxisLabelValues[index]}
+                        </text>
+                    </g>
+                )
+            } else {
+                return (
+                    <g>
+                        <line style={{
+                                stroke: "black", strokeWidth: 1,
+                                shapeRendering: "crispEdges",
+                                transform: transform}}
+                              x1={label + "%"}
+                              x2={label + "%"}
+                              y2="10">
+                            </line>
+                        <line style={{
+                                stroke: "gray", strokeWidth: 1,
+                                strokeDasharray: "5,5", shapeRendering: "crispEdges",
+                                transform: transform}}
+                              x1={label + "%"} x2={label + "%"} y2={-plotHeight}></line>
+                        <text x={label + "%"} y="25" style={{transform: "translateX(-10px)"}}>
+                            {xAxisLabelValues[index]}
+                        </text>
+                    </g>
+                )
+            }
+        });
+        const yAxisLabelScale = [0, 33, 66, 100];
+        const yAxisLabelValues = this.getAxisTicks(
+            dataRanges, yAxisName, yAxisLabelScale);
+        {/* taken from css */}
+        const yAxisTicks = yAxisLabelScale.map( (label, index) => {
+            if (label == 0 || label == 100) {
+                return (
+                    <g>
+                        <line style={{
+                                stroke: "black", strokeWidth: 1,
+                                shapeRendering: "crispEdges"}}
+                              y1={(100 - label) * plotHeight / 100}
+                              y2={(100 - label) * plotHeight / 100}
+                              x2="-10">
+                        </line>
+                        <text y={((100 - label) * plotHeight / 100) - 5} x="-45">
+                            {yAxisLabelValues[index]}
+                        </text>
+                    </g>
+                )
+            } else {
+                return (
+                    <g>
+                        <line style={{
+                                stroke: "black", strokeWidth: 1,
+                                shapeRendering: "crispEdges"}}
+                              y1={(100 - label) * plotHeight / 100}
+                              y2={(100 - label) * plotHeight / 100}
+                              x2="-10">
+                        </line>
+                        <line style={{
+                                stroke: "gray", strokeWidth: 1,
+                                strokeDasharray: "5,5", shapeRendering: "crispEdges"}}
+                              y1={(100 - label) * plotHeight / 100}
+                              y2={(100 - label) * plotHeight / 100}
+                              x2="100%">
+                        </line>
+                        <text y={((100 - label) * plotHeight / 100) - 5} x="-45">
+                            {yAxisLabelValues[index]}
+                        </text>
+                    </g>
+                )
+            }
+        });
         return (
             <div className="parade_centrePanel">
-                <div className="axis-x-label"  style={{transform: "translateY(455px)", textAlign: "center"}}>
+                {/* The Plot */}
+                <div className="thumbnail_plot">
+                    <div className="thumbnail_plot_canvas" ref="thumb_plot_canvas">
+                        {images}
+                    </div>
+                </div>
+                {/* X Axis Ticks */}
+                <div className="xTicks" style={{height: "40px", marginLeft: '75px', marginRight: '75px'}}>
+                    <svg style={{width: "100%", resize: "both", fontSize: "10px", overflow: "inherit"}}>
+                        {xAxisTicks}
+                    </svg>
+                </div>
+                {/* X Axis Label */}
+                <div className="axis-x-label"  style={{textAlign: "center"}}>
                     <select onChange={(event) => {this.setAxisName('x', event, yAxisName)}}
                             value={xAxisName}
                             style={styles.xAxisSelect}>
                         {axisNames.map((n, i) => (<option key={i} value={n}> {n}</option>))}
                     </select>
                 </div>
+                {/* Y AXis Ticks */}
+                <div className="yTicks" style={{marginLeft: '75px', marginRight: '75px', transform: "translateY(-509px)"}}>
+                    <svg style={{width: "100%", resize: "both", fontSize: "10px", overflow: "inherit"}}>
+                        {yAxisTicks}
+                    </svg>
+                </div>
+                {/* Y Axis Label */}
                 <div className="axis y"
                      style={{
                         transformOrigin: "center",
-                        transform: "translate(-50%, 0) rotate(-90deg) translate(-210px,25px)",
+                        transform: "translate(-50%, 0) rotate(-90deg) translate(450px, 15px)",
                         textAlign: "center"
                     }}>
                     <select onChange={(event) => {this.setAxisName('y', event, xAxisName)}}
@@ -175,35 +297,6 @@ class DataPlot extends React.Component {
                             style={styles.yAxisSelect}>
                         {axisNames.map((n, i) => (<option key={i} value={n}> {n}</option>))}
                     </select>
-                </div>
-                <div className="thumbnail_plot">
-                    <div className="thumbnail_plot_canvas" ref="thumb_plot_canvas">
-                        {images}
-                    </div>
-                </div>
-                <div style={{marginLeft: '50px', marginRight: '50px'}}>
-                    <svg style={{width: "100%", resize: "both", fontSize: "10px", overflow: "inherit"}}>
-                        <g style={{width: "100%"}}>
-                            <line style={{stroke: "black", strokeWidth: 1, shapeRendering: "crispEdges", transform: "translateX(1px)"}} x1="0%" x2="0%" y2="10"></line>
-                            <text x="0%" y="25" style={{transform: "translateX(-10px)"}}> 0%</text>
-                        </g>
-                        <g>
-                            <line style={{stroke: "black", strokeWidth: 1, shapeRendering: "crispEdges"}} x1="25%" x2="25%" y2="10"></line>
-                            <text y="25" x="25%" style={{transform: "translateX(-10px)"}}>25%</text>
-                        </g>
-                        <g>
-                                <line style={{stroke: "black", strokeWidth: 1, shapeRendering: "crispEdges"}} x1="50%" x2="50%" y2="10"></line>
-                            <text x="50%" y="25" style={{transform: "translateX(-10px)"}}>50%</text>
-                        </g>
-                        <g>
-                            <line style={{stroke: "black", strokeWidth: 1, shapeRendering: "crispEdges"}} x1="75%" x2="75%" y2="10"></line>
-                            <text x="75%" y="25" style={{transform: "translateX(-10px)"}}>75%</text>
-                        </g>
-                        <g>
-                            <line style={{stroke: "black", strokeWidth: 1, shapeRendering: "crispEdges"}} x1="100%" x2="100%" y2="10"></line>
-                            <text x="100%" y="25" style={{transform: "translateX(-10px)"}}>100%</text>
-                        </g>
-                    </svg>
                 </div>
             </div>
         );
