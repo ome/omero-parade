@@ -157,7 +157,7 @@ class DataPlot extends React.Component {
         });
         return (
             <div className="parade_centrePanel">
-                <div className="axis-x-label"  style={{transform: "translateY(435px)", textAlign: "center"}}>
+                <div className="axis-x-label"  style={{transform: "translateY(455px)", textAlign: "center"}}>
                     <select onChange={(event) => {this.setAxisName('x', event, yAxisName)}}
                             value={xAxisName}
                             style={styles.xAxisSelect}>
@@ -180,6 +180,30 @@ class DataPlot extends React.Component {
                     <div className="thumbnail_plot_canvas" ref="thumb_plot_canvas">
                         {images}
                     </div>
+                </div>
+                <div style={{marginLeft: '50px', marginRight: '50px'}}>
+                    <svg style={{width: "100%", resize: "both", fontSize: "10px", overflow: "inherit"}}>
+                        <g style={{width: "100%"}}>
+                            <line style={{stroke: "black", strokeWidth: 1, shapeRendering: "crispEdges", transform: "translateX(1px)"}} x1="0%" x2="0%" y2="10"></line>
+                            <text x="0%" y="25" style={{transform: "translateX(-10px)"}}> 0%</text>
+                        </g>
+                        <g>
+                            <line style={{stroke: "black", strokeWidth: 1, shapeRendering: "crispEdges"}} x1="25%" x2="25%" y2="10"></line>
+                            <text y="25" x="25%" style={{transform: "translateX(-10px)"}}>25%</text>
+                        </g>
+                        <g>
+                                <line style={{stroke: "black", strokeWidth: 1, shapeRendering: "crispEdges"}} x1="50%" x2="50%" y2="10"></line>
+                            <text x="50%" y="25" style={{transform: "translateX(-10px)"}}>50%</text>
+                        </g>
+                        <g>
+                            <line style={{stroke: "black", strokeWidth: 1, shapeRendering: "crispEdges"}} x1="75%" x2="75%" y2="10"></line>
+                            <text x="75%" y="25" style={{transform: "translateX(-10px)"}}>75%</text>
+                        </g>
+                        <g>
+                            <line style={{stroke: "black", strokeWidth: 1, shapeRendering: "crispEdges"}} x1="100%" x2="100%" y2="10"></line>
+                            <text x="100%" y="25" style={{transform: "translateX(-10px)"}}>100%</text>
+                        </g>
+                    </svg>
                 </div>
             </div>
         );
