@@ -77,6 +77,8 @@ class Dataset extends React.Component {
                         iconSize={iconSize}
                         handleImageWellClicked={handleImageWellClicked}
                         thumbnails={this.props.thumbnails}
+                        tableData={this.props.tableData}
+                        heatmapTableData={this.props.heatmapTableData}
                     />
                     <div style={{clear: 'both'}}></div>
                 </div>
@@ -88,6 +90,8 @@ class Dataset extends React.Component {
                     iconSize={iconSize}
                     handleImageWellClicked={handleImageWellClicked}
                     thumbnails={this.props.thumbnails}
+                    tableData={this.props.tableData}
+                    heatmapTableData={this.props.heatmapTableData}
                 />
             );
         }

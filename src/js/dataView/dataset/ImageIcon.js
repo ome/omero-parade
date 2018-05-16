@@ -45,7 +45,12 @@ class ImageIcon extends React.Component {
 
     getImgStyle() {
         var width = this.props.iconSize;
-        return {width: width, maxHeight: width}
+        let backgroundColor = this.props.heatmapColor;
+        return {
+            width: width,
+            maxHeight: width,
+            backgroundColor: backgroundColor
+        };
     }
 
     // After rendering, scroll selectd icon into view
