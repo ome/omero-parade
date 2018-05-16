@@ -52,6 +52,7 @@ class Layout extends React.Component {
             showDatasets: true,
             thumbnails: {},
         }
+        this.setIconSize = this.setIconSize.bind(this);
         this.setShowDatasets = this.setShowDatasets.bind(this);
         this.handleAddData = this.handleAddData.bind(this);
         this.handleImageWellClicked = this.handleImageWellClicked.bind(this);
