@@ -22,15 +22,9 @@ import config from '../../config';
 
 const styles = {
     xAxisSelect: {
-        position: 'absolute',
-        right: '40%',
-        top: '100%',
     },
     yAxisSelect: {
-        position: 'absolute',
-        right: '100%',
-        top: '50%',
-        transform: 'rotate(-90deg)',
+
     },
 }
 class DataPlot extends React.Component {
@@ -83,8 +77,17 @@ class DataPlot extends React.Component {
             return 0;
         }
         let minMax = dataRanges[name];
-        let fraction = (value - minMax[0])/(minMax[1] - minMax[0]);
+        let fraction = (value - (minMax[0]))/((minMax[1]) - (minMax[0]));
         return fraction * 100;
+    }
+
+    getAxisTicks(dataRanges, name, numberOfTicks) {
+        let minMax = dataRanges[name];
+        let step = (minMax[1] - minMax[0]) / (numberOfTicks - 1);
+        let ticks = Array.from(
+            {length: numberOfTicks},
+            (x, i) => (minMax[0] + i * step).toFixed(2));
+        return ticks;
     }
 
     render() {
@@ -132,6 +135,10 @@ class DataPlot extends React.Component {
             }
             const x = tableData[xAxisName].data[image.id];
             const y = tableData[yAxisName].data[image.id];
+
+            let left_position = this.getAxisPercent(dataRanges, xAxisName, x);
+            let top_position = (100 - this.getAxisPercent(dataRanges, yAxisName, y));
+
             return (
                 <img alt="image"
                     key={image.id + (image.parent ? image.parent : "")}
@@ -142,26 +149,34 @@ class DataPlot extends React.Component {
                     title={image.name}
                     onClick={event => {handleImageWellClicked(image, event)}}
                     style={{
-                        left: this.getAxisPercent(dataRanges, xAxisName, x) + '%',
-                        top: (100 - this.getAxisPercent(dataRanges, yAxisName, y)) + '%'
+                        left: left_position + '%',
+                        top: top_position + '%'
                     }}
                 />
             )
         });
         return (
             <div className="parade_centrePanel">
-                <div className="thumbnail_plot">
-                    <select onChange={(event) => {this.setAxisName('y', event, xAxisName)}}
-                            value={yAxisName}
-                            style={styles.yAxisSelect}>
-                        {axisNames.map((n, i) => (<option key={i} value={n}> {n}</option>))}
-                    </select>
+                <div className="axis-x-label"  style={{transform: "translateY(435px)", textAlign: "center"}}>
                     <select onChange={(event) => {this.setAxisName('x', event, yAxisName)}}
                             value={xAxisName}
                             style={styles.xAxisSelect}>
                         {axisNames.map((n, i) => (<option key={i} value={n}> {n}</option>))}
                     </select>
-
+                </div>
+                <div className="axis y"
+                     style={{
+                        transformOrigin: "center",
+                        transform: "translate(-50%, 0) rotate(-90deg) translate(-210px,25px)",
+                        textAlign: "center"
+                    }}>
+                    <select onChange={(event) => {this.setAxisName('y', event, xAxisName)}}
+                            value={yAxisName}
+                            style={styles.yAxisSelect}>
+                        {axisNames.map((n, i) => (<option key={i} value={n}> {n}</option>))}
+                    </select>
+                </div>
+                <div className="thumbnail_plot">
                     <div className="thumbnail_plot_canvas" ref="thumb_plot_canvas">
                         {images}
                     </div>
