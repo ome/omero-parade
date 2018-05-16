@@ -53,10 +53,10 @@ class ParadeFilter extends React.Component {
         }
         if (this.props.parentType === "plate") {
             const plateId = this.props.parentId;
-            params = {
-                plate: plateId,
-                field: this.props.plateData[plateId].fieldId
-            }
+            const fieldId = this.props.plateData.find(
+                v => v.plateId === plateId
+            ).fieldId;
+            params = {plate: plateId, field: fieldId}
         } else if (this.props.parentType === "dataset") {
             params = {
                 dataset: this.props.parentId

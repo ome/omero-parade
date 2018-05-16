@@ -30,7 +30,7 @@ class PlateLoader extends React.Component {
         super(props);
         this.state = {
             fields: {},
-            plateData: {},
+            plateData: [],
             selectedWellIds: [],
         }
         this.failureCallback = this.failureCallback.bind(this);
@@ -97,8 +97,9 @@ class PlateLoader extends React.Component {
         this.setState(prevState => {
             const plateData = prevState.plateData;
             const plateNode = response.config.plateNode;
+            const plateIds = response.config.plateIds;
             const plateId = plateNode.data.id;
-            plateData[plateId] = Object.assign(
+            plateData[plateIds.indexOf(plateId)] = Object.assign(
                 response.data, {
                     fieldId: response.config.fieldId,
                     plateId: plateId,
@@ -115,7 +116,7 @@ class PlateLoader extends React.Component {
         }
         this.setState({
             fields: {},
-            plateData: {},
+            plateData: [],
             selectedWellIds: [],
             loading: true
         });
@@ -172,7 +173,7 @@ class PlateLoader extends React.Component {
         }
 
         // Generate a list of all images for each plate from a flattened grid.
-        const images = Object.values(this.state.plateData)
+        const images = this.state.plateData
                 .map(v => v.grid)
                 .reduce((a, b) => a.concat(b), [])  // Flatten each grid
                 .map(row => row.filter(column => column !== null))

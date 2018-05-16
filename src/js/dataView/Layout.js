@@ -155,9 +155,12 @@ class Layout extends React.Component {
         }
         if (this.props.parentType === "plate") {
             const plateId = this.props.parentId;
+            const fieldId = this.props.plateData.find(
+                v => v.plateId === plateId
+            ).fieldId;
             params = {
                 plate: plateId,
-                field: this.props.plateData[plateId].fieldId
+                field: fieldId
             }
         }
         if (this.props.parentType === "dataset") {

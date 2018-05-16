@@ -52,7 +52,7 @@ class PlateGrid extends React.Component {
         $(this.refs.dataIcons).selectable( "destroy" );
     }
 
-    renderPlateGrid(plateId, plateData) {
+    renderPlateGrid(plateData) {
         const iconSize = this.props.iconSize,
             placeholderStyle = {
                 width: iconSize + 'px',
@@ -105,7 +105,7 @@ class PlateGrid extends React.Component {
         });
 
         return (
-            <table key={plateId}>
+            <table key={plateData.plateId}>
                 <tbody>
                     <tr><th colSpan={columnNames.length + 1}>
                         <h2>{plateData.plateName}</h2>
@@ -121,18 +121,8 @@ class PlateGrid extends React.Component {
     }
 
     render() {
-        const data = this.props.plateData;
-        if (data.length < 1) {
-            return (
-                <table />
-            )
-        }
-
-        const plateGrids = Object.entries(data).map(
-            (entry) => {
-                const [plateId, plateData] = entry;
-                return this.renderPlateGrid(plateId, plateData)
-            }
+        const plateGrids = this.props.plateData.map(
+            v => this.renderPlateGrid(v)
         );
         return <div className="plateGrid" ref="plateGrid">
             {plateGrids}
