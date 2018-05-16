@@ -60,7 +60,6 @@ class PlateGrid extends React.Component {
             },
             selectedWellIds = this.props.selectedWellIds,
             handleImageWellClicked = this.props.handleImageWellClicked,
-            tableData = this.props.tableData,
             filteredIds = this.props.filteredImages.map(i => i.id);
         const columnNames = plateData.collabels.map(l => (<th key={l}>{l}</th>));
         const grid = plateData.grid;
@@ -70,11 +69,6 @@ class PlateGrid extends React.Component {
                 if (well) {
                     const hidden = (filteredIds !== undefined && filteredIds.indexOf(well.id) === -1);
                     const selected = selectedWellIds.indexOf(well.wellId) > -1;
-                    // lookup this Well's data from heatmap
-                    // var heatmapValues = heatmapData && heatmapData[well.wellId+""];
-                    // tableData is mapped to Image IDs... (well.id is image ID!)
-                    const imgTableData = Object.keys(tableData)
-                        .map(col => col + ": " + tableData[col].data[well.id]);
                     return (
                         <Well
                             key={well.wellId}
@@ -87,7 +81,10 @@ class PlateGrid extends React.Component {
                             handleWellClick={(event) => {handleImageWellClicked(well, event)}}
                             row={r}
                             col={c}
-                            imgTableData={imgTableData} />
+                            heatmapTableData={this.props.heatmapTableData}
+                            tableData={this.props.tableData}
+                            viewMode={this.props.viewMode}
+                        />
                     )
                 }
                 return (

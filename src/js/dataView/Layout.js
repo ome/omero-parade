@@ -17,6 +17,9 @@
 //
 
 import React, { Component } from 'react';
+import Menu from 'material-ui/Menu';
+import MenuItem from 'material-ui/MenuItem';
+import ArrowDropRight from 'material-ui/svg-icons/navigation-arrow-drop-right';
 import _ from 'lodash'
 import axios from 'axios';
 import qs from 'qs';
@@ -31,10 +34,17 @@ import config from '../config';
 
 class Layout extends React.Component {
 
+    static get ONE_X_ONE_TRANSPARENT() {
+        return "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
+    }
+
     constructor(props) {
         super(props);
+        const imageComponentViewMode =
+            this.props.plateData? "Normal" : "Thumbnails";
         this.state = {
             iconSize: 50,
+            imageComponentViewMode: imageComponentViewMode,
             layout: "icon",   // "icon", "plot" or "table"
             dataProviders: [],
             tableData: {},
@@ -125,7 +135,9 @@ class Layout extends React.Component {
                 console.log("Error loading filters!", thrown);
             }
         );
-        this.loadThumbnails();
+        if (this.state.imageComponentViewMode === "Thumbnails") {
+            this.loadThumbnails();
+        }
     }
 
     componentWillUnmount() {
@@ -137,7 +149,11 @@ class Layout extends React.Component {
     componentDidUpdate(prevProps, prevState, snapshot) {
         const imageIds = this.props.filteredImages.map(v => v.id);
         const prevImageIds = prevProps.filteredImages.map(v => v.id);
-        if (!_.isEqual(imageIds, prevImageIds)) {
+        const imageComponentViewMode = this.state.imageComponentViewMode;
+        const prevImageComponentViewMode = prevState.imageComponentViewMode;
+        if ((!_.isEqual(imageIds, prevImageIds)
+                || imageComponentViewMode !== prevImageComponentViewMode)
+                    && imageComponentViewMode === "Thumbnails") {
             this.loadThumbnails();
         }
     }
@@ -268,12 +284,84 @@ class Layout extends React.Component {
         }
     }
 
+    renderHeatmapMenuItems() {
+        if (Object.keys(this.state.tableData).length < 1) {
+            return null;
+        }
+        return Object.entries(this.state.tableData).map(entry => {
+            const [name, tableData] = entry;
+            const checked = name === this.state.heatmapTableData;
+            return (
+                <MenuItem
+                    insetChildren={true}
+                    primaryText={name}
+                    checked={checked}
+                    onClick={(event) => {
+                        this.setState({
+                            imageComponentViewMode: "Heatmap",
+                            heatmapTableData: name
+                        });
+                    }}
+                />
+            );
+        })
+    }
+
+    renderSettingsMenu() {
+        const heatmapMenuItems = this.renderHeatmapMenuItems();
+        const viewMenuItems = [
+            <MenuItem
+                insetChildren={true}
+                primaryText="Normal"
+                checked={this.state.imageComponentViewMode === "Normal"}
+                onClick={(event) => {
+                    this.setState({
+                        imageComponentViewMode: "Normal"
+                    });
+                }}
+            />,
+            <MenuItem
+                insetChildren={true}
+                primaryText="Thumbnails"
+                checked={this.state.imageComponentViewMode === "Thumbnails"}
+                onClick={(event) => {
+                    this.setState({
+                        imageComponentViewMode: "Thumbnails"
+                    });
+                }}
+            />,
+            <MenuItem
+                insetChildren={true}
+                primaryText="Heatmap"
+                rightIcon={<ArrowDropRight />}
+                checked={this.state.imageComponentViewMode === "Heatmap"}
+                disabled={!heatmapMenuItems}
+                menuItems={heatmapMenuItems}
+            />,
+        ];
+        return <Menu desktop={true}>
+            <MenuItem
+                primaryText="View"
+                rightIcon={<ArrowDropRight />}
+                menuItems={viewMenuItems}
+            />
+        </Menu>
+    }
+
     render() {
         if (this.props.plateData === undefined && this.props.filteredImages === undefined) {
             return(<div></div>)
         }
         let filteredImages = this.props.filteredImages;
         let imageComponent;
+        let settingsMenu;
+        let thumbnails = this.state.thumbnails;
+        if (this.state.imageComponentViewMode !== "Thumbnails") {
+            thumbnails = {};
+            filteredImages.forEach(v => {
+                thumbnails[v.id] = Layout.ONE_X_ONE_TRANSPARENT
+            });
+        }
         if (this.state.layout === "table") {
             imageComponent = (
                 <Tables
@@ -284,7 +372,9 @@ class Layout extends React.Component {
                     handleImageWellClicked = {this.handleImageWellClicked}
                     setImagesWellsSelected = {this.setImagesWellsSelected}
                     tableData={this.state.tableData}
-                    thumbnails={this.state.thumbnails}
+                    thumbnails={thumbnails}
+                    heatmapTableData={this.state.heatmapTableData}
+                    viewMode={this.state.imageComponentViewMode}
                     />)
         } else if (this.state.layout === "plot") {
             imageComponent = (
@@ -295,7 +385,9 @@ class Layout extends React.Component {
                     selectedWellIds={this.state.selectedWellIds}
                     handleImageWellClicked = {this.handleImageWellClicked}
                     setImagesWellsSelected = {this.setImagesWellsSelected}
-                    thumbnails={this.state.thumbnails}
+                    thumbnails={thumbnails}
+                    heatmapTableData={this.state.heatmapTableData}
+                    viewMode={this.state.imageComponentViewMode}
                     />)
         } else if (this.props.plateData) {
             imageComponent = (
@@ -307,18 +399,25 @@ class Layout extends React.Component {
                     selectedWellIds={this.state.selectedWellIds}
                     handleImageWellClicked={this.handleImageWellClicked}
                     setImagesWellsSelected={this.setImagesWellsSelected}
-                    thumbnails={this.state.thumbnails}
+                    thumbnails={thumbnails}
+                    heatmapTableData={this.state.heatmapTableData}
+                    viewMode={this.state.imageComponentViewMode}
                     />)
+            settingsMenu = this.renderSettingsMenu();
         } else {
             imageComponent = (
                 <Dataset
                     iconSize={this.state.iconSize}
                     imgJson={filteredImages}
+                    tableData={this.state.tableData}
                     showDatasets={this.state.showDatasets}
                     handleImageWellClicked={this.handleImageWellClicked}
                     setImagesWellsSelected={this.setImagesWellsSelected}
-                    thumbnails={this.state.thumbnails}
+                    thumbnails={thumbnails}
+                    heatmapTableData={this.state.heatmapTableData}
+                    viewMode={this.state.imageComponentViewMode}
                     />)
+            settingsMenu = this.renderSettingsMenu();
         }
 
         return(
@@ -360,7 +459,8 @@ class Layout extends React.Component {
                     {imageComponent}
                     <Footer
                         iconSize={this.state.iconSize}
-                        setIconSize={this.setIconSize} />
+                        setIconSize={this.setIconSize}
+                        settingsMenu={settingsMenu} />
                 </div>)
     }
 }

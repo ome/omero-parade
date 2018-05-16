@@ -18,14 +18,16 @@
 
 import React, { Component } from 'react';
 
+import { getHeatmapColor } from '../../util';
 import config from '../../config';
 
 class Well extends React.Component {
 
-    // shouldComponentUpdate(nextProps, nextState) {
-    //     // Only re-render if visibility changes
-    //     return this.props.hidden !== nextProps.hidden;
-    // },
+    heatmapColor(dataRange, value) {
+        let [minimum, maximum] = dataRange;
+        let fraction = (value - minimum) / (maximum - minimum);
+        return getHeatmapColor(fraction);
+    }
 
     render() {
         let {id,
@@ -36,44 +38,40 @@ class Well extends React.Component {
                row,
                col,
                thumb_url,
-               imgTableData,
+               tableData,
+               heatmapTableData,
                handleWellClick,
-               selectedHeatmap,
-               heatmapRange,
-               heatmapValues} = this.props;
+               viewMode} = this.props;
 
+        const selectedTableData = tableData[heatmapTableData];
         let heatmapColor = "rgba(255,255,255,0)";   // transparent by default
         let title = "" + row + col; // E.g. A1
-        title = title + " " + imgTableData.join(" ");
         let imgStyle = {width: iconSize + 'px', maxHeight: iconSize + 'px'};
         if (hidden) {
             imgStyle.opacity = 0.1;
         }
         let divStyle = {width: iconSize + 'px', height: iconSize + 'px'};
-        let cls = "";
+        let className = ["well"];
 
-        // if (selectedHeatmap) {
-        //     var value = heatmapValues[selectedHeatmap];
-        //     title += " " + value;
-        //     if (heatmapRange && value) {
-        //         var fraction = (value - heatmapRange[0]) / (heatmapRange[1] - heatmapRange[0]);
-        //         heatmapColor = getHeatmapColor(fraction);
-        //         divStyle.background = heatmapColor;
-        //         cls += "heatmap";
-        //     }
-        // }
+        if (selectedTableData) {
+            divStyle.background = this.heatmapColor(
+                [selectedTableData.min, selectedTableData.max],
+                selectedTableData.data[iid]
+            );
+            className.push("heatmap");
+        }
         if (selected) {
-            cls += " ui-selected";
+            className.push("ui-selected");
         }
 
-        let className = "";
+        let imgClassName = "";
         let src = this.props.thumb_url;
         if (!src) {
-            className = "waiting";
+            imgClassName = "waiting";
             src = config.staticPrefix + "webgateway/img/spacer.gif";
         }
         return (
-            <td className={"well " + cls}
+            <td className={className.join(" ")}
                 data-wellid={id}
                 data-imageid={iid}
                 title={""+row+col}>
@@ -83,7 +81,7 @@ class Well extends React.Component {
                     title={title}
                     >
                     <img
-                        className={className}
+                        className={imgClassName}
                         src={src}
                         style={imgStyle} />
                 </div>

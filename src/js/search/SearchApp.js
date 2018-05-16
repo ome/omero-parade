@@ -1,5 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+
 import SearchForm from './SearchForm';
 import FilterHub from '../filter/FilterHub';
 import ThumbnailLoader from '../dataLoader/ThumbnailLoader'
@@ -34,11 +35,13 @@ class SearchApp extends React.Component {
                         setSearchResults={this.setSearchResults} />
                 </div>
                 <div className="paradeCentrePanel">
-                    <FilterHub
-                        setSelectedImages = {this.setSelectedImages}
-                        images={this.state.searchResults}
-                        thumbnailLoader={this.thumbnailLoader}
-                    />
+                    <MuiThemeProvider>
+                        <FilterHub
+                            setSelectedImages = {this.setSelectedImages}
+                            images={this.state.searchResults}
+                            thumbnailLoader={this.thumbnailLoader}
+                        />
+                    </MuiThemeProvider>
                 </div>
 
                 <div className="rightPanel">
