@@ -53,7 +53,7 @@ class Well extends React.Component {
         let divStyle = {width: iconSize + 'px', height: iconSize + 'px'};
         let className = ["well"];
 
-        if (selectedTableData) {
+        if (selectedTableData && !hidden) {
             divStyle.background = this.heatmapColor(
                 [selectedTableData.min, selectedTableData.max],
                 selectedTableData.data[iid]
@@ -66,7 +66,7 @@ class Well extends React.Component {
 
         let imgClassName = "";
         let src = this.props.thumb_url;
-        if (!src) {
+        if (!src && !hidden) {
             imgClassName = "waiting";
             src = config.staticPrefix + "webgateway/img/spacer.gif";
         }
