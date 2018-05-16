@@ -53,10 +53,12 @@ class Well extends React.Component {
         let divStyle = {width: iconSize + 'px', height: iconSize + 'px'};
         let className = ["well"];
 
+        let heatmapValue;
         if (selectedTableData && !hidden) {
+            heatmapValue = selectedTableData.data[iid];
             divStyle.background = this.heatmapColor(
                 [selectedTableData.min, selectedTableData.max],
-                selectedTableData.data[iid]
+                heatmapValue
             );
             className.push("heatmap");
         }
@@ -84,6 +86,19 @@ class Well extends React.Component {
                         className={imgClassName}
                         src={src}
                         style={imgStyle} />
+                    <div
+                        style={{
+                            position: "absolute",
+                            top: "50%",
+                            left: "50%",
+                            transform: "translate(-50%, -50%)",
+                            fontColor: "white"
+                        }}
+                    >
+                        <span style={{fontColor: "white"}}>
+                            {heatmapValue}
+                        </span>
+                    </div>
                 </div>
             </td>
         )

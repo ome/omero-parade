@@ -49,7 +49,8 @@ class ImageIcon extends React.Component {
         return {
             width: width,
             maxHeight: width,
-            backgroundColor: backgroundColor
+            backgroundColor: backgroundColor,
+            width: "100%"
         };
     }
 
@@ -91,11 +92,25 @@ class ImageIcon extends React.Component {
                 tabIndex={0}
                 onClick={this.handleIconClick}
             >
+                <div style={{position: "relative"}}>
                     <img alt="image"
                         className={className}
                         style={imgStyle}
                         src={src}
                         title={image.name} />
+                    <div
+                        style={{
+                            position: "absolute",
+                            top: "50%",
+                            left: "50%",
+                            transform: "translate(-50%, -50%)"
+                        }}
+                    >
+                        <span style={{fontColor: "white"}}>
+                            {this.props.heatmapValue}
+                        </span>
+                    </div>
+                </div>
             </li>
         )
     }
