@@ -343,26 +343,22 @@ class Layout extends React.Component {
     }
 
     renderHeatmapMenuItems() {
-        if (Object.keys(this.state.tableData).length < 1) {
-            return null;
-        }
-        return Object.entries(this.state.tableData).map(entry => {
-            const [name, tableData] = entry;
-            const checked = name === this.state.heatmapTableData;
-            return (
-                <MenuItem
-                    insetChildren={true}
-                    primaryText={name}
-                    checked={checked}
-                    onClick={(event) => {
-                        this.setState({
-                            imageComponentViewMode: "Heatmap",
-                            heatmapTableData: name
-                        });
-                    }}
-                />
-            );
-        })
+        return this.state.dataProviders.map(v => (
+            <MenuItem
+                insetChildren={true}
+                primaryText={v}
+                checked={v === this.state.heatmapTableData}
+                onClick={(event) => {
+                    this.setState({
+                        imageComponentViewMode: "Heatmap",
+                        heatmapTableData: v
+                    });
+                    if (!this.state.tableData[v]) {
+                        this.handleAddData({target: {value: v}});
+                    }
+                }}
+            />
+        ));
     }
 
     renderSettingsMenu() {
