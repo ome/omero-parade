@@ -17,8 +17,6 @@
 //
 
 import React, { Component } from 'react';
-import FlatButton from 'material-ui/FlatButton';
-import Popover from 'material-ui/Popover';
 
 const styles = {
     footer: {
@@ -43,57 +41,12 @@ class Footer extends React.Component {
 
     constructor(props) {
         super(props);
-
-        this.state = {
-            menuOpen: false
-        };
-        this.menuOnRequestClose = this.menuOnRequestClose.bind(this);
-        this.menuOnClick = this.menuOnClick.bind(this);
-    }
-
-    menuOnClick(event) {
-        // Prevents ghost click
-        event.preventDefault();
-
-        this.setState({
-            menuOpen: true,
-            anchorEl: event.currentTarget
-        });
-    }
-
-    menuOnRequestClose() {
-        this.setState({
-            menuOpen: false
-        });
     }
 
     render() {
         let {setIconSize, iconSize, settingsMenu} = this.props;
         return (
             <div style={styles.footer} >
-                <FlatButton
-                    onClick={this.menuOnClick}
-                    style={{
-                        height: "26px",
-                        position: "absolute",
-                        right: "150px"
-                    }}
-                    label="Settings"
-                    labelStyle={{
-                        fontSize: "10px",
-                        fontWeight: "bold",
-                        lineHeight: "24px"
-                    }}
-                />
-                <Popover
-                    open={this.state.menuOpen}
-                    anchorEl={this.state.anchorEl}
-                    anchorOrigin={{vertical: 'top', horizontal: 'right'}}
-                    targetOrigin={{vertical: 'bottom', horizontal: 'right'}}
-                    onRequestClose={this.menuOnRequestClose}
-                >
-                    {settingsMenu}
-                </Popover>
                 <input
                     type="range"
                     style={styles.slider}

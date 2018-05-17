@@ -17,6 +17,8 @@
 //
 
 import React, { Component } from 'react';
+import FlatButton from 'material-ui/FlatButton';
+import Popover from 'material-ui/Popover';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import ArrowDropRight from 'material-ui/svg-icons/navigation-arrow-drop-right';
@@ -40,20 +42,25 @@ class Layout extends React.Component {
 
     constructor(props) {
         super(props);
-        const imageComponentViewMode =
-            this.props.plateData? "Normal" : "Thumbnails";
+        const isSPW = this.props.plateData !== undefined;
+        const showThumbnails = isSPW? false : true;
         this.state = {
             iconSize: 50,
-            imageComponentViewMode: imageComponentViewMode,
+            imageComponentViewMode: "Normal",
             layout: "icon",   // "icon", "plot" or "table"
             dataProviders: [],
             tableData: {},
             selectedWellIds: [],
             showDatasets: true,
+            showThumbnails: showThumbnails,
             thumbnails: {},
+            menuOpen: false,
         }
         this.setIconSize = this.setIconSize.bind(this);
-        this.setShowDatasets = this.setShowDatasets.bind(this);
+        this.toggleShowDatasets = this.toggleShowDatasets.bind(this);
+        this.toggleShowThumbnails = this.toggleShowThumbnails.bind(this);
+        this.menuOnRequestClose = this.menuOnRequestClose.bind(this);
+        this.menuOnClick = this.menuOnClick.bind(this);
         this.handleAddData = this.handleAddData.bind(this);
         this.handleImageWellClicked = this.handleImageWellClicked.bind(this);
         this.setImagesWellsSelected = this.setImagesWellsSelected.bind(this);
@@ -67,9 +74,32 @@ class Layout extends React.Component {
         this.setState({layout: layout});
     }
 
-    setShowDatasets(event) {
-        let show = event.target.checked;
-        this.setState({showDatasets: show});
+    toggleShowDatasets(event) {
+        this.setState(prevState => {
+            return {showDatasets: !prevState.showDatasets};
+        });
+    }
+
+    toggleShowThumbnails(event) {
+        this.setState(prevState => {
+            return {showThumbnails: !prevState.showThumbnails};
+        });
+    }
+
+    menuOnClick(event) {
+        // Prevents ghost click
+        event.preventDefault();
+
+        this.setState({
+            menuOpen: true,
+            anchorEl: event.currentTarget
+        });
+    }
+
+    menuOnRequestClose() {
+        this.setState({
+            menuOpen: false
+        });
     }
 
     loadThumbnails() {
@@ -136,7 +166,7 @@ class Layout extends React.Component {
                 console.log("Error loading filters!", thrown);
             }
         );
-        if (this.state.imageComponentViewMode === "Thumbnails") {
+        if (this.state.showThumbnails) {
             this.loadThumbnails();
         }
     }
@@ -150,11 +180,11 @@ class Layout extends React.Component {
     componentDidUpdate(prevProps, prevState, snapshot) {
         const imageIds = this.props.filteredImages.map(v => v.id);
         const prevImageIds = prevProps.filteredImages.map(v => v.id);
-        const imageComponentViewMode = this.state.imageComponentViewMode;
-        const prevImageComponentViewMode = prevState.imageComponentViewMode;
+        const showThumbnails = this.state.showThumbnails;
+        const prevShowThumbnails = prevState.showThumbnails;
         if ((!_.isEqual(imageIds, prevImageIds)
-                || imageComponentViewMode !== prevImageComponentViewMode)
-                    && imageComponentViewMode === "Thumbnails") {
+                || (showThumbnails !== prevShowThumbnails))
+                    && this.state.showThumbnails) {
             this.loadThumbnails();
         }
     }
@@ -310,24 +340,15 @@ class Layout extends React.Component {
 
     renderSettingsMenu() {
         const heatmapMenuItems = this.renderHeatmapMenuItems();
-        const viewMenuItems = [
+        const modeMenuItems = [
             <MenuItem
                 insetChildren={true}
                 primaryText="Normal"
                 checked={this.state.imageComponentViewMode === "Normal"}
                 onClick={(event) => {
                     this.setState({
-                        imageComponentViewMode: "Normal"
-                    });
-                }}
-            />,
-            <MenuItem
-                insetChildren={true}
-                primaryText="Thumbnails"
-                checked={this.state.imageComponentViewMode === "Thumbnails"}
-                onClick={(event) => {
-                    this.setState({
-                        imageComponentViewMode: "Thumbnails"
+                        imageComponentViewMode: "Normal",
+                        heatmapTableData: undefined
                     });
                 }}
             />,
@@ -340,7 +361,26 @@ class Layout extends React.Component {
                 menuItems={heatmapMenuItems}
             />,
         ];
+        const viewMenuItems = [
+            <MenuItem
+                insetChildren={true}
+                primaryText="Dataset"
+                checked={this.state.showDatasets}
+                onClick={this.toggleShowDatasets}
+            />,
+            <MenuItem
+                insetChildren={true}
+                primaryText="Thumbnails"
+                checked={this.state.showThumbnails}
+                onClick={this.toggleShowThumbnails}
+            />,
+        ];
         return <Menu desktop={true}>
+            <MenuItem
+                primaryText="Mode"
+                rightIcon={<ArrowDropRight />}
+                menuItems={modeMenuItems}
+            />
             <MenuItem
                 primaryText="View"
                 rightIcon={<ArrowDropRight />}
@@ -350,14 +390,15 @@ class Layout extends React.Component {
     }
 
     render() {
-        if (this.props.plateData === undefined && this.props.filteredImages === undefined) {
+        if (this.props.plateData === undefined
+                && this.props.filteredImages === undefined) {
             return(<div></div>)
         }
         let filteredImages = this.props.filteredImages;
         let imageComponent;
-        let settingsMenu;
         let thumbnails = this.state.thumbnails;
-        if (this.state.imageComponentViewMode !== "Thumbnails") {
+        if (!this.state.showThumbnails
+                || this.state.imageComponentViewMode === "Heatmap") {
             thumbnails = {};
             filteredImages.forEach(v => {
                 thumbnails[v.id] = Layout.ONE_X_ONE_TRANSPARENT
@@ -404,7 +445,6 @@ class Layout extends React.Component {
                     heatmapTableData={this.state.heatmapTableData}
                     viewMode={this.state.imageComponentViewMode}
                     />)
-            settingsMenu = this.renderSettingsMenu();
         } else {
             imageComponent = (
                 <Dataset
@@ -418,7 +458,6 @@ class Layout extends React.Component {
                     heatmapTableData={this.state.heatmapTableData}
                     viewMode={this.state.imageComponentViewMode}
                     />)
-            settingsMenu = this.renderSettingsMenu();
         }
 
         return(
@@ -441,12 +480,28 @@ class Layout extends React.Component {
                             })}
                         </select>
                         <div className="layoutControls">
-                            <label>
-                                Show Datasets
-                                <input  type="checkbox"
-                                        checked={this.state.showDatasets}
-                                        onChange={this.setShowDatasets} />
-                            </label>
+                            <FlatButton
+                                onClick={this.menuOnClick}
+                                style={{
+                                    height: "22px",
+                                    marginRight: "2px"
+                                }}
+                                label="Settings"
+                                labelStyle={{
+                                    fontSize: "10px",
+                                    fontWeight: "bold",
+                                    lineHeight: "22px"
+                                }}
+                            />
+                            <Popover
+                                open={this.state.menuOpen}
+                                anchorEl={this.state.anchorEl}
+                                anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
+                                targetOrigin={{vertical: 'top', horizontal: 'right'}}
+                                onRequestClose={this.menuOnRequestClose}
+                            >
+                                {this.renderSettingsMenu()}
+                            </Popover>
                             <div>
                                 <button onClick={() => {this.setLayout("icon")}}
                                         className={"iconLayoutButton " + (this.state.layout === "icon" ? "checked" : "")} />
@@ -461,7 +516,7 @@ class Layout extends React.Component {
                     <Footer
                         iconSize={this.state.iconSize}
                         setIconSize={this.setIconSize}
-                        settingsMenu={settingsMenu} />
+                    />
                 </div>)
     }
 }
