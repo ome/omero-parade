@@ -142,6 +142,7 @@ class DataPlot extends React.Component {
             const x = tableData[xAxisName].data[image.id];
             const y = tableData[yAxisName].data[image.id];
 
+            {/* Tooltip info */}
             let properties = "";
             for (let key in tableData) {
                 if (key != xAxisName && key != yAxisName) {
@@ -155,7 +156,6 @@ class DataPlot extends React.Component {
             return (
                 <div
                     style={{
-                        position: "absolute",
                         left: left_position + '%',
                         top: top_position + '%'}}
                     key={image.id + (image.parent ? image.parent : "")}
@@ -169,35 +169,6 @@ class DataPlot extends React.Component {
                         properties}
                     onClick={event => {handleImageWellClicked(image, event)}}
                 ></div>
-                /*
-                <circle
-                    cx={left_position + '%'}
-                    cy={top_position + '%'}
-                    r="5"
-                    stroke="#33aba1"
-                    strokeWidth="1"
-                    fill="#1f4579"
-                    key={image.id + (image.parent ? image.parent : "")}
-                    className={classNames.join(" ")}
-                    data-id={image.id}
-                    data-wellid={image.wellId}
-                    title={image.name}
-                    onClick={event => {handleImageWellClicked(image, event)}}
-                />
-                */
-                /*<img alt="image"
-                    key={image.id + (image.parent ? image.parent : "")}
-                    className={classNames.join(" ")}
-                    data-id={image.id}
-                    data-wellid={image.wellId}
-                    src={src}
-                    title={image.name}
-                    onClick={event => {handleImageWellClicked(image, event)}}
-                    style={{
-                        left: left_position + '%',
-                        top: top_position + '%'
-                    }}
-                />*/
             )
         });
         const lineStyle = {
@@ -209,24 +180,28 @@ class DataPlot extends React.Component {
         const xAxisLabelValues = this.getAxisTicks(
             dataRanges, xAxisName, xAxisLabelScale);
         const xAxisTicks = xAxisLabelScale.map( (label, index) => {
-            let transform = ""
+            const xPos = label + "%";
             if (label == 0) {
-                transform = "translateX(1px)";
-            } else {
-                transform = "translateX(0px)";
-            }
-            if (label == 0 || label == 100) {
                 return (
                     <g>
-                        <line style={{
-                                stroke: "black", strokeWidth: 1,
-                                shapeRendering: "crispEdges",
-                                transform: transform}}
-                              x1={label + "%"}
-                              x2={label + "%"}
-                              y2="10">
+                        <line className="plot-x-tick-lines"
+                              x1={xPos} x2={xPos} y2="10"
+                              style={{transform: "translateX(1px)"}}>
                         </line>
-                        <text x={label + "%"} y="25" style={{transform: "translateX(-10px)"}}>
+                        <text x={xPos} y="25"
+                              style={{transform: "translateX(-10px)"}}>
+                            {xAxisLabelValues[index]}
+                        </text>
+                    </g>
+                )
+            } else if (label == 100) {
+                return (
+                    <g>
+                        <line className="plot-x-tick-lines"
+                              x1={xPos} x2={xPos} y2="10">
+                        </line>
+                        <text x={xPos} y="25"
+                              style={{transform: "translateX(-10px)"}}>
                             {xAxisLabelValues[index]}
                         </text>
                     </g>
@@ -234,20 +209,14 @@ class DataPlot extends React.Component {
             } else {
                 return (
                     <g>
-                        <line style={{
-                                stroke: "black", strokeWidth: 1,
-                                shapeRendering: "crispEdges",
-                                transform: transform}}
-                              x1={label + "%"}
-                              x2={label + "%"}
-                              y2="10">
-                            </line>
-                        <line style={{
-                                stroke: "gray", strokeWidth: 1,
-                                strokeDasharray: "5,5", shapeRendering: "crispEdges",
-                                transform: transform}}
-                              x1={label + "%"} x2={label + "%"} y2={-plotHeight}></line>
-                        <text x={label + "%"} y="25" style={{transform: "translateX(-10px)"}}>
+                        <line className="plot-x-tick-lines"
+                              x1={xPos} x2={xPos} y2="10">
+                        </line>
+                        <line className="plot-x-grid-lines"
+                              x1={xPos} x2={xPos} y2={-plotHeight}>
+                        </line>
+                        <text x={xPos} y="25"
+                              style={{transform: "translateX(-10px)"}}>
                             {xAxisLabelValues[index]}
                         </text>
                     </g>
@@ -257,19 +226,27 @@ class DataPlot extends React.Component {
         const yAxisLabelScale = [0, 33, 66, 100];
         const yAxisLabelValues = this.getAxisTicks(
             dataRanges, yAxisName, yAxisLabelScale);
-        {/* taken from css */}
         const yAxisTicks = yAxisLabelScale.map( (label, index) => {
-            if (label == 0 || label == 100) {
+            const yPos = (100 - label) * plotHeight / 100;
+            if (label == 0) {
                 return (
                     <g>
-                        <line style={{
-                                stroke: "black", strokeWidth: 1,
-                                shapeRendering: "crispEdges"}}
-                              y1={(100 - label) * plotHeight / 100}
-                              y2={(100 - label) * plotHeight / 100}
-                              x2="-10">
+                        <line className="plot-y-tick-lines"
+                              y1={yPos} y2={yPos} x2="-10">
                         </line>
-                        <text y={((100 - label) * plotHeight / 100) - 5} x="-45">
+                        <text x="-45" y={yPos - 5}>
+                            {yAxisLabelValues[index]}
+                        </text>
+                    </g>
+                )
+            } else if (label == 100) {
+                return (
+                    <g>
+                        <line className="plot-y-tick-lines"
+                              y1={yPos} y2={yPos} x2="-10"
+                              style={{transform: "translateY(1px)"}}>
+                        </line>
+                        <text x="-45" y={yPos - 5}>
                             {yAxisLabelValues[index]}
                         </text>
                     </g>
@@ -277,21 +254,13 @@ class DataPlot extends React.Component {
             } else {
                 return (
                     <g>
-                        <line style={{
-                                stroke: "black", strokeWidth: 1,
-                                shapeRendering: "crispEdges"}}
-                              y1={(100 - label) * plotHeight / 100}
-                              y2={(100 - label) * plotHeight / 100}
-                              x2="-10">
+                        <line className="plot-y-tick-lines"
+                              y1={yPos} y2={yPos} x2="-10">
                         </line>
-                        <line style={{
-                                stroke: "gray", strokeWidth: 1,
-                                strokeDasharray: "5,5", shapeRendering: "crispEdges"}}
-                              y1={(100 - label) * plotHeight / 100}
-                              y2={(100 - label) * plotHeight / 100}
-                              x2="100%">
+                        <line className="plot-y-grid-lines"
+                              y1={yPos} y2={yPos} x2="100%">
                         </line>
-                        <text y={((100 - label) * plotHeight / 100) - 5} x="-45">
+                        <text x="-45" y={yPos - 5}>
                             {yAxisLabelValues[index]}
                         </text>
                     </g>
@@ -301,28 +270,19 @@ class DataPlot extends React.Component {
         return (
             <div className="parade_centrePanel">
                 {/* The Plot */}
-                {/*}
-                <div className="thumbnail_plot">
-                    <div className="thumbnail_plot_canvas1" ref="thumb_plot_canvas1">
-                        <svg className="thumbnail_plot_canvas" ref="thumb_plot_canvas" style={{width: "100%", height: plotHeight - 20 + "px", overflow: "inherit"}}>
-                            {images}
-                        </svg>
-                    </div>
-                </div>
-                */}
                 <div className="thumbnail_plot">
                     <div className="thumbnail_plot_canvas" ref="thumb_plot_canvas" style={{zIndex: 1000}}>
                         {images}
                     </div>
                 </div>
                 {/* X Axis Ticks */}
-                <div className="xTicks" style={{zindex: -1, height: "40px", marginLeft: '75px', marginRight: '75px'}}>
+                <div className="plot-x-ticks">
                     <svg style={{width: "100%", resize: "both", fontSize: "10px", overflow: "inherit"}}>
                         {xAxisTicks}
                     </svg>
                 </div>
                 {/* X Axis Label */}
-                <div className="axis-x-label"  style={{zIndex: -1, textAlign: "center"}}>
+                <div className="plot-x-label">
                     <select onChange={(event) => {this.setAxisName('x', event, yAxisName)}}
                             value={xAxisName}
                             style={styles.xAxisSelect}>
@@ -330,19 +290,13 @@ class DataPlot extends React.Component {
                     </select>
                 </div>
                 {/* Y AXis Ticks */}
-                <div className="yTicks" style={{zIndex: -1, marginLeft: '75px', marginRight: '75px', transform: "translateY(-509px)"}}>
+                <div className="plot-y-ticks">
                     <svg style={{width: "100%", resize: "both", fontSize: "10px", overflow: "inherit"}}>
                         {yAxisTicks}
                     </svg>
                 </div>
                 {/* Y Axis Label */}
-                <div className="axis y"
-                     style={{
-                        zIndex: -1,
-                        transformOrigin: "center",
-                        transform: "translate(-50%, 0) rotate(-90deg) translate(450px, 15px)",
-                        textAlign: "center"
-                    }}>
+                <div className="plot-y-label">
                     <select onChange={(event) => {this.setAxisName('y', event, xAxisName)}}
                             value={yAxisName}
                             style={styles.yAxisSelect}>

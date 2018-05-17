@@ -370,14 +370,15 @@ input[type=range].parade:focus::-ms-fill-upper {
   box-sizing: border-box;
   border: solid black 1px;
   position: relative;
+  min-width: 650px;
 }
 
 .thumbnail_plot_canvas {
   width: 100%;
-  min-width: 650px;
   height: 100%;
   box-sizing: border-box;
   position: relative;
+  z-index: 999;
 }
 
 .thumbnail_plot img {
@@ -396,18 +397,75 @@ input[type=range].parade:focus::-ms-fill-upper {
 }
 
 .parade_centrePanel .thumbnail_plot_canvas .data-point {
+  position: absolute;
   height: 10px;
   width: 10px;
   background-color: #1f4579;
-  border-radius: 50%
+  border-radius: 50%;
 }
 
 .parade_centrePanel .thumbnail_plot_canvas .ui-selected {
-  background-color: #33aba1
+  background-color: #33aba1;
 }
 
 .parade_centrePanel tr.ui-selected {
-  background-color: #33aba1
+  background-color: #33aba1;
+}
+
+.parade_centrePanel .plot-x-ticks {
+  z-index: -1;
+  height: 40px;
+  margin-left: 75px;
+  margin-right: 75px;
+  min-width: 650px;
+}
+
+.parade_centrePanel .plot-x-label {
+  min-width: 850px;
+  z-index: -1;
+  text-align: center;
+}
+
+.parade_centrePanel .plot-y-ticks {
+  z-index: -1;
+  margin-left: 75px;
+  margin-right: 75px;
+  transform: translateY(-509px);
+  min-width: 650px;
+}
+
+.parade_centrePanel .plot-y-label {
+  z-index: -1;
+  transform-origin: center;
+  transform: translate(-50%, 0) rotate(-90deg) translate(450px, 15px);
+  text-align: center;
+  width: 450px;
+}
+
+.parade_centrePanel line.plot-x-tick-lines {
+  stroke: black;
+  stroke-width: 1;
+  shape-rendering: crispedges;
+}
+
+.parade_centrePanel line.plot-x-grid-lines {
+  stroke: lightgray;
+  stroke-width: 1;
+  shape-rendering: crispedges;
+  stroke-dasharray: 5,5;
+}
+
+.parade_centrePanel line.plot-y-tick-lines {
+  stroke: black;
+  stroke-width: 1;
+  shape-rendering: crispedges;
+}
+
+.parade_centrePanel line.plot-y-grid-lines {
+  stroke: lightgray;
+  stroke-width: 1;
+  shape-rendering: crispedges;
+  stroke-dasharray: 5,5;
 }
 
 .plateGrid td.ui-selected img {
