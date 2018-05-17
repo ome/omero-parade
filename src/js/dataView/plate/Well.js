@@ -45,8 +45,7 @@ class Well extends React.Component {
                viewMode} = this.props;
 
         const selectedTableData = tableData[heatmapTableData];
-        let heatmapColor = "rgba(255,255,255,0)";   // transparent by default
-        let title = "" + row + col; // E.g. A1
+        const title = "" + row + col; // E.g. A1
         let imgStyle = {width: iconSize + 'px', maxHeight: iconSize + 'px'};
         if (hidden) {
             imgStyle.opacity = 0.1;
@@ -81,7 +80,7 @@ class Well extends React.Component {
             <td className={className.join(" ")}
                 data-wellid={id}
                 data-imageid={iid}
-                title={""+row+col}>
+                title={title}>
                 <div
                     style={divStyle}
                     onClick={event => {handleWellClick(event, id)}}
