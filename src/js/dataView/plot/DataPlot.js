@@ -79,7 +79,9 @@ class DataPlot extends React.Component {
                         this.props.imgJson.find(v => v.id === imageId)
                     );
                 });
-                this.props.setImagesWellsSelected(dtype, images);
+                if (images.length > 0) {
+                    this.props.setImagesWellsSelected(dtype, images);
+                }
             },
         });
     }
