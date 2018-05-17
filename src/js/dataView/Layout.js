@@ -463,7 +463,6 @@ class Layout extends React.Component {
         return(
                 <div className="parade_layout_container">
                     <div className="layoutHeader">
-                        <Progress loading={this.state.loading}/>
                         <select value={"--"} onChange={this.handleAddData}>
                             <option
                                 value="--" >
@@ -479,6 +478,7 @@ class Layout extends React.Component {
                                 );
                             })}
                         </select>
+                        <Progress loading={this.state.loading}/>
                         <div className="layoutControls">
                             <FlatButton
                                 onClick={this.menuOnClick}

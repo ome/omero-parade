@@ -150,7 +150,6 @@ class ParadeFilter extends React.Component {
         return(
             <div className="parade_filter">
                 <div className="parade_filter_controls">
-                    <Progress loading={this.state.loading}/>
                     {this.props.name}
                     {this.state.filterParams.map(p => {
                         return <FilterInput
@@ -162,6 +161,7 @@ class ParadeFilter extends React.Component {
                                     value={this.props.filterValues[p.name]}
                                 />
                     })}
+                    <Progress loading={this.state.loading}/>
                 </div>
                 <div className="sparkline">
                     <span className="minimum">{this.state.minimum}</span>

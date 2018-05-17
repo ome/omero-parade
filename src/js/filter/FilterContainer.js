@@ -92,7 +92,6 @@ class FilterContainer extends React.Component {
     render() {
         return(
             <div className="filterContainer">
-                <Progress loading={this.state.loading}/>
                 <select value={"--"} onChange={this.handleAddFilter}>
                     <option
                         value="--" >
@@ -108,6 +107,7 @@ class FilterContainer extends React.Component {
                         );
                     })}
                 </select>
+                <Progress loading={this.state.loading}/>
                 <br />
                 {
                     this.props.filterNames.map((fname, idx) => (
