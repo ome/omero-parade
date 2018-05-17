@@ -353,6 +353,7 @@ input[type=range].parade:focus::-ms-fill-upper {
   text-align: center;
   font-size: 110%;
   padding: 3px;
+  vertical-align: middle;
 }
 
 .layoutHeader {
@@ -373,6 +374,7 @@ input[type=range].parade:focus::-ms-fill-upper {
 
 .thumbnail_plot_canvas {
   width: 100%;
+  min-width: 650px;
   height: 100%;
   box-sizing: border-box;
   position: relative;
