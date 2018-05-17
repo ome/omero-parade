@@ -108,21 +108,30 @@ class Layout extends React.Component {
         if (imageIds.length < 1) {
             return;
         }
-        this.props.thumbnailLoader.getThumbnails(imageIds, (response) => {
-            this.setState(prevState => {
-                let thumbnails = prevState.thumbnails;
-                for (const imageId in response.data) {
-                    thumbnails[imageId] = response.data[imageId];
-                }
-                return {thumbnails: thumbnails};
-            });
-        }, (thrown) => {
-            if (axios.isCancel(thrown)) {
-                return;
-            }
-            // TODO: Put this error somewhere "correct"
-            console.log("Error loading thumbnails!", thrown);
-        }, this.source.token);
+        // No more than 6 batches of thumbnails to be loaded at once
+        const thumbnailsBatch = config.thumbnailsBatch * 6;
+        for (let i = 0, j = imageIds.length; i < j; i += thumbnailsBatch) {
+            this.props.thumbnailLoader.getThumbnails(
+                imageIds.slice(i, i + thumbnailsBatch),
+                (response) => {
+                    this.setState(prevState => {
+                        let thumbnails = prevState.thumbnails;
+                        for (const imageId in response.data) {
+                            thumbnails[imageId] = response.data[imageId];
+                        }
+                        return {thumbnails: thumbnails};
+                    });
+                },
+                (thrown) => {
+                    if (axios.isCancel(thrown)) {
+                        return;
+                    }
+                    // TODO: Put this error somewhere "correct"
+                    console.log("Error loading thumbnails!", thrown);
+                },
+                this.source.token
+            );
+        }
     }
 
     componentDidMount() {
