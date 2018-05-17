@@ -502,7 +502,7 @@ class Layout extends React.Component {
                         <select value={"--"} onChange={this.handleAddData}>
                             <option
                                 value="--" >
-                                Add table data...
+                                Add data...
                             </option>
                             {this.state.dataProviders.map(function(n, i){
                                 return (
