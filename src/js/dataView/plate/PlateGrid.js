@@ -38,9 +38,17 @@ class PlateGrid extends React.Component {
                     const imageId = parseInt(
                         element.getAttribute('data-imageid'), 10
                     );
-                    images.push(
-                        this.props.filteredImages.find(v => v.id === imageId)
+                    const wellId = parseInt(
+                        element.getAttribute('data-wellid'), 10
                     );
+                    const field = parseInt(
+                        element.getAttribute('field'), 10
+                    );
+                    images.push({
+                        id: imageId,
+                        wellId: wellId,
+                        field: field
+                    });
                 });
                 this.props.setImagesWellsSelected('well', images);
             },
@@ -74,6 +82,7 @@ class PlateGrid extends React.Component {
                             key={well.wellId}
                             id={well.wellId}
                             iid={well.id}
+                            field={well.field}
                             thumb_url={this.props.thumbnails[well.id]}
                             selected={selected}
                             hidden={hidden}

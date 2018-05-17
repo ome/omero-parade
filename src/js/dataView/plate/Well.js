@@ -33,6 +33,7 @@ class Well extends React.Component {
     render() {
         let {id,
                iid,
+               field,
                iconSize,
                selected,
                hidden,
@@ -80,6 +81,7 @@ class Well extends React.Component {
             <td className={className.join(" ")}
                 data-wellid={id}
                 data-imageid={iid}
+                data-field={field}
                 title={title}>
                 <div
                     style={divStyle}
