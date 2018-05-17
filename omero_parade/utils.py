@@ -103,13 +103,14 @@ def get_well_ids(conn, plate_id):
     return [i[0].val for i in p]
 
 
-def get_screen_well_image_ids(conn, screen_id):
+def get_screen_well_image_ids(conn, screen_id, field_id=0):
     """Get dict of {wellId: imageId} for Screen"""
 
     conn.SERVICE_OPTS.setOmeroGroup('-1')
     query_service = conn.getQueryService()
     params = ParametersI()
     params.addId(screen_id)
+    params.add('wsidx', rint(field_id))
     query = "select well.id, img.id "\
             "from Well well "\
             "join well.plate plate "\
@@ -117,7 +118,7 @@ def get_screen_well_image_ids(conn, screen_id):
             "join s_link.parent screen " \
             "join well.wellSamples ws "\
             "join ws.image img "\
-            "where screen.id = :id"
+            "where screen.id = :id and index(ws) = :wsidx"
     p = query_service.projection(query, params, conn.SERVICE_OPTS)
     img_ids = {}
     for i in p:
