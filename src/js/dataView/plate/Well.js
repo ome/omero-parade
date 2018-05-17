@@ -100,7 +100,7 @@ class Well extends React.Component {
                             fontColor: "white"
                         }}
                     >
-                        <span style={{fontColor: "white"}}>
+                        <span style={{color: "white"}}>
                             {heatmapValue}
                         </span>
                     </div>

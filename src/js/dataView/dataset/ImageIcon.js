@@ -106,7 +106,7 @@ class ImageIcon extends React.Component {
                             transform: "translate(-50%, -50%)"
                         }}
                     >
-                        <span style={{fontColor: "white"}}>
+                        <span style={{color: "white"}}>
                             {this.props.heatmapValue}
                         </span>
                     </div>
