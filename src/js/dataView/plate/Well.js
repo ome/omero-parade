@@ -18,6 +18,7 @@
 
 import React, { Component } from 'react';
 
+import Layout from '../Layout';
 import { getHeatmapColor } from '../../util';
 import config from '../../config';
 
@@ -68,9 +69,13 @@ class Well extends React.Component {
 
         let imgClassName = "";
         let src = this.props.thumb_url;
-        if (!src && !hidden) {
-            imgClassName = "waiting";
-            src = config.staticPrefix + "webgateway/img/spacer.gif";
+        if (!src) {
+            if (hidden) {
+                src = Layout.ONE_X_ONE_GROUP_GRAY;
+            } else {
+                imgClassName = "waiting";
+                src = config.staticPrefix + "webgateway/img/spacer.gif";
+            }
         }
         return (
             <td className={className.join(" ")}

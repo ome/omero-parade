@@ -36,8 +36,15 @@ import config from '../config';
 
 class Layout extends React.Component {
 
+    // 1x1 transparent GIF
     static get ONE_X_ONE_TRANSPARENT() {
         return "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
+    }
+
+    // 1x1 opaque PNG which is the same colour as the group/user selection
+    // dialog
+    static get ONE_X_ONE_GROUP_GRAY() {
+        return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mOMS837DwAEjAIylmNwUwAAAABJRU5ErkJggg==";
     }
 
     constructor(props) {
@@ -409,9 +416,10 @@ class Layout extends React.Component {
         if (!this.state.showThumbnails
                 || this.state.imageComponentViewMode === "Heatmap") {
             thumbnails = {};
-            filteredImages.forEach(v => {
-                thumbnails[v.id] = Layout.ONE_X_ONE_TRANSPARENT
-            });
+            const isSPW = this.props.plateData !== undefined;
+            const thumbnail =
+                isSPW? Layout.ONE_X_ONE_GROUP_GRAY : ONE_X_ONE_TRANSPARENT;
+            filteredImages.forEach(v => {thumbnails[v.id] = thumbnail});
         }
         if (this.state.layout === "table") {
             imageComponent = (
