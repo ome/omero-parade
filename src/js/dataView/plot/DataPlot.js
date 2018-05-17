@@ -54,14 +54,16 @@ class DataPlot extends React.Component {
         let dtype = this.props.imgJson[0].wellId ? 'well' : 'image';
         let idAttr = (dtype === 'well' ? 'data-wellid': 'data-id')
         $(this.refs.thumb_plot_canvas).selectable({
-            filter: 'img',
+            filter: 'div',
             distance: 2,
             stop: () => {
                 // Make the same selection in the jstree etc
+                console.log("Selecting things");
                 let ids = [];
                 $(".thumbnail_plot_canvas .ui-selected").each(function(){
                     ids.push(parseInt($(this).attr(idAttr), 10));
                 });
+                console.log("Selected ids", dtype, ids);
                 this.props.setImagesWellsSelected(dtype, ids);
             },
         });
@@ -140,11 +142,50 @@ class DataPlot extends React.Component {
             const x = tableData[xAxisName].data[image.id];
             const y = tableData[yAxisName].data[image.id];
 
+            let properties = "";
+            for (let key in tableData) {
+                if (key != xAxisName && key != yAxisName) {
+                    properties += "\n" + key + ": " + tableData[key].data[image.id];
+                }
+            }
+
             let left_position = this.getAxisPercent(dataRanges, xAxisName, x);
             let top_position = (100 - this.getAxisPercent(dataRanges, yAxisName, y));
-
+            classNames.push("data-point");
             return (
-                <img alt="image"
+                <div
+                    style={{
+                        position: "absolute",
+                        left: left_position + '%',
+                        top: top_position + '%'}}
+                    key={image.id + (image.parent ? image.parent : "")}
+                    className={classNames.join(" ")}
+                    data-id={image.id}
+                    data-wellid={image.wellId}
+                    title={
+                        "Image Name: " + image.name +
+                        "\n" + xAxisName + ": " + x +
+                        "\n" + yAxisName + ": " + y +
+                        properties}
+                    onClick={event => {handleImageWellClicked(image, event)}}
+                ></div>
+                /*
+                <circle
+                    cx={left_position + '%'}
+                    cy={top_position + '%'}
+                    r="5"
+                    stroke="#33aba1"
+                    strokeWidth="1"
+                    fill="#1f4579"
+                    key={image.id + (image.parent ? image.parent : "")}
+                    className={classNames.join(" ")}
+                    data-id={image.id}
+                    data-wellid={image.wellId}
+                    title={image.name}
+                    onClick={event => {handleImageWellClicked(image, event)}}
+                />
+                */
+                /*<img alt="image"
                     key={image.id + (image.parent ? image.parent : "")}
                     className={classNames.join(" ")}
                     data-id={image.id}
@@ -156,7 +197,7 @@ class DataPlot extends React.Component {
                         left: left_position + '%',
                         top: top_position + '%'
                     }}
-                />
+                />*/
             )
         });
         const lineStyle = {
@@ -260,19 +301,28 @@ class DataPlot extends React.Component {
         return (
             <div className="parade_centrePanel">
                 {/* The Plot */}
+                {/*}
                 <div className="thumbnail_plot">
-                    <div className="thumbnail_plot_canvas" ref="thumb_plot_canvas">
+                    <div className="thumbnail_plot_canvas1" ref="thumb_plot_canvas1">
+                        <svg className="thumbnail_plot_canvas" ref="thumb_plot_canvas" style={{width: "100%", height: plotHeight - 20 + "px", overflow: "inherit"}}>
+                            {images}
+                        </svg>
+                    </div>
+                </div>
+                */}
+                <div className="thumbnail_plot">
+                    <div className="thumbnail_plot_canvas" ref="thumb_plot_canvas" style={{zIndex: 1000}}>
                         {images}
                     </div>
                 </div>
                 {/* X Axis Ticks */}
-                <div className="xTicks" style={{height: "40px", marginLeft: '75px', marginRight: '75px'}}>
+                <div className="xTicks" style={{zindex: -1, height: "40px", marginLeft: '75px', marginRight: '75px'}}>
                     <svg style={{width: "100%", resize: "both", fontSize: "10px", overflow: "inherit"}}>
                         {xAxisTicks}
                     </svg>
                 </div>
                 {/* X Axis Label */}
-                <div className="axis-x-label"  style={{textAlign: "center"}}>
+                <div className="axis-x-label"  style={{zIndex: -1, textAlign: "center"}}>
                     <select onChange={(event) => {this.setAxisName('x', event, yAxisName)}}
                             value={xAxisName}
                             style={styles.xAxisSelect}>
@@ -280,7 +330,7 @@ class DataPlot extends React.Component {
                     </select>
                 </div>
                 {/* Y AXis Ticks */}
-                <div className="yTicks" style={{marginLeft: '75px', marginRight: '75px', transform: "translateY(-509px)"}}>
+                <div className="yTicks" style={{zIndex: -1, marginLeft: '75px', marginRight: '75px', transform: "translateY(-509px)"}}>
                     <svg style={{width: "100%", resize: "both", fontSize: "10px", overflow: "inherit"}}>
                         {yAxisTicks}
                     </svg>
@@ -288,6 +338,7 @@ class DataPlot extends React.Component {
                 {/* Y Axis Label */}
                 <div className="axis y"
                      style={{
+                        zIndex: -1,
                         transformOrigin: "center",
                         transform: "translate(-50%, 0) rotate(-90deg) translate(450px, 15px)",
                         textAlign: "center"

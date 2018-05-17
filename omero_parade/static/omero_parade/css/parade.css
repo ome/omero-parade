@@ -393,6 +393,21 @@ input[type=range].parade:focus::-ms-fill-upper {
   border: solid #87ABD2 3px;
 }
 
+.parade_centrePanel .thumbnail_plot_canvas .data-point {
+  height: 10px;
+  width: 10px;
+  background-color: #1f4579;
+  border-radius: 50%
+}
+
+.parade_centrePanel .thumbnail_plot_canvas .ui-selected {
+  background-color: #33aba1
+}
+
+.parade_centrePanel tr.ui-selected {
+  background-color: #33aba1
+}
+
 .plateGrid td.ui-selected img {
   border: solid transparent 3px;
 }
