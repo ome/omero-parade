@@ -115,10 +115,12 @@ class Layout extends React.Component {
         if (imageIds.length < 1) {
             return;
         }
+        this.setState({loadingThumbnails: true});
         // No more than 6 batches of thumbnails to be loaded at once
         const thumbnailsBatch = config.thumbnailsBatch * 6;
+        let promises = [];
         for (let i = 0, j = imageIds.length; i < j; i += thumbnailsBatch) {
-            this.props.thumbnailLoader.getThumbnails(
+            promises.push(this.props.thumbnailLoader.getThumbnails(
                 imageIds.slice(i, i + thumbnailsBatch),
                 (response) => {
                     this.setState(prevState => {
@@ -130,15 +132,24 @@ class Layout extends React.Component {
                     });
                 },
                 (thrown) => {
-                    if (axios.isCancel(thrown)) {
-                        return;
-                    }
-                    // TODO: Put this error somewhere "correct"
-                    console.log("Error loading thumbnails!", thrown);
+                    throw thrown;
                 },
                 this.source.token
-            );
+            ));
         }
+        Promise.all(promises).then(
+            () => {
+                this.setState({loadingThumbnails: false});
+            },
+            (thrown) => {
+                if (axios.isCancel(thrown)) {
+                    return;
+                }
+                this.setState({loadingThumbnails: false});
+                // TODO: Put this error somewhere "correct"
+                console.log("Error loading thumbnails!", thrown);
+            }
+        );
     }
 
     componentDidMount() {
@@ -405,6 +416,18 @@ class Layout extends React.Component {
         </Menu>
     }
 
+    renderThumbnailProgress() {
+        if (!this.state.loadingThumbnails) {
+            return null;
+        }
+        const a = Object.keys(this.state.thumbnails).length;
+        const b = this.props.filteredImages.length;
+        return <span>
+            <Progress loading={this.state.loadingThumbnails}/>
+            Thumbnails {Math.round(a / b * 100)}%
+        </span>
+    }
+
     render() {
         if (this.props.plateData === undefined
                 && this.props.filteredImages === undefined) {
@@ -497,6 +520,7 @@ class Layout extends React.Component {
                         </select>
                         <Progress loading={this.state.loading}/>
                         <div className="layoutControls">
+                            {this.renderThumbnailProgress()}
                             <FlatButton
                                 onClick={this.menuOnClick}
                                 style={{
