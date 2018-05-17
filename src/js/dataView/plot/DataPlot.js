@@ -58,12 +58,10 @@ class DataPlot extends React.Component {
             distance: 2,
             stop: () => {
                 // Make the same selection in the jstree etc
-                console.log("Selecting things");
                 let ids = [];
                 $(".thumbnail_plot_canvas .ui-selected").each(function(){
                     ids.push(parseInt($(this).attr(idAttr), 10));
                 });
-                console.log("Selected ids", dtype, ids);
                 this.props.setImagesWellsSelected(dtype, ids);
             },
         });
