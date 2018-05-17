@@ -17,6 +17,7 @@
 
 from django.http import JsonResponse
 import json
+from collections import defaultdict
 from omero.sys import ParametersI
 from omero_parade.utils import \
     get_screen_well_ids, \
@@ -25,7 +26,7 @@ from omero_parade.utils import \
 
 
 def get_filters(request, conn):
-    return ["Rating", "Comment", "Tag"]
+    return ["Rating", "Comment", "Tag", "Key_Value"]
 
 
 def get_script(request, script_name, conn):
@@ -53,13 +54,12 @@ def get_script(request, script_name, conn):
     else:
         obj_ids = [long(i) for i in image_ids]
     query_service = conn.getQueryService()
+    params = ParametersI()
+    # Include "-1" so that if we have no object IDs that the query does
+    # not fail.  It will not match anything.
+    params.addIds([-1] + obj_ids)
 
     if script_name == "Rating":
-
-        params = ParametersI()
-        # Include "-1" so that if we have no object IDs that the query does
-        # not fail.  It will not match anything.
-        params.addIds([-1] + obj_ids)
         query = """select oal from %sAnnotationLink as oal
             join fetch oal.details.owner
             left outer join fetch oal.child as ch
@@ -93,11 +93,6 @@ def get_script(request, script_name, conn):
             })
 
     if script_name == "Comment":
-
-        params = ParametersI()
-        # Include "-1" so that if we have no object IDs that the query does
-        # not fail.  It will not match anything.
-        params.addIds([-1] + obj_ids)
         query = """select oal from %sAnnotationLink as oal
             left outer join fetch oal.child as ch
             left outer join oal.parent as pa
@@ -133,11 +128,6 @@ def get_script(request, script_name, conn):
             })
 
     if script_name == "Tag":
-
-        params = ParametersI()
-        # Include "-1" so that if we have no object IDs that the query does
-        # not fail.  It will not match anything.
-        params.addIds([-1] + obj_ids)
         query = """select oal from %sAnnotationLink as oal
             left outer join fetch oal.child as ch
             left outer join oal.parent as pa
@@ -174,6 +164,54 @@ def get_script(request, script_name, conn):
                           'default': "Choose_Tag",
                           'values': all_tags,
                           }]
+        return JsonResponse(
+            {
+                'f': f,
+                'params': filter_params,
+            })
+
+    if script_name == "Key_Value":
+        query = """select oal from %sAnnotationLink as oal
+            left outer join fetch oal.child as ch
+            left outer join oal.parent as pa
+            where pa.id in (:ids) and ch.class=MapAnnotation""" % dtype
+        links = query_service.findAllByQuery(query, params, conn.SERVICE_OPTS)
+        # Dict of {'key': {iid: 'value', iid: 'value'}}
+        map_values = defaultdict(dict)
+        for l in links:
+            iid = l.parent.id.val
+            for kv in l.child.getMapValue():
+                map_values[kv.name][iid] = kv.value
+
+        key_placeholder = "Pick key..."
+        # Return a JS function that will be passed a data object
+        # e.g. {'type': 'Image', 'id': 1}
+        # and a params object of {'paramName': value}
+        # and should return true or false
+        f = """
+(function filter(data, params) {
+    var map_values = %s;
+    var key_placeholder = "%s";
+    if (params.key === key_placeholder) return true;
+    if (map_values[params.key] && map_values[params.key][data.%s]) {
+        var match = map_values[params.key][data.%s].indexOf(params.query) > -1;
+        return (params.query === '' || match);
+    }
+    return false;
+})
+        """ % (json.dumps(map_values), key_placeholder, js_object_attr,
+               js_object_attr)
+
+        keys = map_values.keys()
+        keys.sort(key=lambda x: x.lower())
+
+        filter_params = [{'name': 'key',
+                          'type': 'text',
+                          'values': [key_placeholder] + keys,
+                          'default': key_placeholder},
+                         {'name': 'query',
+                          'type': 'text',
+                          'default': ''}]
         return JsonResponse(
             {
                 'f': f,
