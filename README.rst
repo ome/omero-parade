@@ -16,6 +16,8 @@ Requirements
 
 * OMERO 5.4.0 or newer.
 
+Note that OMERO.parade is compatible with OMERO 5.4.0 but it works
+best with OMERO 5.4.6 or newer.
 
 Installing from PyPI
 ====================
