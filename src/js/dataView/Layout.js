@@ -17,6 +17,7 @@
 //
 
 import React, { Component } from 'react';
+import CircularProgress from 'material-ui/CircularProgress';
 import FlatButton from 'material-ui/FlatButton';
 import Popover from 'material-ui/Popover';
 import Menu from 'material-ui/Menu';
@@ -30,7 +31,6 @@ import Dataset from './dataset/Dataset';
 import PlateGrid from './plate/PlateGrid';
 import DataPlot from './plot/DataPlot';
 import Tables from './table/Tables';
-import Progress from '../filter/Progress';
 import Footer from '../Footer';
 import config from '../config';
 
@@ -418,10 +418,22 @@ class Layout extends React.Component {
         }
         const a = Object.keys(this.state.thumbnails).length;
         const b = this.props.filteredImages.length;
+        const value = Math.round(a / b * 100)
         return <span>
-            <Progress loading={this.state.loadingThumbnails}/>
-            Thumbnails {Math.round(a / b * 100)}%
+            <CircularProgress
+                color="#5e656e"
+                mode="determinate"
+                size={12}
+                value={value}
+            />
         </span>
+    }
+
+    renderAddDataProgress() {
+        if (!this.state.loading) {
+            return null;
+        }
+        <CircularProgress color="#5e656e" size={12} />
     }
 
     render() {
@@ -514,7 +526,7 @@ class Layout extends React.Component {
                                 );
                             })}
                         </select>
-                        <Progress loading={this.state.loading}/>
+                        {this.renderAddDataProgress()}
                         <div className="layoutControls">
                             {this.renderThumbnailProgress()}
                             <FlatButton

@@ -18,11 +18,11 @@
 
 import React, { Component } from 'react';
 import { Sparklines, SparklinesBars } from 'react-sparklines';
+import CircularProgress from 'material-ui/CircularProgress';
 import axios from 'axios';
 import qs from 'qs';
 
 import FilterInput from './FilterInput';
-import Progress from './Progress';
 import config from '../config';
 
 
@@ -146,6 +146,13 @@ class ParadeFilter extends React.Component {
         }
     }
 
+    renderProgress() {
+        if (!this.state.loading) {
+            return null;
+        }
+        return <CircularProgress color="#5e656e" size={12} />
+    }
+
     render() {
         return(
             <div className="parade_filter">
@@ -161,7 +168,7 @@ class ParadeFilter extends React.Component {
                                     value={this.props.filterValues[p.name]}
                                 />
                     })}
-                    <Progress loading={this.state.loading}/>
+                    {this.renderProgress()}
                 </div>
                 <div className="sparkline">
                     <span className="minimum">{this.state.minimum}</span>

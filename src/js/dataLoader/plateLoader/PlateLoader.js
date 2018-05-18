@@ -17,11 +17,11 @@
 //
 
 import React, { Component } from 'react';
+import CircularProgress from 'material-ui/CircularProgress';
 import _ from 'lodash';
 import axios from 'axios';
 
 import FilterHub from '../../filter/FilterHub';
-import Progress from '../../filter/Progress';
 import config from '../../config';
 
 class PlateLoader extends React.Component {
@@ -180,7 +180,7 @@ class PlateLoader extends React.Component {
                 .reduce((a, b) => a.concat(b), []);  // Flatten each row
         if (this.state.loading) {
             return <div>
-                <Progress loading={this.state.loading}/><span>Loading...</span>
+                <CircularProgress color="#5e656e" size={12} /><span>Loading...</span>
             </div>
         }
         return (<FilterHub

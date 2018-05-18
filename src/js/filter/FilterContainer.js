@@ -17,11 +17,11 @@
 //
 
 import React, { Component } from 'react';
+import CircularProgress from 'material-ui/CircularProgress';
 import axios from 'axios';
 import qs from 'qs';
 
 import ParadeFilter from './ParadeFilter';
-import Progress from './Progress';
 import config from '../config';
 
 
@@ -89,6 +89,13 @@ class FilterContainer extends React.Component {
         }
     }
 
+    renderProgress() {
+        if (!this.state.loading) {
+            return null;
+        }
+        return <CircularProgress color="#5e656e" size={12} />
+    }
+
     render() {
         return(
             <div className="filterContainer">
@@ -107,7 +114,7 @@ class FilterContainer extends React.Component {
                         );
                     })}
                 </select>
-                <Progress loading={this.state.loading}/>
+                {this.renderProgress()}
                 <br />
                 {
                     this.props.filterNames.map((fname, idx) => (
