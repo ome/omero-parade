@@ -7,7 +7,7 @@
 OMERO.parade
 ============
 
-An OMERO.web app for displaying Dataset thumbnails or Plates in OMERO.web centre panel
+An OMERO.web app for filtering Data in OMERO.web centre panel.
 
 For full details see `SUPPORT.md <https://github.com/ome/omero-parade/blob/master/SUPPORT.md>`_.
 
