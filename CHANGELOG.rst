@@ -7,7 +7,7 @@ Data mining tool for Images stored in OMERO
 
 This version includes:
 
-  - display thumbnails for all datasets within a project
+  - display thumbnails for all Datasets within a Project
   - filter Dataset and Plate data 
   - filter by Rating, Tag, Comment, Map Annotation, OMERO.table and ROI count
   - add column data to the display
