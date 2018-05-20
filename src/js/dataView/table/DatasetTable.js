@@ -65,7 +65,7 @@ class DatasetTable extends React.Component {
                 )
             });
             return (
-                <tr key={image.id + (image.parent ? image.parent : "")}>
+                <tr className={classNames.join(" ")} key={image.id + (image.parent ? image.parent : "")}>
                     <td><img alt="image"
                             className={classNames.join(" ")}
                             width={iconSize + "px"}
