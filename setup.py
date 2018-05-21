@@ -29,7 +29,7 @@ from setuptools import setup, find_packages
 
 VERSION = "0.1.0"
 
-DESCRIPTION = "OMERO.parade creation app"
+DESCRIPTION = "A Python plugin for OMERO.web"
 AUTHOR = "The Open Microscopy Team"
 LICENSE = "AGPL-3.0"
 HOMEPAGE = "https://github.com/ome/omero-parade"
@@ -109,7 +109,7 @@ setup(name="omero-parade",
       description=DESCRIPTION,
       long_description=read_file('README.rst'),
       classifiers=[
-          'Development Status :: 5 - Production/Stable',
+          'Development Status :: 3 - Alpha',
           'Environment :: Web Environment',
           'Framework :: Django',
           'Intended Audience :: End Users/Desktop',
