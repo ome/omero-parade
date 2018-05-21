@@ -98,6 +98,19 @@ class ParadeFilter extends React.Component {
         }
     }
 
+    // Formats float to 2 places. Otherwise returns value.
+    formatNumber(value) {
+        let num = parseFloat(value);
+        if (isNaN(num)) {
+            return value
+        }
+        if (parseInt(num) === num) {
+           return value
+        } else {
+            return num.toFixed(2)
+        }
+    }
+
     render() {
         return(
             <div className="parade_filter">
@@ -115,11 +128,15 @@ class ParadeFilter extends React.Component {
                     })}
                 </div>
                 <div className="sparkline">
-                    <span className="minimum">{this.state.minimum}</span>
+                    <span className="minimum">
+                        {this.formatNumber(this.state.minimum)}
+                    </span>
                     <Sparklines data={this.state.histogram}>
                         <SparklinesBars />
                     </Sparklines>
-                    <span className="maximum">{this.state.maximum}</span>
+                    <span className="maximum">
+                        {this.formatNumber(this.state.maximum)}
+                    </span>
                 </div>
                 <button
                     className="parade_removeFilter"
