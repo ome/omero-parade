@@ -1,3 +1,8 @@
+0.1.1 (Jun 2018)
+----------------
+
+Update the readme to remove the top link installation
+
 0.1.0 (May 2018)
 ----------------
 
