@@ -449,7 +449,7 @@ class Layout extends React.Component {
             thumbnails = {};
             const isSPW = this.props.plateData !== undefined;
             const thumbnail =
-                isSPW? Layout.ONE_X_ONE_GROUP_GRAY : ONE_X_ONE_TRANSPARENT;
+                isSPW? Layout.ONE_X_ONE_GROUP_GRAY : Layout.ONE_X_ONE_TRANSPARENT;
             filteredImages.forEach(v => {thumbnails[v.id] = thumbnail});
         }
         if (this.state.layout === "table") {
