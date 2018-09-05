@@ -435,7 +435,6 @@ input[type=range].parade:focus::-ms-fill-upper {
 }
 
 .parade_centrePanel .plot-y-label {
-  z-index: -1;
   transform-origin: center;
   transform: translate(-50%, 0) rotate(-90deg) translate(450px, 15px);
   text-align: center;
