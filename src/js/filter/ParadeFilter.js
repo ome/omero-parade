@@ -71,7 +71,6 @@ class ParadeFilter extends React.Component {
     }
     
     handleFilterInput(paramName, value) {
-        this.props.handleFilterChange(this.props.filterIndex, paramName, value);
         // Depending on how many filter parameters we have, their type, and
         // the availability of additional metadata this method may be invoked
         // by several other event handlers.  The defining characteristic that
@@ -81,6 +80,11 @@ class ParadeFilter extends React.Component {
         let filterParam = this.state.filterParams.filter(v => {
             return v.name === paramName;
         })[0];
+
+        // If this filterParam object has extra data (histogram, min, max)
+        // Then we assume it is the first param of a Table filter
+        // and we are switching to a different column (named 'value')
+        // We try to update the histogram, min & max values for this column
         if (filterParam.histograms) {
             this.setState({
                 histogram: filterParam.histograms[value]
@@ -96,6 +100,16 @@ class ParadeFilter extends React.Component {
                 maximum: filterParam.maxima[value]
             });
         }
+
+        let paramState = {};
+        paramState[paramName] = value;
+
+        // Also for Table filter, if switching column we want to reset the
+        // 'count' we are filtering by.
+        if (filterParam.maxima && filterParam.minima !== undefined) {
+            paramState.count = undefined;
+        }
+        this.props.handleFilterChange(this.props.filterIndex, paramState);
     }
 
     render() {
