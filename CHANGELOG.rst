@@ -1,3 +1,11 @@
+0.1.2 (Sept 2018)
+-----------------
+
+Bug fixing release.
+
+ - display selection box in plot view (Firefox)
+ - reset filter
+
 0.1.1 (Jun 2018)
 ----------------
 
