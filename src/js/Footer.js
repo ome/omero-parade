@@ -32,15 +32,19 @@ const styles = {
         position: 'absolute',
         right: 25,
         width: 120,
-        top: 6,
+        top: 4,
         border: 'solid #aaa 1px',
     }
 }
 
 class Footer extends React.Component {
-    
+
+    constructor(props) {
+        super(props);
+    }
+
     render() {
-        let {setIconSize, iconSize} = this.props;
+        let {setIconSize, iconSize, settingsMenu} = this.props;
         return (
             <div style={styles.footer} >
                 <input

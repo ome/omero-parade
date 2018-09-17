@@ -18,8 +18,10 @@
 import logging
 
 from omero.model import OriginalFileI
-from omero_parade.utils import get_dataset_image_ids, \
+from omero_parade.utils import \
+    get_dataset_image_ids, \
     get_project_image_ids, \
+    get_screen_well_image_ids, \
     get_well_image_ids
 from omeroweb.webgateway.views import _annotations
 
@@ -52,15 +54,22 @@ def get_dataproviders(request, conn):
     # Can provide data from any table column
     project_id = request.GET.get('project')
     dataset_id = request.GET.get('dataset')
+    screen_id = request.GET.get('screen')
     plate_id = request.GET.get('plate')
     logger.debug(
-        'Project:%s Dataset:%s Plate:%s' % (project_id, dataset_id, plate_id))
+        'Project:%s Dataset:%s Screen:%s Plate:%s' % (
+            project_id, dataset_id, screen_id, plate_id
+        )
+    )
 
     if project_id is not None:
         return get_names(conn, 'Project', project_id)
 
     if dataset_id is not None:
         return get_names(conn, 'Dataset', dataset_id)
+
+    if screen_id is not None:
+        return get_names(conn, 'Screen', screen_id)
 
     if plate_id is not None:
         # Mimic the behaviour of right-hand panel table queries and prefer
@@ -77,16 +86,22 @@ def get_data(request, data_name, conn):
     """Return table data for images."""
     project_id = request.GET.get('project')
     dataset_id = request.GET.get('dataset')
+    screen_id = request.GET.get('screen')
     plate_id = request.GET.get('plate')
     field_id = request.GET.get('field')
-    logger.debug('Project:%s Dataset: %s Plate:%s Field:%s' % (
-        project_id, dataset_id, plate_id, field_id
-    ))
+    logger.debug(
+        'Project:%s Dataset:%s Screen:%s Plate:%s Field:%s' % (
+            project_id, dataset_id, screen_id, plate_id, field_id
+        )
+    )
 
     if project_id is not None:
         img_ids = get_project_image_ids(conn, project_id)
     elif dataset_id is not None:
         img_ids = get_dataset_image_ids(conn, dataset_id)
+    elif screen_id is not None:
+        # dict of well_id: img_id
+        img_ids = get_screen_well_image_ids(conn, screen_id)
     elif plate_id is not None and field_id is not None:
         # dict of well_id: img_id
         img_ids = get_well_image_ids(conn, plate_id, field_id)
@@ -104,6 +119,10 @@ def get_data(request, data_name, conn):
         if dataset_id is not None:
             index_column_name = 'Image'
             table = get_table(conn, 'Dataset', dataset_id)
+
+        if screen_id is not None:
+            index_column_name = 'Well'
+            table = get_table(conn, 'Screen', screen_id)
 
         if plate_id is not None:
             index_column_name = 'Well'
@@ -134,7 +153,7 @@ def get_data(request, data_name, conn):
         for index_id, value in zip(index_ids, values):
             if project_id is not None or dataset_id is not None:
                 table_data[index_id] = value
-            if plate_id is not None:
+            if plate_id is not None or screen_id is not None:
                 try:
                     table_data[img_ids[index_id]] = value
                 except KeyError:

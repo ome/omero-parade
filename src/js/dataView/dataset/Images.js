@@ -19,6 +19,7 @@
 import React, { Component } from 'react';
 
 import ImageIcon from './ImageIcon'
+import { getHeatmapColor } from '../../util';
 
 class Images extends React.Component {
 
@@ -26,22 +27,46 @@ class Images extends React.Component {
         super(props);
     }
 
+    heatmapColor(dataRange, value) {
+        let [minimum, maximum] = dataRange;
+        let fraction = (value - minimum) / (maximum - minimum);
+        return getHeatmapColor(fraction);
+    }
+
     render() {
         let {imgJson,
              iconSize,
-             handleImageWellClicked} = this.props;
+             handleImageWellClicked,
+             tableData,
+             heatmapTableData} = this.props;
 
+        const selectedTableData = tableData[heatmapTableData];
         return (
             <ul>
-                {imgJson.map(image => (
-                    <ImageIcon
-                        image={image}
-                        src={this.props.thumbnails[image.id]}
-                        // If images in Datasets, use parent to make unique
-                        key={image.id + (image.parent ? image.parent : "")}
-                        iconSize={iconSize}
-                        handleImageWellClicked={handleImageWellClicked} />
-                ))}
+                {imgJson.map(image => {
+                    const imageId = image.id;
+                    let heatmapColor;
+                    let heatmapValue;
+                    if (selectedTableData) {
+                        heatmapValue = selectedTableData.data[imageId];
+                        heatmapColor = this.heatmapColor(
+                            [selectedTableData.min, selectedTableData.max],
+                            heatmapValue
+                        );
+                    }
+                    return (
+                        <ImageIcon
+                            image={image}
+                            src={this.props.thumbnails[imageId]}
+                            // If images in Datasets, use parent to make unique
+                            key={imageId + (image.parent ? image.parent : "")}
+                            iconSize={iconSize}
+                            handleImageWellClicked={handleImageWellClicked}
+                            heatmapColor={heatmapColor}
+                            heatmapValue={heatmapValue}
+                        />
+                    )
+                })}
             </ul>
         );
     }

@@ -18,73 +18,93 @@
 
 import React, { Component } from 'react';
 
+import Layout from '../Layout';
+import { getHeatmapColor } from '../../util';
 import config from '../../config';
 
 class Well extends React.Component {
 
-    // shouldComponentUpdate(nextProps, nextState) {
-    //     // Only re-render if visibility changes
-    //     return this.props.hidden !== nextProps.hidden;
-    // },
+    heatmapColor(dataRange, value) {
+        let [minimum, maximum] = dataRange;
+        let fraction = (value - minimum) / (maximum - minimum);
+        return getHeatmapColor(fraction);
+    }
 
     render() {
         let {id,
+               iid,
+               field,
                iconSize,
                selected,
                hidden,
                row,
                col,
                thumb_url,
-               imgTableData,
+               tableData,
+               heatmapTableData,
                handleWellClick,
-               selectedHeatmap,
-               heatmapRange,
-               heatmapValues} = this.props;
+               viewMode} = this.props;
 
-
-        let heatmapColor = "rgba(255,255,255,0)";   // transparent by default
-        let title = "" + row + col; // E.g. A1
-        title = title + " " + imgTableData.join(" ");
+        const selectedTableData = tableData[heatmapTableData];
+        const title = "" + row + col; // E.g. A1
         let imgStyle = {width: iconSize + 'px', maxHeight: iconSize + 'px'};
         if (hidden) {
             imgStyle.opacity = 0.1;
         }
         let divStyle = {width: iconSize + 'px', height: iconSize + 'px'};
-        let cls = "";
+        let className = ["well"];
 
-        // if (selectedHeatmap) {
-        //     var value = heatmapValues[selectedHeatmap];
-        //     title += " " + value;
-        //     if (heatmapRange && value) {
-        //         var fraction = (value - heatmapRange[0]) / (heatmapRange[1] - heatmapRange[0]);
-        //         heatmapColor = getHeatmapColor(fraction);
-        //         divStyle.background = heatmapColor;
-        //         cls += "heatmap";
-        //     }
-        // }
+        let heatmapValue;
+        if (selectedTableData && !hidden) {
+            heatmapValue = selectedTableData.data[iid];
+            divStyle.background = this.heatmapColor(
+                [selectedTableData.min, selectedTableData.max],
+                heatmapValue
+            );
+            className.push("heatmap");
+        }
         if (selected) {
-            cls += " ui-selected";
+            className.push("ui-selected");
         }
 
-        let className = "";
+        let imgClassName = "";
         let src = this.props.thumb_url;
         if (!src) {
-            className = "waiting";
-            src = config.staticPrefix + "webgateway/img/spacer.gif";
+            if (hidden) {
+                src = Layout.ONE_X_ONE_GROUP_GRAY;
+            } else {
+                imgClassName = "waiting";
+                src = config.staticPrefix + "webgateway/img/spacer.gif";
+            }
         }
         return (
-            <td className={"well " + cls}
+            <td className={className.join(" ")}
                 data-wellid={id}
-                title={""+row+col}>
+                data-imageid={iid}
+                data-field={field}
+                title={title}>
                 <div
                     style={divStyle}
                     onClick={event => {handleWellClick(event, id)}}
                     title={title}
                     >
                     <img
-                        className={className}
+                        className={imgClassName}
                         src={src}
                         style={imgStyle} />
+                    <div
+                        style={{
+                            position: "absolute",
+                            top: "50%",
+                            left: "50%",
+                            transform: "translate(-50%, -50%)",
+                            fontColor: "white"
+                        }}
+                    >
+                        <span style={{color: "white"}}>
+                            {heatmapValue}
+                        </span>
+                    </div>
                 </div>
             </td>
         )

@@ -33,11 +33,24 @@ class PlateGrid extends React.Component {
             distance: 2,
             stop: () => {
                 // Make the same selection in the jstree etc
-                let ids = [];
-                $(".plateGrid .ui-selected").each(function(){
-                    ids.push(parseInt($(this).attr('data-wellid'), 10));
+                let images = [];
+                $(".plateGrid .ui-selected").each((index, element) => {
+                    const imageId = parseInt(
+                        element.getAttribute('data-imageid'), 10
+                    );
+                    const wellId = parseInt(
+                        element.getAttribute('data-wellid'), 10
+                    );
+                    const field = parseInt(
+                        element.getAttribute('field'), 10
+                    );
+                    images.push({
+                        id: imageId,
+                        wellId: wellId,
+                        field: field
+                    });
                 });
-                this.props.setImagesWellsSelected('well', ids);
+                this.props.setImagesWellsSelected('well', images);
             },
         });
     }
@@ -47,41 +60,29 @@ class PlateGrid extends React.Component {
         $(this.refs.dataIcons).selectable( "destroy" );
     }
 
-    render() {
-        var data = this.props.plateData,
-            iconSize = this.props.iconSize,
+    renderPlateGrid(plateData) {
+        const iconSize = this.props.iconSize,
             placeholderStyle = {
                 width: iconSize + 'px',
                 height: iconSize + 'px',
             },
             selectedWellIds = this.props.selectedWellIds,
             handleImageWellClicked = this.props.handleImageWellClicked,
-            tableData = this.props.tableData,
             filteredIds = this.props.filteredImages.map(i => i.id);
-        if (!data) {
-            return (
-                <table />
-            )
-        }
-        var columnNames = data.collabels.map(function(l){
-            return (<th key={l}>{l}</th>);
-        });
-        var grid = data.grid;
-        var rows = data.rowlabels.map((r, rowIndex) => {
-            var wells = data.collabels.map((c, colIndex) => {
-                var well = grid[rowIndex][colIndex];
+        const columnNames = plateData.collabels.map(l => (<th key={l}>{l}</th>));
+        const grid = plateData.grid;
+        const rows = plateData.rowlabels.map((r, rowIndex) => {
+            const wells = plateData.collabels.map((c, colIndex) => {
+                const well = grid[rowIndex][colIndex];
                 if (well) {
-                    var hidden = (filteredIds !== undefined && filteredIds.indexOf(well.id) === -1);
-                    var selected = selectedWellIds.indexOf(well.wellId) > -1;
-                    // lookup this Well's data from heatmap
-                    // var heatmapValues = heatmapData && heatmapData[well.wellId+""];
-                    // tableData is mapped to Image IDs... (well.id is image ID!)
-                    var imgTableData = Object.keys(tableData).map(col => col + ": " + tableData[col].data[well.id])
+                    const hidden = (filteredIds !== undefined && filteredIds.indexOf(well.id) === -1);
+                    const selected = selectedWellIds.indexOf(well.wellId) > -1;
                     return (
                         <Well
                             key={well.wellId}
                             id={well.wellId}
                             iid={well.id}
+                            field={well.field}
                             thumb_url={this.props.thumbnails[well.id]}
                             selected={selected}
                             hidden={hidden}
@@ -89,14 +90,17 @@ class PlateGrid extends React.Component {
                             handleWellClick={(event) => {handleImageWellClicked(well, event)}}
                             row={r}
                             col={c}
-                            imgTableData={imgTableData} />
+                            heatmapTableData={this.props.heatmapTableData}
+                            tableData={this.props.tableData}
+                            viewMode={this.props.viewMode}
+                        />
                     )
-                } else {
-                    return (
-                        <td className="placeholder" key={r + "_" + c}>
-                            <div style={placeholderStyle} />
-                        </td>);
                 }
+                return (
+                    <td className="placeholder" key={r + "_" + c}>
+                        <div style={placeholderStyle} />
+                    </td>
+                );
             });
             return (
                 <tr key={r}>
@@ -107,18 +111,28 @@ class PlateGrid extends React.Component {
         });
 
         return (
-            <div className="plateGrid" ref="plateGrid">
-                <table>
-                    <tbody>
-                        <tr>
-                            <th> </th>
-                            {columnNames}
-                        </tr>
-                        {rows}
-                    </tbody>
-                </table>
-            </div>
+            <table key={plateData.plateId}>
+                <tbody>
+                    <tr><th colSpan={columnNames.length + 1}>
+                        <h2>{plateData.plateName}</h2>
+                    </th></tr>
+                    <tr>
+                        <th> </th>
+                        {columnNames}
+                    </tr>
+                    {rows}
+                </tbody>
+            </table>
         );
+    }
+
+    render() {
+        const plateGrids = this.props.plateData.map(
+            v => this.renderPlateGrid(v)
+        );
+        return <div className="plateGrid" ref="plateGrid">
+            {plateGrids}
+        </div>;
     }
 }
 

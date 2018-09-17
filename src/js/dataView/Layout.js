@@ -17,8 +17,15 @@
 //
 
 import React, { Component } from 'react';
+import CircularProgress from 'material-ui/CircularProgress';
+import FlatButton from 'material-ui/FlatButton';
+import Popover from 'material-ui/Popover';
+import Menu from 'material-ui/Menu';
+import MenuItem from 'material-ui/MenuItem';
+import ArrowDropRight from 'material-ui/svg-icons/navigation-arrow-drop-right';
 import _ from 'lodash'
 import axios from 'axios';
+import qs from 'qs';
 
 import Dataset from './dataset/Dataset';
 import PlateGrid from './plate/PlateGrid';
@@ -29,24 +36,41 @@ import config from '../config';
 
 class Layout extends React.Component {
 
+    // 1x1 transparent GIF
+    static get ONE_X_ONE_TRANSPARENT() {
+        return "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
+    }
+
+    // 1x1 opaque PNG which is the same colour as the group/user selection
+    // dialog
+    static get ONE_X_ONE_GROUP_GRAY() {
+        return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mOMS837DwAEjAIylmNwUwAAAABJRU5ErkJggg==";
+    }
+
     constructor(props) {
         super(props);
+        const isSPW = this.props.plateData !== undefined;
+        const showThumbnails = isSPW? false : true;
         this.state = {
             iconSize: 50,
+            imageComponentViewMode: "Normal",
             layout: "icon",   // "icon", "plot" or "table"
             dataProviders: [],
             tableData: {},
             selectedWellIds: [],
             showDatasets: true,
+            showThumbnails: showThumbnails,
             thumbnails: {},
+            menuOpen: false,
         }
         this.setIconSize = this.setIconSize.bind(this);
-        this.setLayout = this.setLayout.bind(this);
-        this.setShowDatasets = this.setShowDatasets.bind(this);
+        this.toggleShowDatasets = this.toggleShowDatasets.bind(this);
+        this.toggleShowThumbnails = this.toggleShowThumbnails.bind(this);
+        this.menuOnRequestClose = this.menuOnRequestClose.bind(this);
+        this.menuOnClick = this.menuOnClick.bind(this);
         this.handleAddData = this.handleAddData.bind(this);
         this.handleImageWellClicked = this.handleImageWellClicked.bind(this);
         this.setImagesWellsSelected = this.setImagesWellsSelected.bind(this);
-        this.setSelectedWells = this.setSelectedWells.bind(this);
     }
 
     setIconSize(size) {
@@ -57,9 +81,32 @@ class Layout extends React.Component {
         this.setState({layout: layout});
     }
 
-    setShowDatasets(event) {
-        let show = event.target.checked;
-        this.setState({showDatasets: show});
+    toggleShowDatasets(event) {
+        this.setState(prevState => {
+            return {showDatasets: !prevState.showDatasets};
+        });
+    }
+
+    toggleShowThumbnails(event) {
+        this.setState(prevState => {
+            return {showThumbnails: !prevState.showThumbnails};
+        });
+    }
+
+    menuOnClick(event) {
+        // Prevents ghost click
+        event.preventDefault();
+
+        this.setState({
+            menuOpen: true,
+            anchorEl: event.currentTarget
+        });
+    }
+
+    menuOnRequestClose() {
+        this.setState({
+            menuOpen: false
+        });
     }
 
     loadThumbnails() {
@@ -68,59 +115,87 @@ class Layout extends React.Component {
         if (imageIds.length < 1) {
             return;
         }
-        const CancelToken = axios.CancelToken;
-        this.source = CancelToken.source();
-        this.props.thumbnailLoader.getThumbnails(imageIds, (response) => {
-            this.setState(prevState => {
-                let thumbnails = prevState.thumbnails;
-                for (const imageId in response.data) {
-                    thumbnails[imageId] = response.data[imageId];
+        this.setState({loadingThumbnails: true});
+        // No more than 6 batches of thumbnails to be loaded at once
+        const thumbnailsBatch = config.thumbnailsBatch * 6;
+        let promises = [];
+        for (let i = 0, j = imageIds.length; i < j; i += thumbnailsBatch) {
+            promises.push(this.props.thumbnailLoader.getThumbnails(
+                imageIds.slice(i, i + thumbnailsBatch),
+                (response) => {
+                    this.setState(prevState => {
+                        let thumbnails = prevState.thumbnails;
+                        for (const imageId in response.data) {
+                            thumbnails[imageId] = response.data[imageId];
+                        }
+                        return {thumbnails: thumbnails};
+                    });
+                },
+                (thrown) => {
+                    throw thrown;
+                },
+                this.source.token
+            ));
+        }
+        Promise.all(promises).then(
+            () => {
+                this.setState({loadingThumbnails: false});
+            },
+            (thrown) => {
+                if (axios.isCancel(thrown)) {
+                    return;
                 }
-                return {thumbnails: thumbnails};
-            });
-        }, (thrown) => {
-            if (axios.isCancel(thrown)) {
-                return;
+                this.setState({loadingThumbnails: false});
+                // TODO: Put this error somewhere "correct"
+                console.log("Error loading thumbnails!", thrown);
             }
-            // TODO: Put this error somewhere "correct"
-            console.log("Error loading thumbnails!", thrown);
-        }, this.source.token);
+        );
     }
 
     componentDidMount() {
-        // list available data providers (TODO: only for current data? e.g. plate)
-        let url = config.dataprovidersUrl;
+        const CancelToken = axios.CancelToken;
+        this.source = CancelToken.source();
+
+        let params = {};
         if (this.props.parentType === "project") {
-            url += '?project=' + this.props.parentId;
-        } else if (this.props.datasetId
-                   || this.props.parentType === "dataset") {
-            // FIXME: Be compatible with older implementations that
-            // did not use a generic `parentId`.
-            let datasetId = this.props.datasetId;
-            if (!datasetId) {
-                datasetId = this.props.parentId;
-            }
-            url += '?dataset=' + datasetId;
-        } else if (this.props.plateId || this.props.parentType == "plate") {
-            // FIXME: Be compatible with older implementations that
-            // did not use a generic `parentId`.
-            let plateId = this.props.plateId;
-            if (!plateId) {
-                plateId = this.props.parentId;
-            }
-            url += '?plate=' + plateId;
+            params = {project: this.props.parentId};
         }
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            cache: false,
-            success: data => {
-                this.setState({
-                    dataProviders: data.data,
-                });
-            }
+        if (this.props.parentType === "dataset") {
+            params = {dataset: this.props.parentId};
+        }
+        if (this.props.parentType === "screen") {
+            params = {screen: this.props.parentId};
+        }
+        if (this.props.parentType === "plate") {
+            params = {plate: this.props.parentId};
+        }
+        this.setState({
+            loading: true
         });
-        this.loadThumbnails();
+        axios.get(config.dataprovidersUrl, {
+            cancelToken: this.source.token,
+            params: params
+        }).then(
+            (response) => {
+                this.setState({
+                    dataProviders: response.data.data,
+                    loading: false
+                });
+            },
+            (thrown) => {
+                if (axios.isCancel(thrown)) {
+                    return;
+                }
+                this.setState({
+                    loading: false
+                });
+                // TODO: Put this error somewhere "correct"
+                console.log("Error loading filters!", thrown);
+            }
+        );
+        if (this.state.showThumbnails) {
+            this.loadThumbnails();
+        }
     }
 
     componentWillUnmount() {
@@ -132,48 +207,85 @@ class Layout extends React.Component {
     componentDidUpdate(prevProps, prevState, snapshot) {
         const imageIds = this.props.filteredImages.map(v => v.id);
         const prevImageIds = prevProps.filteredImages.map(v => v.id);
-        if (!_.isEqual(imageIds, prevImageIds)) {
+        const showThumbnails = this.state.showThumbnails;
+        const prevShowThumbnails = prevState.showThumbnails;
+        if ((!_.isEqual(imageIds, prevImageIds)
+                || (showThumbnails !== prevShowThumbnails))
+                    && this.state.showThumbnails) {
             this.loadThumbnails();
         }
     }
 
     handleAddData(event) {
         // When user chooses to ADD data by Name, load it...
-        var dataName = event.target.value;
-        if (dataName !== "--") {
-            var url = config.indexUrl + 'data/' + btoa(dataName);
+        const dataName = event.target.value;
+        if (dataName === "--") {
+            return;
+        }
 
-            if (this.props.parentType === "plate") {
-                url += '?plate=' + this.props.parentId;
-                if (this.props.fieldId !== undefined) {
-                    url += '&field=' + this.props.fieldId;
-                }
+        let params = {image: this.props.filteredImages.map(v => v.id)};
+        if (this.props.parentType === "screen") {
+            params = {screen: this.props.parentId};
+        }
+        if (this.props.parentType === "plate") {
+            const plateId = this.props.parentId;
+            const fieldId = this.props.plateData.find(
+                v => v.plateId === plateId
+            ).fieldId;
+            params = {
+                plate: plateId,
+                field: fieldId
             }
-            else if (this.props.parentType === "dataset") {
-                url += '?dataset=' + this.props.parentId;
-            } else if (this.props.parentType === "project") {
-                url += '?project=' + this.props.parentId;
-            } else {
-                url += '?' + this.props.filteredImages.map(i => 'image=' + i.id).join('&');
+        }
+        if (this.props.parentType === "dataset") {
+            params = {
+                dataset: this.props.parentId
             }
-            $.getJSON(url, data => {
+        }
+        if (this.props.parentType === "project") {
+            params = {
+                project: this.props.parentId
+            }
+        }
+        this.setState({
+            loading: true
+        });
+        axios.get(config.indexUrl + 'data/' + btoa(dataName), {
+            cancelToken: this.source.token,
+            params: params,
+            paramsSerializer: params => (
+                qs.stringify(params, { indices: false })
+            )
+        }).then(
+            (response) => {
                 // Add data to table data
                 let td = Object.assign({}, this.state.tableData);
-                td[dataName] = data;
+                td[dataName] = response.data;
                 this.setState({
+                    loading: false,
                     tableData: td
                 });
-            });
-        }
+            },
+            (thrown) => {
+                if (axios.isCancel(thrown)) {
+                    return;
+                }
+                this.setState({
+                    loading: false
+                });
+                // TODO: Put this error somewhere "correct"
+                console.log("Error loading filters!", thrown);
+            }
+        );
     }
 
     handleImageWellClicked(obj, event) {
         // Might be a Dataset image OR a Well that is selected.
-        let imageId = obj.id;
-        let wellId = obj.wellId;
+        const imageId = obj.id;
+        const wellId = obj.wellId;
         if (wellId) {
             // TODO - handle Shift/Ctrl-click
-            this.setSelectedWells([wellId]);
+            this.setSelectedWells([obj]);
             return;
         }
         let selIds = this.props.filteredImages.filter(i => i.selected).map(i => i.id);
@@ -204,21 +316,22 @@ class Layout extends React.Component {
         this.props.setSelectedImages(toSelect);
     }
 
-    setImagesWellsSelected(dtype, ids) {
+    setImagesWellsSelected(dtype, images) {
         // Selected state of IMAGES is handled in jstree
         // Selected state of WELLS is handled by this.state 
         if (dtype === 'well') {
-            this.setSelectedWells(ids);
+            this.setSelectedWells(images);
         } else {
-            this.props.setSelectedImages(ids);
+            this.props.setSelectedImages(images.map(v => v.id));
         }
     }
 
-    setSelectedWells(wellIds) {
-        this.setState({selectedWellIds: wellIds});
+    setSelectedWells(images) {
+        this.setState({selectedWellIds: images.map(v => v.wellId)});
         // Trigger loading Wells in right panel...
-        var well_index = this.props.fieldId;
-        var selected_objs = wellIds.map(wId => ({id: 'well-' + wId, index: this.props.fieldId}))
+        const selected_objs = images.map(
+            v => ({id: 'well-' + v.wellId, index: v.field})
+        );
         $("body")
             .data("selected_objects.ome", selected_objs)
             .trigger("selection_change.ome");
@@ -229,12 +342,116 @@ class Layout extends React.Component {
         }
     }
 
+    renderHeatmapMenuItems() {
+        return this.state.dataProviders.map(v => (
+            <MenuItem
+                insetChildren={true}
+                primaryText={v}
+                checked={v === this.state.heatmapTableData}
+                onClick={(event) => {
+                    this.setState({
+                        imageComponentViewMode: "Heatmap",
+                        heatmapTableData: v
+                    });
+                    if (!this.state.tableData[v]) {
+                        this.handleAddData({target: {value: v}});
+                    }
+                }}
+            />
+        ));
+    }
+
+    renderSettingsMenu() {
+        const heatmapMenuItems = this.renderHeatmapMenuItems();
+        const modeMenuItems = [
+            <MenuItem
+                insetChildren={true}
+                primaryText="Normal"
+                checked={this.state.imageComponentViewMode === "Normal"}
+                onClick={(event) => {
+                    this.setState({
+                        imageComponentViewMode: "Normal",
+                        heatmapTableData: undefined
+                    });
+                }}
+            />,
+            <MenuItem
+                insetChildren={true}
+                primaryText="Heatmap"
+                rightIcon={<ArrowDropRight />}
+                checked={this.state.imageComponentViewMode === "Heatmap"}
+                disabled={!heatmapMenuItems}
+                menuItems={heatmapMenuItems}
+            />,
+        ];
+        const viewMenuItems = [
+            <MenuItem
+                insetChildren={true}
+                primaryText="Dataset"
+                checked={this.state.showDatasets}
+                onClick={this.toggleShowDatasets}
+            />,
+            <MenuItem
+                insetChildren={true}
+                primaryText="Thumbnails"
+                checked={this.state.showThumbnails}
+                onClick={this.toggleShowThumbnails}
+            />,
+        ];
+        return <Menu desktop={true}>
+            <MenuItem
+                primaryText="Mode"
+                rightIcon={<ArrowDropRight />}
+                menuItems={modeMenuItems}
+            />
+            <MenuItem
+                primaryText="View"
+                rightIcon={<ArrowDropRight />}
+                menuItems={viewMenuItems}
+            />
+        </Menu>
+    }
+
+    renderThumbnailProgress() {
+        if (!this.state.loadingThumbnails) {
+            return null;
+        }
+        const a = Object.keys(this.state.thumbnails).length;
+        const b = this.props.filteredImages.length;
+        const value = Math.round(a / b * 100)
+        return <span>
+            <CircularProgress
+                color="#5e656e"
+                mode="determinate"
+                size={12}
+                value={value}
+            />
+        </span>
+    }
+
+    renderAddDataProgress() {
+        if (!this.state.loading) {
+            return null;
+        }
+        <CircularProgress color="#5e656e" size={12} />
+    }
+
     render() {
-        if (this.props.plateData === undefined && this.props.filteredImages === undefined) {
+        if (this.props.plateData === undefined
+                && this.props.filteredImages === undefined) {
             return(<div></div>)
         }
         let filteredImages = this.props.filteredImages;
         let imageComponent;
+        let thumbnails = this.state.thumbnails;
+        if (!this.state.showThumbnails
+                || this.state.imageComponentViewMode === "Heatmap") {
+            thumbnails = {};
+            const isSPW = this.props.plateData !== undefined;
+            const thumbnail =
+                isSPW? Layout.ONE_X_ONE_GROUP_GRAY : Layout.ONE_X_ONE_TRANSPARENT;
+            filteredImages.forEach(v => {thumbnails[v.id] = thumbnail});
+        }
         if (this.state.layout === "table") {
             imageComponent = (
                 <Tables
@@ -245,7 +462,9 @@ class Layout extends React.Component {
                     handleImageWellClicked = {this.handleImageWellClicked}
                     setImagesWellsSelected = {this.setImagesWellsSelected}
                     tableData={this.state.tableData}
-                    thumbnails={this.state.thumbnails}
+                    thumbnails={thumbnails}
+                    heatmapTableData={this.state.heatmapTableData}
+                    viewMode={this.state.imageComponentViewMode}
                     />)
         } else if (this.state.layout === "plot") {
             imageComponent = (
@@ -256,7 +475,9 @@ class Layout extends React.Component {
                     selectedWellIds={this.state.selectedWellIds}
                     handleImageWellClicked = {this.handleImageWellClicked}
                     setImagesWellsSelected = {this.setImagesWellsSelected}
-                    thumbnails={this.state.thumbnails}
+                    thumbnails={thumbnails}
+                    heatmapTableData={this.state.heatmapTableData}
+                    viewMode={this.state.imageComponentViewMode}
                     />)
         } else if (this.props.plateData) {
             imageComponent = (
@@ -268,17 +489,22 @@ class Layout extends React.Component {
                     selectedWellIds={this.state.selectedWellIds}
                     handleImageWellClicked={this.handleImageWellClicked}
                     setImagesWellsSelected={this.setImagesWellsSelected}
-                    thumbnails={this.state.thumbnails}
+                    thumbnails={thumbnails}
+                    heatmapTableData={this.state.heatmapTableData}
+                    viewMode={this.state.imageComponentViewMode}
                     />)
         } else {
             imageComponent = (
                 <Dataset
                     iconSize={this.state.iconSize}
                     imgJson={filteredImages}
+                    tableData={this.state.tableData}
                     showDatasets={this.state.showDatasets}
                     handleImageWellClicked={this.handleImageWellClicked}
                     setImagesWellsSelected={this.setImagesWellsSelected}
-                    thumbnails={this.state.thumbnails}
+                    thumbnails={thumbnails}
+                    heatmapTableData={this.state.heatmapTableData}
+                    viewMode={this.state.imageComponentViewMode}
                     />)
         }
 
@@ -288,7 +514,7 @@ class Layout extends React.Component {
                         <select value={"--"} onChange={this.handleAddData}>
                             <option
                                 value="--" >
-                                Add table data...
+                                Add data...
                             </option>
                             {this.state.dataProviders.map(function(n, i){
                                 return (
@@ -300,13 +526,31 @@ class Layout extends React.Component {
                                 );
                             })}
                         </select>
+                        {this.renderAddDataProgress()}
                         <div className="layoutControls">
-                            <label>
-                                Show Datasets
-                                <input  type="checkbox"
-                                        checked={this.state.showDatasets}
-                                        onChange={this.setShowDatasets} />
-                            </label>
+                            {this.renderThumbnailProgress()}
+                            <FlatButton
+                                onClick={this.menuOnClick}
+                                style={{
+                                    height: "22px",
+                                    marginRight: "2px"
+                                }}
+                                label="Settings"
+                                labelStyle={{
+                                    fontSize: "10px",
+                                    fontWeight: "bold",
+                                    lineHeight: "22px"
+                                }}
+                            />
+                            <Popover
+                                open={this.state.menuOpen}
+                                anchorEl={this.state.anchorEl}
+                                anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
+                                targetOrigin={{vertical: 'top', horizontal: 'right'}}
+                                onRequestClose={this.menuOnRequestClose}
+                            >
+                                {this.renderSettingsMenu()}
+                            </Popover>
                             <div>
                                 <button onClick={() => {this.setLayout("icon")}}
                                         className={"iconLayoutButton " + (this.state.layout === "icon" ? "checked" : "")} />
@@ -320,7 +564,8 @@ class Layout extends React.Component {
                     {imageComponent}
                     <Footer
                         iconSize={this.state.iconSize}
-                        setIconSize={this.setIconSize} />
+                        setIconSize={this.setIconSize}
+                    />
                 </div>)
     }
 }

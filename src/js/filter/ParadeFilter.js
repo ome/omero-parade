@@ -18,6 +18,10 @@
 
 import React, { Component } from 'react';
 import { Sparklines, SparklinesBars } from 'react-sparklines';
+import CircularProgress from 'material-ui/CircularProgress';
+import axios from 'axios';
+import qs from 'qs';
+
 import FilterInput from './FilterInput';
 import config from '../config';
 
@@ -36,40 +40,84 @@ class ParadeFilter extends React.Component {
         // Load /filter/?filter=filterName&plate=plateId script
         // which adds itself to the PARADE_FILTERS list,
         // like OPEN_WITH list.
+        const CancelToken = axios.CancelToken;
+        this.source = CancelToken.source();
 
-        var url = config.indexUrl + 'filters/script/' + this.props.name;
+        let params = params = {
+            image: this.props.images.map(v => v.id)
+        };
+        if (this.props.parentType === "screen") {
+            params = {
+                screen: this.props.parentId
+            }
+        }
         if (this.props.parentType === "plate") {
-            url += '?plate=' + this.props.parentId;
-            if (this.props.fieldId !== undefined) {
-                url += '&field=' + this.props.fieldId;
+            const plateId = this.props.parentId;
+            const fieldId = this.props.plateData.find(
+                v => v.plateId === plateId
+            ).fieldId;
+            params = {plate: plateId, field: fieldId}
+        } else if (this.props.parentType === "dataset") {
+            params = {
+                dataset: this.props.parentId
             }
-        }
-        else if (this.props.parentType === "dataset") {
-            url += '?dataset=' + this.props.parentId;
         } else if (this.props.parentType === "project") {
-            url += '?project=' + this.props.parentId;
-        } else {
-            url += '?' + this.props.images.map(i => 'image=' + i.id).join('&');
-        }
-        $.getJSON(url, function(data){
-            if (!data.f) {
-                return;
+            params = {
+                project: this.props.parentId
             }
-            // Response has filter function - Needs eval()
-            var f = eval(data.f);
-            // Get current values - set state to parent
-            var filterValues = data.params.reduce((prev, current) => {
-                prev[current.name] = current.default;
-                return prev;
-            }, {});
-            this.props.handleFilterLoaded(this.props.filterIndex, f, filterValues);
-
-            this.setState({
-                filterParams: data.params
-            })
-        }.bind(this));
+        }
+        this.setState({
+            loading: true
+        });
+        axios.get(config.indexUrl + 'filters/script/' + this.props.name, {
+            cancelToken: this.source.token,
+            params: params,
+            paramsSerializer: params => (
+                qs.stringify(params, { indices: false })
+            )
+        }).then(
+            (response) => {
+                if (!response.data.f) {
+                    this.setState({
+                        loading: false
+                    });
+                    return;
+                }
+                // Response has filter function - Needs eval()
+                const f = eval(response.data.f);
+                // Get current values - set state to parent
+                const filterValues = response.data.params
+                    .reduce((prev, current) => {
+                        prev[current.name] = current.default;
+                        return prev;
+                    }, {});
+                this.props.handleFilterLoaded(
+                    this.props.filterIndex, f, filterValues
+                );
+                this.setState({
+                    filterParams: response.data.params,
+                    loading: false
+                });
+            },
+            (thrown) => {
+                if (axios.isCancel(thrown)) {
+                    return;
+                }
+                this.setState({
+                    loading: false
+                });
+                // TODO: Put this error somewhere "correct"
+                console.log("Error loading filters!", thrown);
+            }
+        );
     }
-    
+
+    componentWillUnmount() {
+        if (this.source) {
+            this.source.cancel();
+        }
+    }
+
     handleFilterInput(paramName, value) {
         // Depending on how many filter parameters we have, their type, and
         // the availability of additional metadata this method may be invoked
@@ -112,6 +160,13 @@ class ParadeFilter extends React.Component {
         this.props.handleFilterChange(this.props.filterIndex, paramState);
     }
 
+    renderProgress() {
+        if (!this.state.loading) {
+            return null;
+        }
+        return <CircularProgress color="#5e656e" size={12} />
+    }
+
     render() {
         return(
             <div className="parade_filter">
@@ -127,6 +182,7 @@ class ParadeFilter extends React.Component {
                                     value={this.props.filterValues[p.name]}
                                 />
                     })}
+                    {this.renderProgress()}
                 </div>
                 <div className="sparkline">
                     <span className="minimum">{this.state.minimum}</span>

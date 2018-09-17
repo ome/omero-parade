@@ -27,11 +27,16 @@ class Dataset extends React.Component {
             distance: 2,
             stop: () => {
                 // Make the same selection in the jstree etc
-                let ids = [];
-                $(".parade_centrePanel .ui-selected").each(function(){
-                    ids.push(parseInt($(this).attr('data-id'), 10));
+                let images = [];
+                $(".parade_centrePanel .ui-selected").each((index, element) => {
+                    const imageId = parseInt(
+                        element.getAttribute('data-id'), 10
+                    );
+                    images.push(
+                        this.props.imgJson.find(v => v.id === imageId)
+                    );
                 });
-                this.props.setImagesWellsSelected('image', ids);
+                this.props.setImagesWellsSelected('image', images);
             },
         });
     }
@@ -72,6 +77,8 @@ class Dataset extends React.Component {
                         iconSize={iconSize}
                         handleImageWellClicked={handleImageWellClicked}
                         thumbnails={this.props.thumbnails}
+                        tableData={this.props.tableData}
+                        heatmapTableData={this.props.heatmapTableData}
                     />
                     <div style={{clear: 'both'}}></div>
                 </div>
@@ -83,6 +90,8 @@ class Dataset extends React.Component {
                     iconSize={iconSize}
                     handleImageWellClicked={handleImageWellClicked}
                     thumbnails={this.props.thumbnails}
+                    tableData={this.props.tableData}
+                    heatmapTableData={this.props.heatmapTableData}
                 />
             );
         }

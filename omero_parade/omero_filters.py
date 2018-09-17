@@ -18,7 +18,10 @@
 from django.http import JsonResponse
 import json
 from omero.sys import ParametersI
-from omero_parade.utils import get_image_ids, get_project_image_ids
+from omero_parade.utils import \
+    get_screen_image_ids, \
+    get_image_ids, \
+    get_project_image_ids
 
 
 def get_filters(request, conn):
@@ -29,16 +32,19 @@ def get_script(request, script_name, conn):
     """Return a JS function to filter images by various params."""
     project_id = request.GET.get('project')
     dataset_id = request.GET.get('dataset')
+    screen_id = request.GET.get('screen')
     plate_id = request.GET.get('plate')
     field_id = request.GET.get('field')
     image_ids = request.GET.getlist('image')
     if project_id:
         img_ids = get_project_image_ids(conn, project_id)
-    elif plate_id and field_id:
-        img_ids = get_image_ids(conn, plate_id, field_id)
     elif dataset_id:
         objects = conn.getObjects('Image', opts={'dataset': dataset_id})
         img_ids = [i.id for i in objects]
+    elif screen_id:
+        img_ids = get_screen_image_ids(conn, screen_id)
+    elif plate_id and field_id:
+        img_ids = get_image_ids(conn, plate_id, field_id)
     else:
         img_ids = [long(i) for i in image_ids]
     query_service = conn.getQueryService()

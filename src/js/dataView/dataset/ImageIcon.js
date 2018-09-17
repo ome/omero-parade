@@ -45,7 +45,13 @@ class ImageIcon extends React.Component {
 
     getImgStyle() {
         var width = this.props.iconSize;
-        return {width: width, maxHeight: width}
+        let backgroundColor = this.props.heatmapColor;
+        return {
+            width: width,
+            maxHeight: width,
+            backgroundColor: backgroundColor,
+            width: "100%"
+        };
     }
 
     // After rendering, scroll selectd icon into view
@@ -86,11 +92,25 @@ class ImageIcon extends React.Component {
                 tabIndex={0}
                 onClick={this.handleIconClick}
             >
+                <div style={{position: "relative"}}>
                     <img alt="image"
                         className={className}
                         style={imgStyle}
                         src={src}
                         title={image.name} />
+                    <div
+                        style={{
+                            position: "absolute",
+                            top: "50%",
+                            left: "50%",
+                            transform: "translate(-50%, -50%)"
+                        }}
+                    >
+                        <span style={{color: "white"}}>
+                            {this.props.heatmapValue}
+                        </span>
+                    </div>
+                </div>
             </li>
         )
     }

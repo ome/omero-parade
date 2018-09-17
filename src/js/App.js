@@ -17,8 +17,10 @@
 //
 
 import React, { Component } from 'react';
-import DataContainer from './dataLoader/DataContainer'
-import ThumbnailLoader from './dataLoader/ThumbnailLoader'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+
+import DataContainer from './dataLoader/DataContainer';
+import ThumbnailLoader from './dataLoader/ThumbnailLoader';
 
 
 class App extends Component {
@@ -30,9 +32,11 @@ class App extends Component {
 
     render() {
         return (
-            <DataContainer
-                jstree={this.props.jstree}
-                thumbnailLoader={this.thumbnailLoader} />
+            <MuiThemeProvider>
+                <DataContainer
+                    jstree={this.props.jstree}
+                    thumbnailLoader={this.thumbnailLoader} />
+            </MuiThemeProvider>
         )
     }
 }

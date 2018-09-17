@@ -17,7 +17,7 @@
 //
 
 import React, { Component } from 'react';
-import FieldsLoader from './plateLoader/FieldsLoader'
+import PlateLoader from './plateLoader/PlateLoader'
 import DatasetContainer from './datasetLoader/DatasetContainer';
 
 
@@ -212,19 +212,14 @@ class DataContainer extends React.Component {
             if (effectiveRootNode.type === "dataset") {
                 return [effectiveRootNode];
             }
-            // When our root is a Screen or a Plate the effective root will
-            // only be defined if a single Screen, Plate or PlateAcquisition
-            // is selected.
-            if (["screen", "plate"].includes(effectiveRootNode.type)) {
-                let selectedNode = treeSelectedNodes[0];
-                if (selectedNode.type === "plate") {
-                    return [selectedNode];
-                }
-                if (selectedNode.type === "acquisition") {
-                    return [jstree.get_node(
-                        jstree.get_parent(selectedNode.id)
-                    )];
-                }
+            // When our root is a Screen, the open nodes are all its
+            // children (Plates).
+            if (effectiveRootNode.type === "screen") {
+                return effectiveRootNode.children.map(v => jstree.get_node(v));
+            }
+            // When our root is a Plate, it is what is open.
+            if (effectiveRootNode.type === "plate") {
+                return [effectiveRootNode];
             }
         }
         return [];
@@ -266,7 +261,12 @@ class DataContainer extends React.Component {
         // If plate has > 1 run, show nothing
         if (effectiveRootNode.type === "plate"
                 && effectiveRootNode.children.length > 1) {
-            return (<h2 className="iconTable">Select Run</h2>);
+            // Parent component enforces that there will only be one selected
+            // node
+            const selectedNode = this.state.treeSelectedNodes[0];
+            if (!selectedNode || selectedNode.type !== "acquisition") {
+                return (<h2 className="iconTable">Select Run</h2>);
+            }
         }
         // If Project has no open Datasets, offer to open them all
         if (effectiveRootNode.type === "project") {
@@ -285,7 +285,8 @@ class DataContainer extends React.Component {
         if (effectiveRootNode.type === "screen"
                 || effectiveRootNode.type === "plate") {
             return (
-                <FieldsLoader
+                <PlateLoader
+                    jstree={jstree}
                     treeSelectedNodes={this.state.treeSelectedNodes}
                     treeOpenNodes={this.state.treeOpenNodes}
                     effectiveRootNode={this.state.effectiveRootNode}

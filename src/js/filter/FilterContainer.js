@@ -17,6 +17,10 @@
 //
 
 import React, { Component } from 'react';
+import CircularProgress from 'material-ui/CircularProgress';
+import axios from 'axios';
+import qs from 'qs';
+
 import ParadeFilter from './ParadeFilter';
 import config from '../config';
 
@@ -32,23 +36,49 @@ class FilterContainer extends React.Component {
     }
 
     componentDidMount() {
-        // list available filters (TODO: only for current data? e.g. plate)
-        let url = config.filtersUrl;
+        const CancelToken = axios.CancelToken;
+        this.source = CancelToken.source();
+        let params = {
+            image: this.props.images.map(v => v.id)
+        };
         if (this.props.parentType && this.props.parentId) {
-            url += '?' + this.props.parentType + '=' + this.props.parentId;
-        } else {
-            url += '?' + this.props.images.map(i => 'image=' + i.id).join('&');
-        }
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            cache: false,
-            success: data => {
-                this.setState({
-                    filters: data.data,
-                });
+            params = {
+                [this.props.parentType]: this.props.parentId
             }
+        }
+        this.setState({
+            loading: true
         });
+        axios.get(config.filtersUrl, {
+            cancelToken: this.source.token,
+            params: params,
+            paramsSerializer: params => (
+                qs.stringify(params, { indices: false })
+            )
+        }).then(
+            (response) => {
+                this.setState({
+                    filters: response.data.data,
+                    loading: false
+                });
+            },
+            (thrown) => {
+                if (axios.isCancel(thrown)) {
+                    return;
+                }
+                this.setState({
+                    loading: false
+                });
+                // TODO: Put this error somewhere "correct"
+                console.log("Error loading filters!", thrown);
+            }
+        );
+    }
+
+    componentWillUnmount() {
+        if (this.source) {
+            this.source.cancel();
+        }
     }
 
     handleAddFilter(event) {
@@ -57,6 +87,13 @@ class FilterContainer extends React.Component {
         if (filterName !== "--") {
             this.props.addFilter(filterName);
         }
+    }
+
+    renderProgress() {
+        if (!this.state.loading) {
+            return null;
+        }
+        return <CircularProgress color="#5e656e" size={12} />
     }
 
     render() {
@@ -77,6 +114,7 @@ class FilterContainer extends React.Component {
                         );
                     })}
                 </select>
+                {this.renderProgress()}
                 <br />
                 {
                     this.props.filterNames.map((fname, idx) => (
@@ -87,7 +125,7 @@ class FilterContainer extends React.Component {
                             name={fname}
                             parentType={this.props.parentType}
                             parentId={this.props.parentId}
-                            fieldId={this.props.fieldId}
+                            plateData={this.props.plateData}
                             images={this.props.images}
                             handleFilterLoaded={this.props.handleFilterLoaded}
                             handleFilterChange={this.props.handleFilterChange}

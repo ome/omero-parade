@@ -36,17 +36,23 @@ def get_filters(request, conn):
 def get_script(request, script_name, conn):
     """Return a JS function to filter images by various params."""
     project_id = request.GET.get('project')
+    screen_id = request.GET.get('screen')
     plate_id = request.GET.get('plate')
 
-    if project_id is None and plate_id is None:
+    if project_id is None and screen_id is None and plate_id is None:
         return JsonResponse(
-            {'Error': 'Neither Project ID nor Plate ID specified'})
+            {'Error': 'Project ID nor Screen ID, nor Plate ID specified'})
 
     if script_name == "Table":
         table = None
 
         if project_id is not None:
             table = get_table(conn, 'Project', project_id)
+
+        if screen_id is not None:
+            table = get_table(conn, 'Screen', screen_id)
+            if table is None:
+                table = get_table(conn, 'Screen', screen_id)
 
         if plate_id is not None:
             table = get_table(conn, 'Screen.plateLinks.child', plate_id)

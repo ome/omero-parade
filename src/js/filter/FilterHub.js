@@ -149,7 +149,7 @@ class FilterHub extends React.Component {
                     <FilterContainer
                         parentType={this.props.parentType}
                         parentId={this.props.parentId}
-                        fieldId={this.props.fieldId}
+                        plateData={this.props.plateData}
                         images={this.props.images}
                         addFilter={this.addFilter}
                         handleFilterLoaded={this.handleFilterLoaded}
@@ -161,9 +161,8 @@ class FilterHub extends React.Component {
                     <Layout
                         parentType={this.props.parentType}
                         parentId={this.props.parentId}
-                        fieldId={this.props.fieldId}
-                        setSelectedImages={this.props.setSelectedImages}
                         plateData={this.props.plateData}
+                        setSelectedImages={this.props.setSelectedImages}
                         filteredImages={this.state.filteredImages}
                         thumbnailLoader={this.props.thumbnailLoader}
                         />
