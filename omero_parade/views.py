@@ -184,7 +184,7 @@ def get_data(request, data_name, conn=None, **kwargs):
                         rv['histogram'] = histogram.tolist()
                     except TypeError:
                         pass
-                    return JsonResponse(rv);
+                    return JsonResponse(rv)
         except ImportError:
             pass
 
