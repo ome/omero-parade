@@ -21,13 +21,19 @@ from omero.model import OriginalFileI
 from omero_parade.utils import get_dataset_image_ids, \
     get_project_image_ids, \
     get_well_image_ids
-from omeroweb.webgateway.views import _annotations
+try:
+    from omeroweb.webgateway.views import _bulk_file_annotations
+except ImportError:
+    # in case we don't have OMERO 5.5.1
+    from omeroweb.webgateway.views import _annotations as \
+        _bulk_file_annotations
 
 logger = logging.getLogger(__name__)
 
 
 def get_table(conn, objtype, objid):
-    data = _annotations(None, objtype, objid, conn=conn).get('data', [])
+    data = _bulk_file_annotations(None, objtype, objid, conn=conn).get(
+        'data', [])
     if len(data) < 1:
         return None
     # Just use the first Table we find
