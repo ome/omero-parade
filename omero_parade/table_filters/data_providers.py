@@ -52,7 +52,7 @@ def get_names(conn, objtype, objid):
         return []
     try:
         column_names = [col.name for col in table.getHeaders()]
-    except:
+    finally:
         table.close()
     return ["Table_%s" % c for c in column_names]
 
