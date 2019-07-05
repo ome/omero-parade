@@ -169,18 +169,22 @@ def get_data(request, data_name, conn=None, **kwargs):
                 if data_name in dp:
                     data = module.get_data(request, data_name, conn)
                     values = numpy.array(data.values())
-                    bins = 10
-                    if NUMPY_GT_1_11_0:
-                        # numpy.histogram() only supports bin calculation
-                        # from 1.11.0 onwards
-                        bins = 'auto'
-                    histogram, bin_edges = numpy.histogram(values, bins=bins)
-                    return JsonResponse({
-                        'data': data,
-                        'min': numpy.amin(values).item(),
-                        'max': numpy.amax(values).item(),
-                        'histogram': histogram.tolist()
-                    })
+                    rv = {'data': data}
+                    # Adding histogram etc will fail if data is not numerical
+                    try:
+                        rv['min'] = numpy.amin(values).item()
+                        rv['max'] = numpy.amax(values).item()
+                        bins = 10
+                        if NUMPY_GT_1_11_0:
+                            # numpy.histogram() only supports bin calculation
+                            # from 1.11.0 onwards
+                            bins = 'auto'
+                        histogram, bin_edges = numpy.histogram(values,
+                                                               bins=bins)
+                        rv['histogram'] = histogram.tolist()
+                    except TypeError:
+                        pass
+                    return JsonResponse(rv)
         except ImportError:
             pass
 
