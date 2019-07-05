@@ -50,7 +50,10 @@ def get_names(conn, objtype, objid):
     table = get_table(conn, objtype, objid)
     if table is None:
         return []
-    column_names = [col.name for col in table.getHeaders()]
+    try:
+        column_names = [col.name for col in table.getHeaders()]
+    finally:
+        table.close()
     return ["Table_%s" % c for c in column_names]
 
 
@@ -120,32 +123,36 @@ def get_data(request, data_name, conn):
         if table is None:
             return dict()
 
-        headers = table.getHeaders()
-        column_names = [column.name for column in headers]
-        logger.debug('Column names: %r' % column_names)
-        index_column_index = column_names.index(index_column_name)
-        named_column_index = column_names.index(column_name)
+        try:
+            headers = table.getHeaders()
+            column_names = [column.name for column in headers]
+            logger.debug('Column names: %r' % column_names)
+            index_column_index = column_names.index(index_column_name)
+            named_column_index = column_names.index(column_name)
 
-        # Load appropriate index column and named column
-        number_of_rows = table.getNumberOfRows()
-        logger.debug('Number of rows: %d' % number_of_rows)
-        column_data = table.read([
-            index_column_index, named_column_index
-        ], 0, number_of_rows).columns
+            # Load appropriate index column and named column
+            number_of_rows = table.getNumberOfRows()
+            logger.debug('Number of rows: %d' % number_of_rows)
+            column_data = table.read([
+                index_column_index, named_column_index
+            ], 0, number_of_rows).columns
 
-        table_data = {}
-        index_ids = column_data[0].values
-        values = column_data[1].values
+            table_data = {}
+            index_ids = column_data[0].values
+            values = column_data[1].values
 
-        for index_id, value in zip(index_ids, values):
-            if project_id is not None or dataset_id is not None:
-                table_data[index_id] = value
-            if plate_id is not None:
-                try:
-                    table_data[img_ids[index_id]] = value
-                except KeyError:
-                    # The table may have data from different plates in it.  We
-                    # only have a dictionary of well_id: img_id for the
-                    # current plate.
-                    pass
+            for index_id, value in zip(index_ids, values):
+                if project_id is not None or dataset_id is not None:
+                    table_data[index_id] = value
+                if plate_id is not None:
+                    try:
+                        table_data[img_ids[index_id]] = value
+                    except KeyError:
+                        # The table may have data from different plates.
+                        # We only have a dictionary of well_id: img_id for
+                        # the current plate.
+                        pass
+        finally:
+            table.close()
+
         return table_data
