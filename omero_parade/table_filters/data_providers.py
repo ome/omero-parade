@@ -167,8 +167,8 @@ def get_data(request, data_name, conn):
                     try:
                         table_data[img_ids[index_id]] = value
                     except KeyError:
-                        # The table may have data from different plates in it.  We
-                        # only have a dictionary of well_id: img_id for the
+                        # The table may have data from different plates in it.
+                        # We only have a dictionary of well_id: img_id for the
                         # current plate.
                         pass
         finally:
