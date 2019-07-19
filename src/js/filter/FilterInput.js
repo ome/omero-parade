@@ -37,7 +37,13 @@ class FilterInput extends React.Component {
         if (max == undefined) {
             return value;
         }
+        if (value == undefined) {
+            value = "";
+        }
         let padding = max.toString().length - value.toString().length;
+        if (isNaN(padding) || padding < 0) {
+            padding = 0;
+        }
         return "\u2007".repeat(padding) + value;
     }
 
