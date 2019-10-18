@@ -141,7 +141,7 @@ class Layout extends React.Component {
         // When user chooses to ADD data by Name, load it...
         var dataName = event.target.value;
         if (dataName !== "--") {
-            var url = config.indexUrl + 'data/' + btoa(dataName);
+            var url = config.indexUrl + 'data/' + btoa(dataName) + '/';
 
             if (this.props.parentType === "plate") {
                 url += '?plate=' + this.props.parentId;
