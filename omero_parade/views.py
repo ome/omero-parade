@@ -159,6 +159,9 @@ def get_data(request, data_name, conn=None, **kwargs):
             {'Error': 'Could not Base64 decode: %s' % data_name}
         )
 
+    # python3 bytes > str
+    data_name = data_name.decode('utf-8')
+
     modules = parade_settings.PARADE_FILTERS
 
     for m in modules:
