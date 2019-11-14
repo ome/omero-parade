@@ -68,7 +68,7 @@ def get_long_or_default(request, name, default):
     val = None
     val_raw = request.GET.get(name, default)
     if val_raw is not None:
-        val = long(val_raw)
+        val = int(val_raw)
     return val
 
 
