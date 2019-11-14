@@ -175,8 +175,8 @@ def get_data(request, data_name, conn=None, **kwargs):
                     rv = {'data': data}
                     # Adding histogram etc will fail if data is not numerical
                     try:
-                        rv['min'] = numpy.amin(values).item()
-                        rv['max'] = numpy.amax(values).item()
+                        rv['min'] = list(numpy.amin(values))[0]
+                        rv['max'] = list(numpy.amax(values))[0]
                         bins = 10
                         if NUMPY_GT_1_11_0:
                             # numpy.histogram() only supports bin calculation
