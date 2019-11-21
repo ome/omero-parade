@@ -37,7 +37,7 @@ class ParadeFilter extends React.Component {
         // which adds itself to the PARADE_FILTERS list,
         // like OPEN_WITH list.
 
-        var url = config.indexUrl + 'filters/script/' + this.props.name;
+        var url = config.indexUrl + 'filters/script/' + this.props.name + '/';
         if (this.props.parentType === "plate") {
             url += '?plate=' + this.props.parentId;
             if (this.props.fieldId !== undefined) {
