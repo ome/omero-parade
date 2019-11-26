@@ -44,7 +44,7 @@ def get_script(request, script_name, conn):
         js_object_attr = "wellId"
         obj_ids = get_well_ids(conn, plate_id)
     else:
-        obj_ids = [long(i) for i in image_ids]
+        obj_ids = [int(i) for i in image_ids]
     query_service = conn.getQueryService()
     params = ParametersI()
     # Include "-1" so that if we have no object IDs that the query does

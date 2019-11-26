@@ -17,12 +17,11 @@
 
 """Django urls."""
 
-from django.conf.urls import url, patterns
-import views
+from django.conf.urls import url
+from . import views
 
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
 
     # Home page
     url(r'^$', views.index, name="parade_index"),
@@ -49,4 +48,4 @@ urlpatterns = patterns(
     # Get the table data
     url(r'^data/(?P<data_name>[\w+\/=]+)/$', views.get_data,
         name='parade_data'),
-)
+]

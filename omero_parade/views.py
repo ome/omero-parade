@@ -68,7 +68,7 @@ def get_long_or_default(request, name, default):
     val = None
     val_raw = request.GET.get(name, default)
     if val_raw is not None:
-        val = long(val_raw)
+        val = int(val_raw)
     return val
 
 
@@ -159,6 +159,9 @@ def get_data(request, data_name, conn=None, **kwargs):
             {'Error': 'Could not Base64 decode: %s' % data_name}
         )
 
+    # python3 bytes > str
+    data_name = data_name.decode('utf-8')
+
     modules = parade_settings.PARADE_FILTERS
 
     for m in modules:
@@ -172,8 +175,8 @@ def get_data(request, data_name, conn=None, **kwargs):
                     rv = {'data': data}
                     # Adding histogram etc will fail if data is not numerical
                     try:
-                        rv['min'] = numpy.amin(values).item()
-                        rv['max'] = numpy.amax(values).item()
+                        rv['min'] = list(numpy.amin(values))[0]
+                        rv['max'] = list(numpy.amax(values))[0]
                         bins = 10
                         if NUMPY_GT_1_11_0:
                             # numpy.histogram() only supports bin calculation
