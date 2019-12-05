@@ -1,3 +1,8 @@
+0.2.dev2 (Dec 2019)
+-------------------
+
+- Fix loading of Key-Value pairs (#69)
+
 0.2.dev1 (Nov 2019)
 -------------------
 
