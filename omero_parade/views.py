@@ -149,9 +149,16 @@ def dataprovider_list(request, conn=None, **kwargs):
 
     return JsonResponse({'data': dps})
 
+def numpy_to_json(value):
+    if isinstance(value, numpy.integer):
+        return int(value)
+    elif isinstance(value, numpy.floating):
+        return float(value)
+    return value
 
 @login_required()
 def get_data(request, data_name, conn=None, **kwargs):
+    # Avoid e.g. int64 is not JSON serializable
     try:
         data_name = b64decode(data_name)
     except Exception:
@@ -171,12 +178,12 @@ def get_data(request, data_name, conn=None, **kwargs):
                 dp = module.get_dataproviders(request, conn)
                 if data_name in dp:
                     data = module.get_data(request, data_name, conn)
-                    values = numpy.array(data.values())
+                    values = numpy.array(list(data.values()))
                     rv = {'data': data}
                     # Adding histogram etc will fail if data is not numerical
                     try:
-                        rv['min'] = list(numpy.amin(values))[0]
-                        rv['max'] = list(numpy.amax(values))[0]
+                        rv['min'] = numpy_to_json(numpy.amin(values))
+                        rv['max'] = numpy_to_json(numpy.amax(values))
                         bins = 10
                         if NUMPY_GT_1_11_0:
                             # numpy.histogram() only supports bin calculation
