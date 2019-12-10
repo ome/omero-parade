@@ -149,12 +149,14 @@ def dataprovider_list(request, conn=None, **kwargs):
 
     return JsonResponse({'data': dps})
 
+
 def numpy_to_json(value):
     if isinstance(value, numpy.integer):
         return int(value)
     elif isinstance(value, numpy.floating):
         return float(value)
     return value
+
 
 @login_required()
 def get_data(request, data_name, conn=None, **kwargs):
