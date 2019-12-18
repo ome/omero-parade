@@ -21,10 +21,9 @@
 # Version: 1.0
 
 import os
-import setuptools.command.install
-import setuptools.command.develop
-import setuptools.command.sdist
-from distutils.core import Command
+from setuptools.command.build_py import build_py
+from setuptools.command.install import install
+from setuptools.command.sdist import sdist
 from setuptools import setup, find_packages
 
 VERSION = "0.2.dev3"
@@ -39,68 +38,18 @@ def read_file(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 
-cmdclass = {}
-
-
-class NpmInstall(Command):
-
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        self.spawn(['npm', 'install'])
-
-
-cmdclass['npm_install'] = NpmInstall
-
-
-class RunProd(Command):
-
-    sub_commands = [
-        ('npm_install', None)
-    ]
-
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        if not os.path.isdir('src'):
-            return
-        for command in self.get_sub_commands():
-            self.run_command(command)
-
-        self.spawn(['npm', 'run', 'build'])
-
-
-cmdclass['run_prod'] = RunProd
-
-
-class Sdist(setuptools.command.sdist.sdist):
-
-    def run(self):
-        if os.path.isdir('src'):
-            self.run_command('run_prod')
-        setuptools.command.sdist.sdist.run(self)
-
-
-cmdclass['sdist'] = Sdist
-
-
-class Install(setuptools.command.install.install):
-
-    def run(self):
-        if not os.path.isdir('omero_parade/static/omero_parade/js'):
-            self.run_command('run_prod')
-        setuptools.command.install.install.run(self)
-
-
-cmdclass['install'] = Install
+def require_npm(command, strict=False):
+    """
+    Decorator to run NPM prerequisites
+    """
+    class WrappedCommand(command):
+        def run(self):
+            if strict or not os.path.isdir(
+                    'omero_parade/static/omero_parade/js'):
+                self.spawn(['npm', 'install'])
+                self.spawn(['npm', 'run', 'build'])
+            command.run(self)
+    return WrappedCommand
 
 
 setup(name="omero-parade",
@@ -136,5 +85,9 @@ setup(name="omero-parade",
       install_requires=['numpy'],
       include_package_data=True,
       zip_safe=False,
-      cmdclass=cmdclass,
+      cmdclass={
+          'build_py': require_npm(build_py),
+          'install': require_npm(install),
+          'sdist': require_npm(sdist, True),
+      },
       )
