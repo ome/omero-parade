@@ -26,7 +26,7 @@ from setuptools.command.install import install
 from setuptools.command.sdist import sdist
 from setuptools import setup, find_packages
 
-VERSION = "0.2.dev3"
+VERSION = "0.2.0.dev3"
 
 DESCRIPTION = "A Python plugin for OMERO.web"
 AUTHOR = "The Open Microscopy Team"

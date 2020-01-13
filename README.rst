@@ -12,15 +12,13 @@ An OMERO.web app for filtering Data in OMERO.web centre panel.
 For full details see `SUPPORT.md <https://github.com/ome/omero-parade/blob/master/SUPPORT.md>`_.
 
 Requirements
-============
+------------
 
-* OMERO 5.4.0 or newer.
-
-Note that OMERO.parade is compatible with OMERO 5.4.0 but it works
-best with OMERO 5.4.6 or newer.
+* OMERO 5.6.0 or newer
+* Python 3.6 or newer
 
 Installing from PyPI
-====================
+--------------------
 
 This section assumes that an OMERO.web is already installed.
 
@@ -48,7 +46,7 @@ Now restart OMERO.web as normal.
 
 
 Build
-=====
+-----
 
 In order to build you need:
 
@@ -80,7 +78,7 @@ To build a compressed, minified version for production, run:
 
 
 Custom Filtering
-================
+----------------
 
 Users can customize the filtering options available by adding their own
 python modules to the setting:
@@ -167,7 +165,7 @@ also be passed in a params object with the user input.
 
 
 Custom Data Providers
-=====================
+---------------------
 
 Custom data providers return numerical data for Images that can
 be shown in a table for sorting, or plotted in a graph.
@@ -206,3 +204,32 @@ Examples for ``omero_parade/data_providers.py``
             for i in p:
                 roi_counts[i[0].val] = i[1].val
             return roi_counts
+
+Release process
+---------------
+
+This repository uses `bump2version <https://pypi.org/project/bump2version/>`_ to manage version numbers.
+To tag a release run::
+
+    $ bumpversion release
+
+This will remove the ``.dev0`` suffix from the current version, commit, and tag the release.
+
+To switch back to a development version run::
+
+    $ bumpversion --no-tag [major|minor|patch]
+
+specifying ``major``, ``minor`` or ``patch`` depending on whether the development branch will be a `major, minor or patch release <https://semver.org/>`_. This will also add the ``.dev0`` suffix.
+
+Remember to ``git push`` all commits and tags.
+
+License
+-------
+
+This project, similar to many Open Microscopy Environment (OME) projects, is
+licensed under the terms of the GNU General Public License (GPL) v2 or later.
+
+Copyright
+---------
+
+2019-2020, The Open Microscopy Environment
