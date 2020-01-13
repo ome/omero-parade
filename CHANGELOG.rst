@@ -1,12 +1,8 @@
-0.2.dev2 (Dec 2019)
--------------------
+0.2.0 (Jan 2020)
+----------------
 
+- Drop support for Python 2
 - Fix loading of Key-Value pairs (#69)
-
-0.2.dev1 (Nov 2019)
--------------------
-
-Migration to Python 3
 
 0.1.3 (Jul 2019)
 -----------------
