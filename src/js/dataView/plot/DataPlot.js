@@ -269,7 +269,7 @@ class DataPlot extends React.Component {
             <div className="parade_centrePanel">
                 {/* The Plot */}
                 <div className="thumbnail_plot">
-                    <div className="thumbnail_plot_canvas" ref="thumb_plot_canvas" style={{zIndex: 1000}}>
+                    <div className="thumbnail_plot_canvas" ref="thumb_plot_canvas">
                         {images}
                     </div>
                 </div>
