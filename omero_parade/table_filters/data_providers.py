@@ -92,13 +92,9 @@ def get_data(request, data_name, conn):
         project_id, dataset_id, plate_id, field_id
     ))
 
-    if project_id is not None:
-        img_ids = get_project_image_ids(conn, project_id)
-    elif dataset_id is not None:
-        img_ids = get_dataset_image_ids(conn, dataset_id)
-    elif plate_id is not None and field_id is not None:
+    if plate_id is not None and field_id is not None:
         # dict of well_id: img_id
-        img_ids = get_well_image_ids(conn, plate_id, field_id)
+        well_to_img_id = get_well_image_ids(conn, plate_id, field_id)
     else:
         return dict()
 
@@ -141,12 +137,12 @@ def get_data(request, data_name, conn):
             index_ids = column_data[0].values
             values = column_data[1].values
 
-            for index_id, value in zip(index_ids, values):
+            for obj_id, value in zip(index_ids, values):
                 if project_id is not None or dataset_id is not None:
-                    table_data[index_id] = value
+                    table_data[obj_id] = value
                 if plate_id is not None:
                     try:
-                        table_data[img_ids[index_id]] = value
+                        table_data[well_to_img_id[obj_id]] = value
                     except KeyError:
                         # The table may have data from different plates.
                         # We only have a dictionary of well_id: img_id for
