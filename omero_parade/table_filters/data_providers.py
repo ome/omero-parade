@@ -18,9 +18,7 @@
 import logging
 
 from omero.model import OriginalFileI
-from omero_parade.utils import get_dataset_image_ids, \
-    get_project_image_ids, \
-    get_well_image_ids
+from omero_parade.utils import get_well_image_ids
 try:
     from omeroweb.webgateway.views import _bulk_file_annotations
 except ImportError:
