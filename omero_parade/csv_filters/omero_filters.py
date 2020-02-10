@@ -149,20 +149,23 @@ def get_script(request, script_name, conn):
     for name, values in column_data.items():
 
         try:
-            values = [float(v) for v in values]
+            # try to convert to number (if not empty string)
+            values = [float(v) if len(v) > 0 else v for v in values]
         except ValueError:
             pass
         else:
             table_data[name] = values
             table_cols.append(name)
-            minima[name] = numpy.amin(values).item()
-            maxima[name] = numpy.amax(values).item()
+            # only use numbers (not empty strings) for histogram...
+            nums = [v for v in values if isinstance(v, float)]
+            minima[name] = numpy.amin(nums).item()
+            maxima[name] = numpy.amax(nums).item()
             bins = 10
             if NUMPY_GT_1_11_0:
                 # numpy.histogram() only supports bin calculation
                 # from 1.11.0 onwards
                 bins = 'auto'
-            histogram, bin_edges = numpy.histogram(values, bins=bins)
+            histogram, bin_edges = numpy.histogram(nums, bins=bins)
             histograms[name] = histogram.tolist()
 
     # Return a JS function that will be passed an object
