@@ -27,7 +27,7 @@ PARADE_SETTINGS_MAPPING = {
     "omero.web.parade.filters":
         ["PARADE_FILTERS",
          '["omero_parade", "omero_parade.annotation_filters", '
-         '"omero_parade.table_filters"]',
+         '"omero_parade.table_filters", "omero_parade.csv_filters"]',
          json.loads,
          ("Filters for filtering data. Each is a python module \
           that contains an omero_filter module"
