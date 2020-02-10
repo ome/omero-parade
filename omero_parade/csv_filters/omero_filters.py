@@ -20,20 +20,20 @@ import numpy
 from django.http import JsonResponse
 import logging
 import json
-import re
 import csv
 from io import StringIO
 
-from omero.grid import DoubleColumn, LongColumn
 from omero.model import FileAnnotationI
 from omero_parade.views import NUMPY_GT_1_11_0
 from omero_parade.utils import get_well_image_ids
 
 logger = logging.getLogger(__name__)
 
+
 def name_to_word(name):
     w = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.'
     return "".join([l if l in w else '_' for l in name])
+
 
 def get_filters(request, conn):
 
@@ -72,7 +72,6 @@ def get_image_well_ids(conn, plate_id):
 def get_script(request, script_name, conn):
     """Return a JS function to filter images by various params."""
     obj_types = ["project", "dataset", "screen", "plate"]
-
 
     obj = None
     obj_type = None
@@ -118,7 +117,7 @@ def get_script(request, script_name, conn):
         # First row is column names:
         if column_names is None:
             column_names = [name.strip() for name in row]
-            # 
+            # Batch_ROI_Export uses 'image_id'
             if 'Image' not in column_names and 'image_id' in column_names:
                 column_names[column_names.index('image_id')] = 'Image'
             for name in column_names:
@@ -193,19 +192,19 @@ def get_script(request, script_name, conn):
     """ % json.dumps(table_data)
 
     filter_params = [{'name': 'column_name',
-                        'type': 'text',
-                        'values': table_cols,
-                        'default': table_cols[0],
-                        'minima': minima,
-                        'maxima': maxima,
-                        'histograms': histograms},
-                        {'name': 'operator',
-                        'type': 'text',
-                        'values': ['>', '=', '<'],
-                        'default': '>'},
-                        {'name': 'count',
-                        'type': 'number',
-                        'default': ''}]
+                      'type': 'text',
+                      'values': table_cols,
+                      'default': table_cols[0],
+                      'minima': minima,
+                      'maxima': maxima,
+                      'histograms': histograms},
+                     {'name': 'operator',
+                      'type': 'text',
+                      'values': ['>', '=', '<'],
+                      'default': '>'},
+                     {'name': 'count',
+                      'type': 'number',
+                      'default': ''}]
     return JsonResponse(
         {
             'f': f,

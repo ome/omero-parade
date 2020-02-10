@@ -20,8 +20,6 @@ import csv
 from io import StringIO
 
 from omero.model import FileAnnotationI
-from omero_parade.utils import get_well_image_ids
-from .omero_filters import name_to_word
 
 logger = logging.getLogger(__name__)
 
@@ -83,7 +81,7 @@ def get_data(request, data_name, conn):
                 if data_name.startswith(file_ann.getFile().name):
                     csv_file = file_ann.getFile()
                     break
-    
+
     if csv_file is None:
         return {}
 
@@ -100,12 +98,10 @@ def get_data(request, data_name, conn):
         return {'Error': 'Column %s not found' % col_name}
 
     data_col_idx = first_row.index(col_name)
-    well_to_img = None
     # TODO handle SPW, Well
     # handle csv from Batch_ROI_Export.py which uses 'image_id'
     if 'Image' not in first_row and 'image_id' in first_row:
         first_row[first_row.index('image_id')] = 'Image'
-
 
     img_col_idx = first_row.index('Image')
     table_data = {}
