@@ -24,10 +24,11 @@ from omeroweb.settings import process_custom_settings, report_settings
 # load settings
 PARADE_SETTINGS_MAPPING = {
 
-    "omero.web.parade.max_csv_size": ["MAX_CSV_SIZE", 100000000, int,
-    ("Maximum supported size of CSV files in bytes, to avoid trying \
-     to load very large files for filtering or plotting. \
-     The default is 100MB")],
+    "omero.web.parade.max_csv_size":
+        ["MAX_CSV_SIZE", 100000000, int,
+         ("Maximum supported size of CSV files in bytes, to avoid trying \
+          to load very large files for filtering or plotting. \
+          The default is 100MB")],
 
     "omero.web.parade.filters":
         ["PARADE_FILTERS",
