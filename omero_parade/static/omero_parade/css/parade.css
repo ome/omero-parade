@@ -378,6 +378,7 @@ input[type=range].parade:focus::-ms-fill-upper {
   height: 100%;
   box-sizing: border-box;
   position: relative;
+  z-index: 1;
 }
 
 .thumbnail_plot img {
