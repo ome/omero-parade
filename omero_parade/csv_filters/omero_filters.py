@@ -26,11 +26,17 @@ from io import StringIO
 from omero.model import FileAnnotationI
 from omero_parade.views import NUMPY_GT_1_11_0
 from omero_parade.utils import get_well_image_ids
+from .data_providers import get_csv_annotations
 
 logger = logging.getLogger(__name__)
 
 
 def name_to_word(name):
+    """
+    Replace any non alpha-numeric character or . with underscore.
+
+    This allows us to use the filter name in URL to load filter script
+    """
     w = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.'
     return "".join([l if l in w else '_' for l in name])
 
@@ -39,23 +45,17 @@ def get_filters(request, conn):
 
     obj_types = ["project", "dataset", "screen", "plate"]
 
-    obj = None
-    for ob_type in obj_types:
-        if request.GET.get(ob_type) is not None:
-            obj_id = request.GET.get(ob_type)
-            obj = conn.getObject(ob_type, obj_id)
+    obj_type = None
+    obj_id = None
+    for o in obj_types:
+        if request.GET.get(o) is not None:
+            obj_id = request.GET.get(o)
+            obj_type = o
             break
 
-    if obj is None:
-        return []
-
-    csv_names = []
-    for ann in obj.listAnnotations():
-        if (ann.OMERO_TYPE == FileAnnotationI):
-            if ann.file.name.val.endswith('csv'):
-                csv_names.append(ann.file.name.val)
-
-    csv_names = [name_to_word(name) for name in csv_names]
+    csv_anns = get_csv_annotations(conn, obj_type, obj_id)
+    # Use name_to_word so that filter can be used in URL
+    csv_names = [name_to_word(ann.file.name.val) for ann in csv_anns]
     return csv_names
 
 
@@ -85,8 +85,6 @@ def get_script(request, script_name, conn):
     if obj is None:
         return JsonResponse(
             {'Error': 'Specify object e.g. ?project=1'})
-
-    print('name', script_name)
 
     # find csv file by name
     file_ann = None

@@ -20,19 +20,24 @@ import csv
 from io import StringIO
 
 from omero.model import FileAnnotationI
+from omero_parade import parade_settings
 
 logger = logging.getLogger(__name__)
+MAX_CSV_SIZE = parade_settings.MAX_CSV_SIZE
 
 
-def get_csv_files(conn, obj_type, obj_id):
+def get_csv_annotations(conn, obj_type, obj_id):
 
     csv_files = []
-
     obj = conn.getObject(obj_type, obj_id)
+    if obj is None:
+        return []
+
     for ann in obj.listAnnotations():
-        if (ann.OMERO_TYPE == FileAnnotationI):
-            if ann.file.name.val.endswith('.csv'):
-                csv_files.append(ann)
+        if (ann.OMERO_TYPE == FileAnnotationI and
+                ann.file.size.val < MAX_CSV_SIZE and
+                ann.file.name.val.endswith('.csv')):
+            csv_files.append(ann)
 
     return csv_files
 
@@ -47,12 +52,11 @@ def get_csv_column_names(file_ann):
 
 
 def get_names(conn, obj_type, obj_id):
-    csv_files = get_csv_files(conn, obj_type, obj_id)
+    csv_files = get_csv_annotations(conn, obj_type, obj_id)
 
     names = []
     for f in csv_files:
         fname = f.file.name.val
-        print(fname)
         for col in get_csv_column_names(f):
             names.append("%s %s" % (fname, col))
     return names
@@ -77,7 +81,7 @@ def get_data(request, data_name, conn):
     for dtype in obj_types:
         if request.GET.get(dtype) is not None:
             obj_id = request.GET.get(dtype)
-            for file_ann in get_csv_files(conn, dtype, obj_id):
+            for file_ann in get_csv_annotations(conn, dtype, obj_id):
                 if data_name.startswith(file_ann.getFile().name):
                     csv_file = file_ann.getFile()
                     break
