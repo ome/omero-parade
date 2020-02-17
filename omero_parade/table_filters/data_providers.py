@@ -93,7 +93,7 @@ def get_data(request, data_name, conn):
     if plate_id is not None and field_id is not None:
         # dict of well_id: img_id
         well_to_img_id = get_well_image_ids(conn, plate_id, field_id)
-    else:
+    elif project_id is None and dataset_id is None:
         return dict()
 
     if data_name.startswith("Table_"):
