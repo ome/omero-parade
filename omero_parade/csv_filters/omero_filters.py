@@ -101,8 +101,6 @@ def get_script(request, script_name, conn):
     if obj_type == 'plate':
         well_ids = get_image_well_ids(conn, obj_id)
 
-    print('well_ids', well_ids)
-
     # read file
     chs = [ch.decode() for ch in file_ann.getFile().getFileInChunks()]
     text = "".join(chs)
@@ -151,6 +149,9 @@ def get_script(request, script_name, conn):
         except ValueError:
             pass
         else:
+            # If ALL empty, ignore
+            if not any(values):
+                continue
             table_data[name] = values
             table_cols.append(name)
             # only use numbers (not empty strings) for histogram...
