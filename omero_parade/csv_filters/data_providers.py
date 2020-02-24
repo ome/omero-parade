@@ -73,7 +73,6 @@ def get_dataproviders(request, conn):
 
 def get_data(request, data_name, conn):
     """Return table data for images."""
-    print('data_name', data_name)
     # Find matching csv file...
     csv_file = None
     for dtype in OBJ_TYPES:
