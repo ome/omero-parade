@@ -26,7 +26,7 @@ from io import StringIO
 from omero.model import FileAnnotationI
 from omero_parade.views import NUMPY_GT_1_11_0
 from omero_parade.utils import get_well_image_ids
-from .data_providers import get_csv_annotations
+from .data_providers import get_csv_annotations, OBJ_TYPES
 
 logger = logging.getLogger(__name__)
 
@@ -42,12 +42,9 @@ def name_to_word(name):
 
 
 def get_filters(request, conn):
-
-    obj_types = ["project", "dataset", "screen", "plate"]
-
     obj_type = None
     obj_id = None
-    for o in obj_types:
+    for o in OBJ_TYPES:
         if request.GET.get(o) is not None:
             obj_id = request.GET.get(o)
             obj_type = o
@@ -71,11 +68,9 @@ def get_image_well_ids(conn, plate_id):
 
 def get_script(request, script_name, conn):
     """Return a JS function to filter images by various params."""
-    obj_types = ["project", "dataset", "screen", "plate"]
-
     obj = None
     obj_type = None
-    for t in obj_types:
+    for t in OBJ_TYPES:
         if request.GET.get(t) is not None:
             obj_id = int(request.GET.get(t))
             obj = conn.getObject(t, obj_id)

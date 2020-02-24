@@ -23,6 +23,8 @@ from omero.model import FileAnnotationI
 from omero_parade import parade_settings
 
 logger = logging.getLogger(__name__)
+
+OBJ_TYPES = ["project", "dataset", "screen", "plate"]
 MAX_CSV_SIZE = parade_settings.MAX_CSV_SIZE
 
 
@@ -63,9 +65,7 @@ def get_names(conn, obj_type, obj_id):
 
 
 def get_dataproviders(request, conn):
-    obj_types = ["project", "dataset", "screen", "plate"]
-
-    for dtype in obj_types:
+    for dtype in OBJ_TYPES:
         if request.GET.get(dtype) is not None:
             obj_id = request.GET.get(dtype)
             return get_names(conn, dtype, obj_id)
@@ -75,10 +75,8 @@ def get_data(request, data_name, conn):
     """Return table data for images."""
     print('data_name', data_name)
     # Find matching csv file...
-    obj_types = ["project", "dataset", "screen", "plate"]
-
     csv_file = None
-    for dtype in obj_types:
+    for dtype in OBJ_TYPES:
         if request.GET.get(dtype) is not None:
             obj_id = request.GET.get(dtype)
             for file_ann in get_csv_annotations(conn, dtype, obj_id):
