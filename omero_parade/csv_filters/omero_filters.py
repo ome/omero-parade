@@ -108,9 +108,12 @@ def get_script(request, script_name, conn):
         # First row is column names:
         if column_names is None:
             column_names = [name.strip() for name in row]
-            # Batch_ROI_Export uses 'image_id'
-            if 'Image' not in column_names and 'image_id' in column_names:
-                column_names[column_names.index('image_id')] = 'Image'
+            # Batch_ROI_Export uses 'image_id'. Also support 'image'
+            if 'Image' not in column_names:
+                if 'image_id' in column_names:
+                    column_names[column_names.index('image_id')] = 'Image'
+                elif 'image' in column_names:
+                    column_names[column_names.index('image')] = 'Image'
             for name in column_names:
                 column_data[name] = []
             continue

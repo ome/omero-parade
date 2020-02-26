@@ -100,13 +100,15 @@ def get_data(request, data_name, conn):
 
     data_col_idx = first_row.index(col_name)
     # TODO handle SPW, Well
-    # handle csv from Batch_ROI_Export.py which uses 'image_id'
-    if 'Image' not in first_row and 'image_id' in first_row:
-        first_row[first_row.index('image_id')] = 'Image'
+    # handle 'Image' column named 'image' or 'image_id'
+    img_names = ['Image', 'image', 'image_id']
+    img_col_idx = -1
+    for name in img_names:
+        if name in first_row:
+            img_col_idx = first_row.index(name)
+            break
 
-    img_col_idx = first_row.index('Image')
     table_data = {}
-
     for row in csv_reader:
         img_id = row[img_col_idx].strip()
         value = row[data_col_idx].strip()
