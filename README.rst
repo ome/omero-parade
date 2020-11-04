@@ -1,5 +1,5 @@
-.. image:: https://travis-ci.org/ome/omero-parade.svg?branch=master
-    :target: https://travis-ci.org/ome/omero-parade
+.. image:: https://github.com/ome/omero-parade/workflows/OMERO/badge.svg
+    :target: https://github.com/ome/omero-parade/actions
 
 .. image:: https://badge.fury.io/py/omero-parade.svg
     :target: https://badge.fury.io/py/omero-parade
