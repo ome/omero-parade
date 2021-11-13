@@ -31,11 +31,6 @@ class DataPlot extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            xAxisName: undefined,
-            yAxisName: undefined,
-        }
-        this.setAxisName = this.setAxisName.bind(this);
     }
 
     setAxisName(axis, event, otherAxis) {
@@ -44,9 +39,11 @@ class DataPlot extends React.Component {
         // user picks one to change, we set both.
         let name = event.target.value;
         if (axis === 'x') {
-            this.setState({xAxisName: name, yAxisName: otherAxis});
+            this.props.setAxisX(name);
+            this.props.setAxisY(otherAxis);
         } else {
-            this.setState({yAxisName: name, xAxisName: otherAxis});
+            this.props.setAxisY(name);
+            this.props.setAxisX(otherAxis);
         }
     }
 
@@ -98,8 +95,8 @@ class DataPlot extends React.Component {
         let {imgJson, iconSize, tableData,
              handleImageWellClicked, selectedWellIds} = this.props;
 
-        let xAxisName = this.state.xAxisName;
-        let yAxisName = this.state.yAxisName;
+        let xAxisName = this.props.axisX;
+        let yAxisName = this.props.axisY;
 
         // Available axes are dataTable keys.
         let axisNames = Object.keys(tableData);

@@ -39,6 +39,8 @@ class Layout extends React.Component {
             selectedWellIds: [],
             showDatasets: true,
             thumbnails: {},
+            axisX: undefined,
+            axisY: undefined
         }
         this.setIconSize = this.setIconSize.bind(this);
         this.setLayout = this.setLayout.bind(this);
@@ -47,10 +49,20 @@ class Layout extends React.Component {
         this.handleImageWellClicked = this.handleImageWellClicked.bind(this);
         this.setImagesWellsSelected = this.setImagesWellsSelected.bind(this);
         this.setSelectedWells = this.setSelectedWells.bind(this);
+        this.setAxisX = this.setAxisX.bind(this);
+        this.setAxisY = this.setAxisY.bind(this);
     }
 
     setIconSize(size) {
         this.setState({iconSize: parseInt(size, 10)});
+    }
+
+    setAxisX(colName) {
+        this.setState({axisX: colName});
+    }
+
+    setAxisY(colName) {
+        this.setState({ axisY: colName });
     }
 
     setLayout(layout) {
@@ -257,6 +269,10 @@ class Layout extends React.Component {
                     handleImageWellClicked = {this.handleImageWellClicked}
                     setImagesWellsSelected = {this.setImagesWellsSelected}
                     thumbnails={this.state.thumbnails}
+                    setAxisX={this.setAxisX}
+                    setAxisY={this.setAxisY}
+                    axisX={this.state.axisX}
+                    axisY={this.state.axisY}
                     />)
         } else if (this.props.plateData) {
             imageComponent = (
