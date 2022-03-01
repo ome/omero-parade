@@ -1,3 +1,8 @@
+0.2.2 (March 2022)
+------------------
+
+- Pin omero-web to 5.14.0 [#98](https://github.com/ome/omero-parade/pull/98)
+
 0.2.1 (Feb 2020)
 ----------------
 
