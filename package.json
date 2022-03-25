@@ -14,7 +14,7 @@
     "build-dev": "webpack --progress --config webpack.dev.js"
   },
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "clusterfck": "^0.6.0",
     "lodash": "^4.17.21",
     "qs": "^6.5.2",
