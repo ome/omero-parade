@@ -9,9 +9,9 @@
   "license": "AGPL-3.0+",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "webpack --watch --config webpack.dev.js",
-    "build": "webpack --progress --config webpack.prod.js",
-    "build-dev": "webpack --progress --config webpack.dev.js"
+    "watch": "webpack --watch --openssl-legacy-provider --config webpack.dev.js",
+    "build": "webpack --progress --openssl-legacy-provider --config webpack.prod.js",
+    "build-dev": "webpack --progress --openssl-legacy-provider --config webpack.dev.js"
   },
   "dependencies": {
     "axios": "^0.21.2",
