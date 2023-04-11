@@ -17,7 +17,7 @@
     "axios": "^0.21.2",
     "clusterfck": "^0.6.0",
     "lodash": "^4.17.21",
-    "qs": "^6.5.2",
+    "qs": "^6.5.3",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
     "react-sparklines": "^1.7.0"
