@@ -57,18 +57,12 @@ In order to build you need:
 
     $ npm install
 
-To build an uncompressed version and automatically rebuild when source
+To build an compressed, minified version and automatically rebuild when source
 files change, run:
 
 ::
 
     $ npm run watch
-
-To build an uncompressed version, run:
-
-::
-
-    $ npm run build-dev
 
 To build a compressed, minified version for production, run:
 
@@ -232,4 +226,4 @@ licensed under the terms of the GNU General Public License (GPL) v2 or later.
 Copyright
 ---------
 
-2019-2020, The Open Microscopy Environment
+2019-2023, The Open Microscopy Environment
