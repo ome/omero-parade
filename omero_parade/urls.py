@@ -39,13 +39,13 @@ urlpatterns = [
     # Get the script - need to also include current data to be filtered
     # e.g. ?plate=1
     re_path(r'^filters/script/(?P<filter_name>[\w.]+)/$', views.filter_script,
-        name='parade_filter_script'),
+            name='parade_filter_script'),
 
     # list sources of table data
     re_path(r'^dataproviders/$', views.dataprovider_list,
-        name='parade_dataproviders'),
+            name='parade_dataproviders'),
 
     # Get the table data
     re_path(r'^data/(?P<data_name>[\w+\/=]+)/$', views.get_data,
-        name='parade_data'),
+            name='parade_data'),
 ]
