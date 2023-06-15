@@ -57,8 +57,7 @@ In order to build you need:
 
     $ npm install
 
-To build an compressed, minified version and automatically rebuild when source
-files change, run:
+To build and automatically rebuild when source files change, run:
 
 ::
 
