@@ -1,3 +1,9 @@
+
+0.2.4 (March 2022)
+------------------
+
+- Make app compatible with Django 4.0.x [#123](https://github.com/ome/omero-parade/pull/123)
+
 0.2.3 (March 2022)
 ------------------
 
