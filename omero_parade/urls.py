@@ -17,35 +17,35 @@
 
 """Django urls."""
 
-from django.conf.urls import url
+from django.urls import re_path
 from . import views
 
 
 urlpatterns = [
 
     # Home page
-    url(r'^$', views.index, name="parade_index"),
+    re_path(r'^$', views.index, name="parade_index"),
 
     # GET search results. Use ?query=foo
-    url(r'^search/$', views.search, name='parade_search'),
+    re_path(r'^search/$', views.search, name='parade_search'),
 
     # list fields in Plate ?plate=123 or Acquisition ?run=456
-    url(r'^api/fields/$', views.api_field_list, name='parade_fields'),
+    re_path(r'^api/fields/$', views.api_field_list, name='parade_fields'),
 
     # list functions for filtering data
-    # url(r'^api/filters/$', views.api_filter_list, name='parade_filters'),
-    url(r'^filters/$', views.filter_list, name='parade_filters'),
+    # re_path(r'^api/filters/$', views.api_filter_list, name='parade_filters'),
+    re_path(r'^filters/$', views.filter_list, name='parade_filters'),
 
     # Get the script - need to also include current data to be filtered
     # e.g. ?plate=1
-    url(r'^filters/script/(?P<filter_name>[\w.]+)/$', views.filter_script,
-        name='parade_filter_script'),
+    re_path(r'^filters/script/(?P<filter_name>[\w.]+)/$', views.filter_script,
+            name='parade_filter_script'),
 
     # list sources of table data
-    url(r'^dataproviders/$', views.dataprovider_list,
-        name='parade_dataproviders'),
+    re_path(r'^dataproviders/$', views.dataprovider_list,
+            name='parade_dataproviders'),
 
     # Get the table data
-    url(r'^data/(?P<data_name>[\w+\/=]+)/$', views.get_data,
-        name='parade_data'),
+    re_path(r'^data/(?P<data_name>[\w+\/=]+)/$', views.get_data,
+            name='parade_data'),
 ]
