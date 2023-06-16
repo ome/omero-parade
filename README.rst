@@ -11,12 +11,6 @@ An OMERO.web app for filtering Data in OMERO.web centre panel.
 
 For full details see `SUPPORT.md <https://github.com/ome/omero-parade/blob/master/SUPPORT.md>`_.
 
-Requirements
-------------
-
-* OMERO 5.6.0 or newer
-* Python 3.6 or newer
-
 Installing from PyPI
 --------------------
 
@@ -50,8 +44,7 @@ Build
 
 In order to build you need:
 
-* npm version equal or greater to 3.0! npm version equal or greater than
-  5.2 is recommended!
+* npm version equal or greater than `npm 8.19.4`.
 
 ::
 
