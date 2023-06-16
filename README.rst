@@ -11,6 +11,13 @@ An OMERO.web app for filtering Data in OMERO.web centre panel.
 
 For full details see `SUPPORT.md <https://github.com/ome/omero-parade/blob/master/SUPPORT.md>`_.
 
+
+Requirements
+------------
+
+* OMERO.web 5.6.1 or newer.
+
+
 Installing from PyPI
 --------------------
 
