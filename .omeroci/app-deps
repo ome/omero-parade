@@ -3,5 +3,5 @@
 set -e
 set -u
 yum -y install epel-release
-curl --silent --location https://rpm.nodesource.com/setup_14.x | sudo bash -
+curl --silent --location https://rpm.nodesource.com/setup_16.x | sudo bash -
 yum -y install nodejs
