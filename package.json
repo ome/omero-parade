@@ -7,30 +7,23 @@
     "url": "https://github.com/ome/omero-parade.git"
   },
   "license": "AGPL-3.0+",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "webpack --watch --openssl-legacy-provider --config webpack.dev.js",
-    "build": "webpack --progress --openssl-legacy-provider --config webpack.prod.js",
-    "build-dev": "webpack --progress --openssl-legacy-provider --config webpack.dev.js"
+    "watch": "vite build --watch",
+    "build": "vite build"
   },
   "dependencies": {
-    "axios": "^0.21.2",
-    "clusterfck": "^0.6.0",
+    "axios": "^1.3.5",
     "lodash": "^4.17.21",
-    "qs": "^6.5.2",
-    "react": "^16.3.2",
-    "react-dom": "^16.3.2",
+    "qs": "^6.11.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-sparklines": "^1.7.0"
   },
   "devDependencies": {
-    "babel-core": "^6.26.0",
-    "babel-loader": "^7.1.4",
-    "babel-plugin-transform-class-properties": "^6.24.1",
-    "babel-plugin-transform-decorators": "^6.24.1",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-react": "^6.24.1",
-    "webpack": "^4.1.1",
-    "webpack-cli": "^3.1.1",
-    "webpack-merge": "^4.1.2"
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "@vitejs/plugin-react": "^3.1.0",
+    "vite": "^4.2.0"
   }
 }

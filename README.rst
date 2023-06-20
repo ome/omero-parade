@@ -11,11 +11,12 @@ An OMERO.web app for filtering Data in OMERO.web centre panel.
 
 For full details see `SUPPORT.md <https://github.com/ome/omero-parade/blob/master/SUPPORT.md>`_.
 
+
 Requirements
 ------------
 
-* OMERO 5.6.0 or newer
-* Python 3.6 or newer
+* OMERO.web 5.6.1 or newer.
+
 
 Installing from PyPI
 --------------------
@@ -50,25 +51,17 @@ Build
 
 In order to build you need:
 
-* npm version equal or greater to 3.0! npm version equal or greater than
-  5.2 is recommended!
+* npm version equal or greater than `npm 8.19.4`.
 
 ::
 
     $ npm install
 
-To build an uncompressed version and automatically rebuild when source
-files change, run:
+To build and automatically rebuild when source files change, run:
 
 ::
 
     $ npm run watch
-
-To build an uncompressed version, run:
-
-::
-
-    $ npm run build-dev
 
 To build a compressed, minified version for production, run:
 
@@ -232,4 +225,4 @@ licensed under the terms of the GNU General Public License (GPL) v2 or later.
 Copyright
 ---------
 
-2019-2020, The Open Microscopy Environment
+2019-2023, The Open Microscopy Environment

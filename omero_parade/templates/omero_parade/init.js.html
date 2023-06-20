@@ -2,8 +2,10 @@
 {% load static %}
 
 <link rel="stylesheet" href="{% static 'omero_parade/css/parade.css' %}"></link>
-<script src="{% static 'omero_parade/js/bundle.js' %}"></script>
-<script>
+
+
+<script type="module">
+  import omero_parade from '{% static 'omero_parade/js/bundle.js' %}';
 
 $(function() {
 
