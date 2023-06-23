@@ -1,3 +1,10 @@
+
+0.2.4 (June 2023)
+-----------------
+
+- Make app compatible with Django 4.0.x [#123](https://github.com/ome/omero-parade/pull/123)
+- Update build to use Vite.js [#122](https://github.com/ome/omero-parade/pull/122)
+
 0.2.3 (March 2022)
 ------------------
 
