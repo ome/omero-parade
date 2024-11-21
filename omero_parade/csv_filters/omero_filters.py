@@ -38,7 +38,7 @@ def name_to_word(name):
     This allows us to use the filter name in URL to load filter script
     """
     w = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.'
-    return "".join([l if l in w else '_' for l in name])
+    return "".join([link if link in w else '_' for link in name])
 
 
 def get_filters(request, conn):
