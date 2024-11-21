@@ -60,8 +60,8 @@ def get_script(request, script_name, conn):
             and ch.ns='openmicroscopy.org/omero/insight/rating'""" % dtype
         links = query_service.findAllByQuery(query, params, conn.SERVICE_OPTS)
         ratings = {}
-        for l in links:
-            ratings[l.parent.id.val] = l.child.longValue.val
+        for link in links:
+            ratings[link.parent.id.val] = link.child.longValue.val
 
         # Return a JS function that will be passed an object
         # e.g. {'type': 'Image', 'id': 1}
@@ -91,11 +91,11 @@ def get_script(request, script_name, conn):
             where pa.id in (:ids) and ch.class=CommentAnnotation""" % dtype
         links = query_service.findAllByQuery(query, params, conn.SERVICE_OPTS)
         comments = {}
-        for l in links:
-            iid = l.parent.id.val
+        for link in links:
+            iid = link.parent.id.val
             if iid not in comments:
                 comments[iid] = ""
-            comments[iid] = " ".join([comments[iid], l.child.textValue.val])
+            comments[iid] = " ".join([comments[iid], link.child.textValue.val])
 
         # Return a JS function that will be passed a data object
         # e.g. {'type': 'Image', 'id': 1}
@@ -127,9 +127,9 @@ def get_script(request, script_name, conn):
         links = query_service.findAllByQuery(query, params, conn.SERVICE_OPTS)
         tags = {}
         all_tags = []
-        for l in links:
-            iid = l.parent.id.val
-            text = l.child.textValue.val
+        for link in links:
+            iid = link.parent.id.val
+            text = link.child.textValue.val
             all_tags.append(text)
             if iid not in tags:
                 tags[iid] = []
@@ -170,9 +170,9 @@ def get_script(request, script_name, conn):
         links = query_service.findAllByQuery(query, params, conn.SERVICE_OPTS)
         # Dict of {'key': {iid: 'value', iid: 'value'}}
         map_values = defaultdict(dict)
-        for l in links:
-            iid = l.parent.id.val
-            for kv in l.child.getMapValue():
+        for link in links:
+            iid = link.parent.id.val
+            for kv in link.child.getMapValue():
                 map_values[kv.name][iid] = kv.value
 
         key_placeholder = "Pick key..."

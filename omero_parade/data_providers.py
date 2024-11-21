@@ -101,8 +101,8 @@ def get_image_map_annotations(conn, plate_id, field_id, ns, key=None):
     if key is None:
         return links
     map_values = {}
-    for l in links:
-        for kv in l.child.getMapValue():
+    for link in links:
+        for kv in link.child.getMapValue():
             if key == kv.name:
-                map_values[l.parent.id.val] = int(kv.value)
+                map_values[link.parent.id.val] = int(kv.value)
     return map_values
