@@ -293,7 +293,7 @@ class DataContainer extends React.Component {
             )
         }
         if (effectiveRootNode.type === "project"
-                || effectiveRootNode.type === "dataset") {
+                || effectiveRootNode.type === "dataset" || effectiveRootNode.type === "tag") {
             return (
                 <DatasetContainer
                     jstree={jstree}
