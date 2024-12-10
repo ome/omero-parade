@@ -109,6 +109,10 @@ class Layout extends React.Component {
                 plateId = this.props.parentId;
             }
             url += '?plate=' + plateId;
+        } else if (this.props.parentType == "tag") {
+            url += '?tag=' + this.props.parentId;
+        } else {
+            console.log("parentType not handled for dataproviders", this.props.parentType, this.props)
         }
         $.ajax({
             url: url,
